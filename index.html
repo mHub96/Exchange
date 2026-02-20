@@ -8,7 +8,6 @@
     <style>
         :root {
             --primary: #007aff;
-            --success: #25D366;
             --bg: #000000;
             --glass: rgba(255, 255, 255, 0.05);
             --border: rgba(255, 255, 255, 0.1);
@@ -25,7 +24,6 @@
             min-height: 100vh; overflow: hidden;
         }
 
-        /* Mesh Background */
         .mesh {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: 
@@ -48,7 +46,6 @@
 
         h2 { font-weight: 700; font-size: 1.6rem; margin-bottom: 25px; letter-spacing: -1px; }
 
-        /* Input Styling */
         input, select {
             width: 100%; height: 60px;
             background: rgba(255,255,255,0.05);
@@ -56,20 +53,9 @@
             border-radius: 18px;
             color: white; font-size: 1rem; text-align: center;
             margin-bottom: 20px; transition: 0.3s;
-            appearance: none;
-        }
-
-        input:focus, select:focus {
-            border-color: var(--primary);
-            background: rgba(255,255,255,0.1);
         }
 
         option { background: #1a1a1a; color: white; }
-
-        label {
-            display: block; font-size: 0.75rem; color: rgba(255,255,255,0.4);
-            margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;
-        }
 
         button {
             width: 100%; height: 60px;
@@ -77,19 +63,10 @@
             border: none; border-radius: 18px;
             font-size: 1.1rem; font-weight: 700;
             cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
         }
 
-        button:active { transform: scale(0.97); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        /* Logic Sections */
         #formSection, #nameWrapper { display: none; }
-
-        /* Spinners */
-        .spin { width: 18px; height: 18px; border: 2px solid rgba(0,0,0,0.1); border-top-color: black; border-radius: 50%; animation: rot 0.8s linear infinite; }
-        @keyframes rot { to { transform: rotate(360deg); } }
-
+        
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-8px);} 75% {transform: translateX(8px);} }
         .shake { animation: shake 0.4s ease; }
     </style>
@@ -108,34 +85,27 @@
     <div id="formSection" class="container">
         <h2>تسجيل الخفر 🇮🇶</h2>
         
-        <label>الاختصاص الطبي</label>
         <select id="specialty" onchange="fetchNames()">
             <option value="">-- اختر القسم --</option>
-            <option value="Neuro">Neuro</option>
-            <option value="Thoracic">Thoracic</option>
-            <option value="Uro">Uro</option>
+            <option value="NS">Neuro (NS)</option>
+            <option value="CT">Thoracic (CT)</option>
+            <option value="US">Urology (US)</option>
             <option value="ENT">ENT</option>
-            <option value="Cardio">Cardio</option>
-            <option value="DeathCertificates">DeathCertificates</option>
-            <option value="OP Anesthesia">OP Anesthesia</option>
-            <option value="ICU Anesthesia">ICU Anesthesia</option>
-            <option value="Radio">Radio</option>
-            <option value="Onco">Onco</option>
-            <option value="Plastic">Plastic</option>
+            <option value="H">Cardio (H)</option>
+            <option value="D">Death Cert (D)</option>
+            <option value="OP">OP Anesthesia (OP)</option>
+            <option value="ICU">ICU Anesthesia (ICU)</option>
+            <option value="R">Radio (R)</option>
+            <option value="ON">Onco (ON)</option>
+            <option value="PS">Plastic (PS)</option>
+            <option value="GS">General Surgery (GS)</option>
         </select>
 
-        <div id="loader" style="display:none; margin: 20px 0;">
-            <div class="spin" style="border-top-color: white; margin: 0 auto;"></div>
-            <p style="font-size: 0.7rem; opacity: 0.5; margin-top: 10px;">جاري جلب قائمة الأسماء...</p>
-        </div>
+        <div id="loader" style="display:none; margin: 10px 0;">جاري التحميل...</div>
 
         <div id="nameWrapper">
-            <label>اسم الطبيب الخفر</label>
             <select id="nameList"></select>
-            
-            <button id="submitBtn" onclick="submitData()">
-                <span id="btnText">تأكيد الخفر</span>
-            </button>
+            <button id="submitBtn" onclick="submitData()">تأكيد الخفر</button>
         </div>
     </div>
 
@@ -143,35 +113,22 @@
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXPOdLnXVLfDNNj_WfVS4tT1HCb6qBzo5lghvX-pYZwCoCV4zcM5NOrJ5Jwp6x4qsJfg/exec";
 
         function unlock() {
-            const passInput = document.getElementById('pass');
-            const loginBox = document.getElementById('loginSection');
-            
-            if(passInput.value === "12345") {
-                loginBox.style.opacity = '0';
-                loginBox.style.transform = 'scale(0.9)';
-                setTimeout(() => {
-                    loginBox.style.display = 'none';
-                    const main = document.getElementById('formSection');
-                    main.style.display = 'block';
-                    main.style.opacity = '0';
-                    setTimeout(() => main.style.opacity = '1', 50);
-                }, 400);
+            const pass = document.getElementById('pass').value;
+            // Matches APP_PASSWORD in your doGet
+            if(pass === "1234") { 
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('formSection').style.display = 'block';
             } else {
-                loginBox.classList.add('shake');
-                setTimeout(() => loginBox.classList.remove('shake'), 400);
-                passInput.value = "";
+                const box = document.getElementById('loginSection');
+                box.classList.add('shake');
+                setTimeout(() => box.classList.remove('shake'), 400);
             }
         }
 
         async function fetchNames() {
             const spec = document.getElementById('specialty').value;
-            const loader = document.getElementById('loader');
-            const wrapper = document.getElementById('nameWrapper');
-            
-            if (!spec) { wrapper.style.display = 'none'; return; }
-
-            loader.style.display = 'block';
-            wrapper.style.display = 'none';
+            if (!spec) return;
+            document.getElementById('loader').style.display = 'block';
 
             try {
                 const response = await fetch(SCRIPT_URL, {
@@ -179,41 +136,27 @@
                     body: JSON.stringify({ action: "getNames", specialty: spec })
                 });
                 const names = await response.json();
-                
                 const list = document.getElementById('nameList');
                 list.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
-                wrapper.style.display = 'block';
+                document.getElementById('nameWrapper').style.display = 'block';
             } catch (e) {
                 alert("خطأ في الاتصال بالسيرفر");
             } finally {
-                loader.style.display = 'none';
+                document.getElementById('loader').style.display = 'none';
             }
         }
 
         async function submitData() {
-            const btn = document.getElementById('submitBtn');
-            const txt = document.getElementById('btnText');
-            
-            btn.disabled = true;
-            txt.innerText = "جاري الحفظ...";
-
             const payload = {
                 action: "submitDuty",
-                password: document.getElementById('pass').value,
+                password: "12345", // Matches PASSWORD_SECRET in your doPost
                 specialty: document.getElementById('specialty').value,
                 name: document.getElementById('nameList').value
             };
 
-            try {
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-                const result = await res.text();
-                alert(result);
-            } catch (e) {
-                alert("تعذر الحفظ. حاول مرة أخرى.");
-            } finally {
-                btn.disabled = false;
-                txt.innerText = "تأكيد الخفر";
-            }
+            const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+            const result = await res.text();
+            alert(result);
         }
     </script>
 </body>
