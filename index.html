@@ -1,96 +1,101 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل خفر الأطباء</title>
+    <title>Duty Registry 🇮🇶</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 400px; text-align: center; }
-        h2 { color: #2c3e50; margin-bottom: 1.5rem; }
-        select, input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .btn-login { background-color: #3498db; color: white; }
-        .btn-submit { background-color: #27ae60; color: white; }
-        button:hover { opacity: 0.9; }
-        #formSection, #nameWrapper { display: none; }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 2s linear infinite; margin: 10px auto; display: none; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        :root { --glass: rgba(255, 255, 255, 0.2); --glass-border: rgba(255, 255, 255, 0.3); }
+        body { 
+            margin: 0; padding: 0; height: 100vh; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            font-family: 'Poppins', sans-serif; display: flex; align-items: center; justify-content: center;
+        }
+        .container {
+            background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 40px; width: 90%; max-width: 400px; text-align: center; color: white;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        input, select {
+            width: 100%; padding: 12px; margin: 15px 0; border: none; border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1); color: white; font-size: 16px; outline: none;
+        }
+        option { background: #764ba2; color: white; }
+        button {
+            width: 100%; padding: 12px; border: none; border-radius: 10px;
+            background: #4facfe; color: white; font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        button:hover { background: #00f2fe; transform: translateY(-2px); }
+        #formSection { display: none; }
+        .loading { display: none; font-size: 12px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>تسجيل خفر الأطباء 🇮🇶</h2>
+<div class="container">
+    <h2>Medical Duty 🇮🇶</h2>
 
     <div id="loginSection">
-        <input type="password" id="pass" placeholder="أدخل رمز المرور">
-        <button class="btn-login" onclick="unlock()">دخول</button>
+        <input type="password" id="pass" placeholder="Enter System Password">
+        <button onclick="unlock()">Access System</button>
     </div>
 
-<label>Specialty / القسم:</label>
-<select id="specialty" onchange="fetchNames()">
-    <option value="">-- Select Specialty --</option>
-    <option value="Neuro">Neuro</option>
-    <option value="ThoracicSurgery">ThoracicSurgery</option>
-    <option value="Uro">Uro</option>
-    <option value="ENT">ENT</option>
-    <option value="Cardio">Cardio</option>
-    <option value="DeathCertificates">DeathCertificates</option>
-    <option value="OP Anesthesia">OP Anesthesia</option>
-    <option value="ICU Anesthesia">ICU Anesthesia</option>
-    <option value="Radio">Radio</option>
-    <option value="Onco">Onco</option>
-    <option value="Plastic">Plastic</option>
-</select>
+    <div id="formSection">
+        <label>Select Specialty</label>
+        <select id="specialty" onchange="fetchNames()">
+            <option value="">-- Choose --</option>
+            <option value="Neuro">Neuro</option>
+            <option value="ThoracicSurgery">ThoracicSurgery</option>
+            <option value="Uro">Uro</option>
+            <option value="ENT">ENT</option>
+            <option value="Cardio">Cardio</option>
+            <option value="DeathCertificates">DeathCertificates</option>
+            <option value="OP Anesthesia">OP Anesthesia</option>
+            <option value="ICU Anesthesia">ICU Anesthesia</option>
+            <option value="Radio">Radio</option>
+            <option value="Onco">Onco</option>
+            <option value="Plastic">Plastic</option>
+        </select>
 
-        <div class="loader" id="loader"></div>
-
-        <div id="nameWrapper">
-            <label>اسم الطبيب:</label>
+        <div id="nameWrapper" style="display:none;">
+            <label>Doctor Name</label>
             <select id="nameList"></select>
-            <button class="btn-submit" onclick="submitData()">تأكيد الحضور والعمل</button>
+            <button onclick="submitData()">Confirm Duty</button>
         </div>
+        <div id="loader" class="loading">Fetching names from Google Sheets...</div>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "YOUR_GOOGLE_WEB_APP_URL_HERE";
+    const SCRIPT_URL = "YOUR_NEW_DEPLOYED_URL";
 
     function unlock() {
         const pass = document.getElementById('pass').value;
-        if(pass === "123") { // Your Password
+        if(pass === "123") { // Your password
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('formSection').style.display = 'block';
-        } else {
-            alert("رمز المرور غير صحيح");
-        }
+        } else { alert("Unauthorized access."); }
     }
 
     async function fetchNames() {
         const spec = document.getElementById('specialty').value;
         if (!spec) return;
-
-        const loader = document.getElementById('loader');
-        const wrapper = document.getElementById('nameWrapper');
-        
-        loader.style.display = 'block';
-        wrapper.style.display = 'none';
+        document.getElementById('loader').style.display = 'block';
 
         try {
-            const res = await fetch(SCRIPT_URL, {
+            const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
                 body: JSON.stringify({ action: "getNames", specialty: spec })
             });
-            const names = await res.json();
-            
+            const names = await response.json();
             const list = document.getElementById('nameList');
             list.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
-            wrapper.style.display = 'block';
+            document.getElementById('nameWrapper').style.display = 'block';
         } catch (e) {
-            alert("خطأ في جلب الأسماء");
+            alert("Connection Error. Check Script URL and Permissions.");
         } finally {
-            loader.style.display = 'none';
+            document.getElementById('loader').style.display = 'none';
         }
     }
 
@@ -101,12 +106,10 @@
             specialty: document.getElementById('specialty').value,
             name: document.getElementById('nameList').value
         };
-
         const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
         const result = await res.text();
         alert(result);
     }
 </script>
-
 </body>
 </html>
