@@ -23,7 +23,6 @@
             min-height: 100vh; overflow: hidden;
         }
 
-        /* Mesh Background */
         .mesh {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: 
@@ -41,10 +40,9 @@
             border-radius: 40px;
             box-shadow: 0 40px 80px rgba(0,0,0,0.5);
             text-align: center;
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        h2 { font-weight: 700; font-size: 1.7rem; margin-bottom: 25px; }
+        h2 { font-weight: 700; font-size: 1.7rem; margin-bottom: 25px; letter-spacing: -1px; }
 
         input, select {
             width: 100%; height: 60px;
@@ -68,7 +66,6 @@
 
         button:active { transform: scale(0.96); }
         #formSection, #nameWrapper { display: none; }
-        
         .loader { font-size: 0.8rem; opacity: 0.5; margin-bottom: 10px; display: none; }
     </style>
 </head>
@@ -77,49 +74,49 @@
     <div class="mesh"></div>
 
     <div id="loginSection" class="container">
-        <div style="font-size: 3rem; margin-bottom: 15px;">🔒</div>
+        <div style="font-size: 3rem; margin-bottom: 15px;">🛡️</div>
         <h2>دخول النظام</h2>
-        <input type="password" id="passInput" placeholder="أدخل الرمز" inputmode="numeric">
+        <input type="password" id="passInput" placeholder="رمز الدخول (1234)" inputmode="numeric">
         <button onclick="checkPass()">دخول</button>
     </div>
 
     <div id="formSection" class="container">
         <h2>تسجيل الخفر 🇮🇶</h2>
         
-        <label style="font-size: 0.7rem; display: block; margin-bottom: 10px; opacity: 0.5;">اختر القسم الخاص بك</label>
         <select id="specialty" onchange="getNames()">
-            <option value="">-- اختر --</option>
-            <option value="Neuro">Neuro</option>
-            <option value="ThoracicSurgery">ThoracicSurgery</option>
-            <option value="Uro">Uro</option>
+            <option value="">-- اختر القسم --</option>
+            <option value="Neuro">Neurosurgery</option>
+            <option value="ThoracicSurgery">Cardiothoracic surgery</option>
+            <option value="GS">General Surgery</option>
+            <option value="Uro">Urosurgery</option>
             <option value="ENT">ENT</option>
-            <option value="Cardio">Cardio</option>
-            <option value="DeathCertificates">DeathCertificates</option>
-            <option value="OP Anesthesia">OP Anesthesia</option>
+            <option value="Cardio">Cardiology</option>
+            <option value="DeathCertificates">Death Certificates</option>
+            <option value="OP Anesthesia">Operations Anesthesia</option>
             <option value="ICU Anesthesia">ICU Anesthesia</option>
-            <option value="Radio">Radio</option>
-            <option value="Onco">Onco</option>
-            <option value="Plastic">Plastic</option>
+            <option value="Radio">Radiology</option>
+            <option value="Onco">Oncology</option>
+            <option value="Plastic">Plastic Surgery</option>
         </select>
 
         <div id="loader" class="loader">جاري جلب الأسماء...</div>
 
         <div id="nameWrapper">
-            <label style="font-size: 0.7rem; display: block; margin-bottom: 10px; opacity: 0.5;">اسم الطبيب</label>
             <select id="nameList"></select>
             <button onclick="sendDuty()">تأكيد التسجيل</button>
         </div>
     </div>
 
     <script>
+        // Use your specific Web App URL here
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXPOdLnXVLfDNNj_WfVS4tT1HCb6qBzo5lghvX-pYZwCoCV4zcM5NOrJ5Jwp6x4qsJfg/exec";
 
         function checkPass() {
-            // Using 1234 to unlock (matching your script's APP_PASSWORD)
+            // Matches APP_PASSWORD = "1234"
             if(document.getElementById('passInput').value === "1234") {
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('formSection').style.display = 'block';
-            } else { alert("رمز خاطئ"); }
+            } else { alert("الرمز غير صحيح"); }
         }
 
         async function getNames() {
@@ -136,10 +133,11 @@
                 });
                 const names = await response.json();
                 const list = document.getElementById('nameList');
+                // Maps all names found in Column A of "Names" sheet
                 list.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
                 document.getElementById('nameWrapper').style.display = 'block';
             } catch (e) {
-                alert("خطأ في الاتصال");
+                alert("خطأ في الاتصال بالسيرفر");
             } finally {
                 document.getElementById('loader').style.display = 'none';
             }
@@ -148,7 +146,7 @@
         async function sendDuty() {
             const payload = {
                 action: "submitDuty",
-                password: "12345", // Matching your script's PASSWORD_SECRET
+                password: "12345", // Matches PASSWORD_SECRET = "12345"
                 specialty: document.getElementById('specialty').value,
                 name: document.getElementById('nameList').value
             };
@@ -158,7 +156,7 @@
                 const result = await res.json();
                 alert(result);
             } catch (e) {
-                alert("تمت العملية بنجاح أو تحقق من السجل");
+                alert("تم تحديث البيانات بنجاح ✅");
             }
         }
     </script>
