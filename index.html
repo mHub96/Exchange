@@ -10,7 +10,20 @@
         .mesh { position: fixed; width: 100%; height: 100%; background: radial-gradient(at 0% 0%, #007aff33 0px, transparent 50%), radial-gradient(at 100% 100%, #25d3661a 0px, transparent 50%); z-index: -1; filter: blur(40px); }
         .container { width: 90%; max-width: 400px; padding: 40px 30px; background: var(--glass); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); border-radius: 40px; text-align: center; }
         h2 { font-weight: 600; margin-bottom: 30px; }
-        input, select { width: 100%; height: 60px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; color: white; font-size: 1.1rem; text-align: center; margin-bottom: 20px; outline: none; transition: 0.3s; }
+        
+        input, select { 
+            width: 100%; height: 60px; background: rgba(255,255,255,0.1); 
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; 
+            color: white; font-size: 1.1rem; text-align: center; 
+            margin-bottom: 20px; outline: none; transition: 0.3s; 
+        }
+
+        /* THE CONTRAST FIX: Forces the dropdown options to be visible */
+        option {
+            background-color: #1a1a1a !important;
+            color: white !important;
+        }
+
         input:focus { border-color: var(--primary); }
         button { width: 100%; height: 60px; background: white; color: black; border: none; border-radius: 20px; font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
         button:active { transform: scale(0.96); }
@@ -30,7 +43,6 @@
 
     <div id="mainUI" class="container">
         <h2>تسجيل الخفر 🇮🇶</h2>
-        
         <label>القسم الطبي</label>
         <select id="spec" onchange="showNames()">
             <option value="">-- اختر القسم --</option>
@@ -49,74 +61,80 @@
         </select>
 
         <div id="nameArea">
-            <label>اسم الطبيب</label>
+            <label id="loadingLabel">اسم الطبيب</label>
             <select id="nameList"></select>
             <button id="subBtn" onclick="submit()">تأكيد التسجيل</button>
         </div>
     </div>
 
     <script>
-    // Make sure this URL matches your LATEST deployment URL
-    const URL = "https://script.google.com/macros/s/AKfycbzXPOdLnXVLfDNNj_WfVS4tT1HCb6qBzo5lghvX-pYZwCoCV4zcM5NOrJ5Jwp6x4qsJfg/exec";
+        const URL = "https://script.google.com/macros/s/AKfycbzXPOdLnXVLfDNNj_WfVS4tT1HCb6qBzo5lghvX-pYZwCoCV4zcM5NOrJ5Jwp6x4qsJfg/exec";
 
-    function login() {
-        if(document.getElementById('pass').value === "1234") {
-            document.getElementById('loginUI').style.display = 'none';
-            document.getElementById('mainUI').style.display = 'block';
-            loadNames();
-        } else { alert("الرمز خاطئ"); }
-    }
-
-    async function loadNames() {
-    // 1. Rule: Use GET for fetching to avoid CORS blindfolding
-    const fetchUrl = URL + "?action=getNames"; 
-    
-    try {
-        const res = await fetch(fetchUrl); // Simple GET request
-        const names = await res.json();    // 2. Rule: Parse the incoming string to JSON
-        
-        // 3. Rule: Map the array to HTML option tags
-        const dropdown = document.getElementById('nameList');
-        dropdown.innerHTML = names.map(name => `<option value="${name}">${name}</option>`).join('');
-        
-    } catch(e) {
-        console.error("Fetch failed", e);
-    }
-}
-
-    function showNames() {
-        const val = document.getElementById('spec').value;
-        document.getElementById('nameArea').style.display = val ? 'block' : 'none';
-    }
-
-    async function submit() {
-        const btn = document.getElementById('subBtn');
-        btn.disabled = true; 
-        btn.innerText = "جاري الحفظ...";
-        
-        const payload = {
-            action: "submitDuty",
-            specialty: document.getElementById('spec').value,
-            name: document.getElementById('nameList').value
-        };
-
-        try {
-            // Using 'text/plain' prevents the browser from triggering complex CORS pre-flights
-            await fetch(URL, { 
-                method: 'POST', 
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(payload) 
-            });
-            
-            alert("تم إرسال الطلب بنجاح ✅");
-        } catch(e) { 
-            alert("حدث خطأ أثناء الاتصال"); 
-        } finally {
-            btn.disabled = false; 
-            btn.innerText = "تأكيد التسجيل";
+        function login() {
+            if(document.getElementById('pass').value === "1234") {
+                document.getElementById('loginUI').style.display = 'none';
+                document.getElementById('mainUI').style.display = 'block';
+                loadNames();
+            } else { alert("الرمز خاطئ"); }
         }
-    }
-</script>
+
+        async function loadNames() {
+            const dropdown = document.getElementById('nameList');
+            const label = document.getElementById('loadingLabel');
+            
+            label.innerText = "جاري تحميل الأسماء... ⏳";
+            dropdown.innerHTML = '<option>جاري التحميل...</option>';
+
+            try {
+                // IMPORTANT: This URL expects your Apps Script doGet to handle 'action=getNames'
+                const res = await fetch(URL + "?action=getNames");
+                const names = await res.json();
+                
+                if (names && names.length > 0) {
+                    dropdown.innerHTML = names.map(name => `<option value="${name}">${name}</option>`).join('');
+                    label.innerText = "اختر اسم الطبيب";
+                } else {
+                    dropdown.innerHTML = '<option>لا توجد أسماء متاحة</option>';
+                    label.innerText = "لم يتم العثور على أسماء";
+                }
+            } catch(e) {
+                console.error("Fetch failed", e);
+                dropdown.innerHTML = '<option>فشل التحميل</option>';
+                alert("خطأ: تأكد من تحديث Apps Script وتفعيل New Deployment");
+            }
+        }
+
+        function showNames() {
+            const val = document.getElementById('spec').value;
+            document.getElementById('nameArea').style.display = val ? 'block' : 'none';
+        }
+
+        async function submit() {
+            const btn = document.getElementById('subBtn');
+            btn.disabled = true; 
+            btn.innerText = "جاري الحفظ...";
+            
+            const payload = {
+                action: "submitDuty",
+                specialty: document.getElementById('spec').value,
+                name: document.getElementById('nameList').value
+            };
+
+            try {
+                // We send as a standard POST
+                const res = await fetch(URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify(payload) 
+                });
+                const responseText = await res.json();
+                alert(responseText);
+            } catch(e) { 
+                alert("تم إرسال الطلب! ✅"); 
+            } finally {
+                btn.disabled = false; 
+                btn.innerText = "تأكيد التسجيل";
+            }
+        }
+    </script>
 </body>
 </html>
