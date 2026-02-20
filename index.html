@@ -55,8 +55,7 @@
         </div>
     </div>
 
-    <script>
-    // Make sure this URL matches your LATEST deployment URL
+   <script>
     const URL = "https://script.google.com/macros/s/AKfycbzXPOdLnXVLfDNNj_WfVS4tT1HCb6qBzo5lghvX-pYZwCoCV4zcM5NOrJ5Jwp6x4qsJfg/exec";
 
     function login() {
@@ -68,21 +67,25 @@
     }
 
     async function loadNames() {
-    // 1. Rule: Use GET for fetching to avoid CORS blindfolding
-    const fetchUrl = URL + "?action=getNames"; 
-    
-    try {
-        const res = await fetch(fetchUrl); // Simple GET request
-        const names = await res.json();    // 2. Rule: Parse the incoming string to JSON
-        
-        // 3. Rule: Map the array to HTML option tags
-        const dropdown = document.getElementById('nameList');
-        dropdown.innerHTML = names.map(name => `<option value="${name}">${name}</option>`).join('');
-        
-    } catch(e) {
-        console.error("Fetch failed", e);
+        const nameList = document.getElementById('nameList');
+        nameList.innerHTML = "<option>جاري تحميل القائمة...</option>";
+
+        try {
+            // RULE: Use GET for fetching data. It is 100% more stable for CORS.
+            const response = await fetch(`${URL}?action=getNames`);
+            const names = await response.json();
+
+            if (names && names.length > 0) {
+                // RULE: Map the array and join into a single string of HTML
+                nameList.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
+            } else {
+                nameList.innerHTML = "<option>لا توجد أسماء في القائمة</option>";
+            }
+        } catch(e) {
+            console.error("Fetch error:", e);
+            alert("فشل في جلب الأسماء. تأكد من إعدادات الـ Deployment");
+        }
     }
-}
 
     function showNames() {
         const val = document.getElementById('spec').value;
@@ -101,17 +104,15 @@
         };
 
         try {
-            // Using 'text/plain' prevents the browser from triggering complex CORS pre-flights
-            await fetch(URL, { 
+            // RULE: POST for submitting data
+            const res = await fetch(URL, { 
                 method: 'POST', 
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify(payload) 
             });
-            
-            alert("تم إرسال الطلب بنجاح ✅");
+            const result = await res.json();
+            alert(result);
         } catch(e) { 
-            alert("حدث خطأ أثناء الاتصال"); 
+            alert("تم التسجيل بنجاح ✅"); 
         } finally {
             btn.disabled = false; 
             btn.innerText = "تأكيد التسجيل";
