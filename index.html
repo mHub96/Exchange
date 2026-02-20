@@ -58,66 +58,30 @@
    <script>
     const URL = "https://script.google.com/macros/s/AKfycbzXPOdLnXVLfDNNj_WfVS4tT1HCb6qBzo5lghvX-pYZwCoCV4zcM5NOrJ5Jwp6x4qsJfg/exec";
 
-    function login() {
-        if(document.getElementById('pass').value === "1234") {
-            document.getElementById('loginUI').style.display = 'none';
-            document.getElementById('mainUI').style.display = 'block';
-            loadNames();
-        } else { alert("الرمز خاطئ"); }
-    }
-
     async function loadNames() {
         const nameList = document.getElementById('nameList');
-        nameList.innerHTML = "<option>جاري تحميل القائمة...</option>";
+        nameList.innerHTML = "<option>جاري التحميل...</option>";
 
         try {
-            // RULE: Use GET for fetching data. It is 100% more stable for CORS.
+            // We append ?action=getNames to use the doGet function
             const response = await fetch(`${URL}?action=getNames`);
+            
+            if (!response.ok) throw new Error('Network response was not ok');
+            
             const names = await response.json();
-
-            if (names && names.length > 0) {
-                // RULE: Map the array and join into a single string of HTML
+            
+            if (Array.isArray(names) && names.length > 0) {
                 nameList.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
             } else {
-                nameList.innerHTML = "<option>لا توجد أسماء في القائمة</option>";
+                nameList.innerHTML = "<option>لا توجد أسماء</option>";
             }
         } catch(e) {
-            console.error("Fetch error:", e);
-            alert("فشل في جلب الأسماء. تأكد من إعدادات الـ Deployment");
+            console.error(e);
+            alert("فشل في جلب الأسماء. تأكد من نشر السكربت كإصدار جديد.");
         }
     }
-
-    function showNames() {
-        const val = document.getElementById('spec').value;
-        document.getElementById('nameArea').style.display = val ? 'block' : 'none';
-    }
-
-    async function submit() {
-        const btn = document.getElementById('subBtn');
-        btn.disabled = true; 
-        btn.innerText = "جاري الحفظ...";
-        
-        const payload = {
-            action: "submitDuty",
-            specialty: document.getElementById('spec').value,
-            name: document.getElementById('nameList').value
-        };
-
-        try {
-            // RULE: POST for submitting data
-            const res = await fetch(URL, { 
-                method: 'POST', 
-                body: JSON.stringify(payload) 
-            });
-            const result = await res.json();
-            alert(result);
-        } catch(e) { 
-            alert("تم التسجيل بنجاح ✅"); 
-        } finally {
-            btn.disabled = false; 
-            btn.innerText = "تأكيد التسجيل";
-        }
-    }
+    
+    // ... keep your login and submit functions ...
 </script>
 </body>
 </html>
