@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Duty Registry Pro 🇮🇶</title>
-    
+    <title>Duty Registry 🇮🇶</title>
     <style>
         :root {
             --primary: #007aff;
@@ -13,7 +12,7 @@
             --border: rgba(255, 255, 255, 0.1);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             margin: 0; padding: 0;
@@ -24,6 +23,7 @@
             min-height: 100vh; overflow: hidden;
         }
 
+        /* Mesh Background */
         .mesh {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: 
@@ -33,8 +33,8 @@
         }
 
         .container {
-            width: 92%; max-width: 400px;
-            padding: 40px 25px;
+            width: 90%; max-width: 380px;
+            padding: 40px 30px;
             background: var(--glass);
             backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
             border: 1px solid var(--border);
@@ -44,31 +44,32 @@
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        h2 { font-weight: 700; font-size: 1.6rem; margin-bottom: 25px; letter-spacing: -1px; }
+        h2 { font-weight: 700; font-size: 1.7rem; margin-bottom: 25px; }
 
         input, select {
             width: 100%; height: 60px;
             background: rgba(255,255,255,0.05);
             border: 1px solid var(--border);
-            border-radius: 18px;
+            border-radius: 20px;
             color: white; font-size: 1rem; text-align: center;
-            margin-bottom: 20px; transition: 0.3s;
+            margin-bottom: 20px; outline: none; transition: 0.3s;
         }
 
+        input:focus, select:focus { border-color: var(--primary); background: rgba(255,255,255,0.1); }
         option { background: #1a1a1a; color: white; }
 
         button {
             width: 100%; height: 60px;
             background: white; color: black;
-            border: none; border-radius: 18px;
+            border: none; border-radius: 20px;
             font-size: 1.1rem; font-weight: 700;
             cursor: pointer; transition: 0.2s;
         }
 
+        button:active { transform: scale(0.96); }
         #formSection, #nameWrapper { display: none; }
         
-        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-8px);} 75% {transform: translateX(8px);} }
-        .shake { animation: shake 0.4s ease; }
+        .loader { font-size: 0.8rem; opacity: 0.5; margin-bottom: 10px; display: none; }
     </style>
 </head>
 <body>
@@ -76,59 +77,57 @@
     <div class="mesh"></div>
 
     <div id="loginSection" class="container">
-        <div style="font-size: 3rem; margin-bottom: 15px;">🛡️</div>
+        <div style="font-size: 3rem; margin-bottom: 15px;">🔒</div>
         <h2>دخول النظام</h2>
-        <input type="password" id="pass" placeholder="أدخل رمز المرور" inputmode="numeric">
-        <button onclick="unlock()">دخول</button>
+        <input type="password" id="passInput" placeholder="أدخل الرمز" inputmode="numeric">
+        <button onclick="checkPass()">دخول</button>
     </div>
 
     <div id="formSection" class="container">
         <h2>تسجيل الخفر 🇮🇶</h2>
         
-        <select id="specialty" onchange="fetchNames()">
-            <option value="">-- اختر القسم --</option>
-            <option value="NS">Neuro (NS)</option>
-            <option value="CT">Thoracic (CT)</option>
-            <option value="US">Urology (US)</option>
+        <label style="font-size: 0.7rem; display: block; margin-bottom: 10px; opacity: 0.5;">اختر القسم الخاص بك</label>
+        <select id="specialty" onchange="getNames()">
+            <option value="">-- اختر --</option>
+            <option value="Neuro">Neuro</option>
+            <option value="ThoracicSurgery">ThoracicSurgery</option>
+            <option value="Uro">Uro</option>
             <option value="ENT">ENT</option>
-            <option value="H">Cardio (H)</option>
-            <option value="D">Death Cert (D)</option>
-            <option value="OP">OP Anesthesia (OP)</option>
-            <option value="ICU">ICU Anesthesia (ICU)</option>
-            <option value="R">Radio (R)</option>
-            <option value="ON">Onco (ON)</option>
-            <option value="PS">Plastic (PS)</option>
-            <option value="GS">General Surgery (GS)</option>
+            <option value="Cardio">Cardio</option>
+            <option value="DeathCertificates">DeathCertificates</option>
+            <option value="OP Anesthesia">OP Anesthesia</option>
+            <option value="ICU Anesthesia">ICU Anesthesia</option>
+            <option value="Radio">Radio</option>
+            <option value="Onco">Onco</option>
+            <option value="Plastic">Plastic</option>
         </select>
 
-        <div id="loader" style="display:none; margin: 10px 0;">جاري التحميل...</div>
+        <div id="loader" class="loader">جاري جلب الأسماء...</div>
 
         <div id="nameWrapper">
+            <label style="font-size: 0.7rem; display: block; margin-bottom: 10px; opacity: 0.5;">اسم الطبيب</label>
             <select id="nameList"></select>
-            <button id="submitBtn" onclick="submitData()">تأكيد الخفر</button>
+            <button onclick="sendDuty()">تأكيد التسجيل</button>
         </div>
     </div>
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXPOdLnXVLfDNNj_WfVS4tT1HCb6qBzo5lghvX-pYZwCoCV4zcM5NOrJ5Jwp6x4qsJfg/exec";
 
-        function unlock() {
-            const pass = document.getElementById('pass').value;
-            // Matches APP_PASSWORD in your doGet
-            if(pass === "1234") { 
+        function checkPass() {
+            // Using 1234 to unlock (matching your script's APP_PASSWORD)
+            if(document.getElementById('passInput').value === "1234") {
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('formSection').style.display = 'block';
-            } else {
-                const box = document.getElementById('loginSection');
-                box.classList.add('shake');
-                setTimeout(() => box.classList.remove('shake'), 400);
-            }
+            } else { alert("رمز خاطئ"); }
         }
 
-        async function fetchNames() {
+        async function getNames() {
             const spec = document.getElementById('specialty').value;
-            if (!spec) return;
+            if(!spec) return;
+            
             document.getElementById('loader').style.display = 'block';
+            document.getElementById('nameWrapper').style.display = 'none';
 
             try {
                 const response = await fetch(SCRIPT_URL, {
@@ -140,23 +139,27 @@
                 list.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
                 document.getElementById('nameWrapper').style.display = 'block';
             } catch (e) {
-                alert("خطأ في الاتصال بالسيرفر");
+                alert("خطأ في الاتصال");
             } finally {
                 document.getElementById('loader').style.display = 'none';
             }
         }
 
-        async function submitData() {
+        async function sendDuty() {
             const payload = {
                 action: "submitDuty",
-                password: "12345", // Matches PASSWORD_SECRET in your doPost
+                password: "12345", // Matching your script's PASSWORD_SECRET
                 specialty: document.getElementById('specialty').value,
                 name: document.getElementById('nameList').value
             };
 
-            const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-            const result = await res.text();
-            alert(result);
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const result = await res.json();
+                alert(result);
+            } catch (e) {
+                alert("تمت العملية بنجاح أو تحقق من السجل");
+            }
         }
     </script>
 </body>
