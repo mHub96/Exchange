@@ -2,180 +2,100 @@
 <html dir="rtl" lang="ar">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Duty Registry 🇮🇶</title>
     <style>
-        :root {
-            --primary: #007aff;
-            --bg: #000000;
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
-        }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-        body {
-            margin: 0; padding: 0;
-            font-family: -apple-system, system-ui, sans-serif;
-            background: var(--bg);
-            color: white;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; overflow: hidden;
-        }
-
-        .mesh {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: 
-                radial-gradient(at 0% 0%, rgba(0, 122, 255, 0.2) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(37, 211, 102, 0.1) 0px, transparent 50%);
-            z-index: -1; filter: blur(40px);
-        }
-
-        .container {
-            width: 90%; max-width: 380px;
-            padding: 40px 30px;
-            background: var(--glass);
-            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
-            text-align: center;
-        }
-
-        h2 { font-weight: 700; font-size: 1.7rem; margin-bottom: 25px; }
-
-        label { display: block; font-size: 0.75rem; opacity: 0.4; margin-bottom: 8px; text-align: right; padding-right: 15px; }
-
-        input, select {
-            width: 100%; height: 60px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            color: white; font-size: 1rem; text-align: center;
-            margin-bottom: 20px; outline: none; transition: 0.3s;
-            appearance: none;
-        }
-
-        input:focus, select:focus { border-color: var(--primary); background: rgba(255,255,255,0.1); }
-        option { background: #1a1a1a; color: white; }
-
-        button {
-            width: 100%; height: 60px;
-            background: white; color: black;
-            border: none; border-radius: 20px;
-            font-size: 1.1rem; font-weight: 700;
-            cursor: pointer; transition: 0.2s;
-        }
-
-        button:active { transform: scale(0.96); }
-        #formSection { display: none; }
-        .loader { font-size: 0.8rem; opacity: 0.5; margin-bottom: 10px; }
+        :root { --bg: #000; --primary: #007aff; --glass: rgba(255,255,255,0.08); }
+        body { margin: 0; background: var(--bg); color: white; font-family: system-ui; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .mesh { position: fixed; width: 100%; height: 100%; background: radial-gradient(at 0% 0%, #007aff33 0px, transparent 50%), radial-gradient(at 100% 100%, #25d3661a 0px, transparent 50%); z-index: -1; filter: blur(40px); }
+        .container { width: 90%; max-width: 380px; padding: 40px 25px; background: var(--glass); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); border-radius: 35px; text-align: center; }
+        h2 { margin-bottom: 25px; font-weight: 600; }
+        label { display: block; font-size: 0.8rem; opacity: 0.5; margin: 10px 10px 5px 0; text-align: right; }
+        input, select { width: 100%; height: 55px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: white; font-size: 1rem; text-align: center; margin-bottom: 15px; outline: none; }
+        option { background: #111; color: white; }
+        button { width: 100%; height: 55px; background: white; color: black; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: 700; cursor: pointer; }
+        #specSection, #nameSection { display: none; }
     </style>
 </head>
 <body>
-
     <div class="mesh"></div>
 
-    <div id="loginSection" class="container">
-        <div style="font-size: 3rem; margin-bottom: 15px;">🔒</div>
+    <div id="passSection" class="container">
+        <div style="font-size: 2.5rem; margin-bottom: 10px;">🔒</div>
         <h2>دخول النظام</h2>
-        <input type="password" id="passInput" placeholder="أدخل رمز الوصول" inputmode="numeric">
+        <input type="password" id="passInput" placeholder="أدخل رمز الوصول">
         <button onclick="checkPass()">دخول</button>
     </div>
 
-    <div id="formSection" class="container">
-        <h2>تسجيل الخفر 🇮🇶</h2>
+    <div id="mainSection" class="container" style="display:none;">
+        <h2>تسجيل الخفر</h2>
         
-        <div id="loadingMsg" class="loader">جاري مزامنة القائمة...</div>
+        <label>القسم الطبي</label>
+        <select id="specSelect" onchange="showNames()">
+            <option value="">-- اختر القسم --</option>
+            <option value="Neuro">Neurosurgery</option>
+            <option value="Thoracic">Cardiothoracic surgery</option>
+            <option value="Surgery">General Surgery</option>
+            <option value="Uro">Urosurgery</option>
+            <option value="ENT">ENT</option>
+            <option value="Cardio">Cardiology</option>
+            <option value="DeathCertificates">Death Certificates</option>
+            <option value="OP Anesthesia">Operations Anesthesia</option>
+            <option value="ICU Anesthesia">ICU Anesthesia</option>
+            <option value="Radio">Radiology</option>
+            <option value="Onco">Oncology</option>
+            <option value="Plastic">Plastic Surgery</option>
+        </select>
 
-        <div id="mainUI" style="display:none;">
-            <label>الطبيب المسؤول</label>
-            <select id="nameList">
-                <option value="">-- اختر الاسم --</option>
-            </select>
-
-            <label>القسم الطبي</label>
-            <select id="specialty">
-                <option value="">-- اختر القسم --</option>
-                <option value="Neuro">Neurosurgery</option>
-                <option value="ThoracicSurgery">Cardiothoracic surgery</option>
-                <option value="GS">General Surgery</option>
-                <option value="Uro">Urosurgery</option>
-                <option value="ENT">ENT</option>
-                <option value="Cardio">Cardiology</option>
-                <option value="DeathCertificates">Death Certificates</option>
-                <option value="OP Anesthesia">Operations Anesthesia</option>
-                <option value="ICU Anesthesia">ICU Anesthesia</option>
-                <option value="Radio">Radiology</option>
-                <option value="Onco">Oncology</option>
-                <option value="Plastic">Plastic Surgery</option>
-            </select>
-
-            <button id="confirmBtn" onclick="sendDuty()">تأكيد البيانات</button>
+        <div id="nameSection">
+            <label>اسم الطبيب</label>
+            <select id="nameList"><option>جاري جلب الأسماء...</option></select>
+            <button id="subBtn" onclick="submit()">تأكيد التسجيل</button>
         </div>
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXPOdLnXVLfDNNj_WfVS4tT1HCb6qBzo5lghvX-pYZwCoCV4zcM5NOrJ5Jwp6x4qsJfg/exec";
+        const SCRIPT_URL = "PASTE_YOUR_NEW_DEPLOYMENT_URL_HERE";
 
         function checkPass() {
             if(document.getElementById('passInput').value === "1234") {
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('formSection').style.display = 'block';
-                fetchAllNames();
-            } else {
-                alert("رمز الوصول غير صحيح");
-                document.getElementById('passInput').value = "";
-            }
+                document.getElementById('passSection').style.display = 'none';
+                document.getElementById('mainSection').style.display = 'block';
+                fetchNames();
+            } else { alert("الرمز خاطئ"); }
         }
 
-        async function fetchAllNames() {
+        async function fetchNames() {
             try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: "getNames", specialty: "ALL" }) 
-                });
-                const names = await response.json();
-                const list = document.getElementById('nameList');
-                
-                // Populates dropdown with names from Column A of "Names" sheet
-                list.innerHTML += names.map(n => `<option value="${n}">${n}</option>`).join('');
-                
-                document.getElementById('loadingMsg').style.display = 'none';
-                document.getElementById('mainUI').style.display = 'block';
-            } catch (e) {
-                console.log(e);
-                alert("حدث خطأ أثناء تحميل الأسماء");
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({action: "getNames"}) });
+                const names = await res.json();
+                document.getElementById('nameList').innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
+            } catch(e) { alert("خطأ في جلب الأسماء"); }
+        }
+
+        function showNames() {
+            if(document.getElementById('specSelect').value !== "") {
+                document.getElementById('nameSection').style.display = 'block';
             }
         }
 
-        async function sendDuty() {
-            const btn = document.getElementById('confirmBtn');
-            const name = document.getElementById('nameList').value;
-            const spec = document.getElementById('specialty').value;
+        async function submit() {
+            const btn = document.getElementById('subBtn');
+            btn.disabled = true; btn.innerText = "جاري الحفظ...";
             
-            if(!name || !spec) { alert("يرجى إكمال الاختيارات"); return; }
-
-            btn.disabled = true;
-            btn.innerText = "جاري الحفظ...";
-
             const payload = {
                 action: "submitDuty",
-                password: "12345", 
-                specialty: spec,
-                name: name
+                password: "12345", // Hidden internal check
+                specialty: document.getElementById('specSelect').value,
+                name: document.getElementById('nameList').value
             };
 
             try {
                 const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-                const result = await res.json();
-                alert(result);
-            } catch (e) {
-                alert("تم تحديث السجل بنجاح ✅");
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "تأكيد البيانات";
-            }
+                const msg = await res.json();
+                alert(msg);
+            } catch(e) { alert("تمت العملية بنجاح ✅"); }
+            btn.disabled = false; btn.innerText = "تأكيد التسجيل";
         }
     </script>
 </body>
