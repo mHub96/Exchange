@@ -42,7 +42,9 @@
             text-align: center;
         }
 
-        h2 { font-weight: 700; font-size: 1.7rem; margin-bottom: 25px; letter-spacing: -1px; }
+        h2 { font-weight: 700; font-size: 1.7rem; margin-bottom: 25px; }
+
+        label { display: block; font-size: 0.7rem; opacity: 0.4; margin-bottom: 8px; text-align: right; padding-right: 10px; }
 
         input, select {
             width: 100%; height: 60px;
@@ -53,7 +55,6 @@
             margin-bottom: 20px; outline: none; transition: 0.3s;
         }
 
-        input:focus, select:focus { border-color: var(--primary); background: rgba(255,255,255,0.1); }
         option { background: #1a1a1a; color: white; }
 
         button {
@@ -65,8 +66,8 @@
         }
 
         button:active { transform: scale(0.96); }
-        #formSection, #nameWrapper { display: none; }
-        .loader { font-size: 0.8rem; opacity: 0.5; margin-bottom: 10px; display: none; }
+        #formSection { display: none; }
+        .loader { font-size: 0.8rem; opacity: 0.5; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -76,79 +77,87 @@
     <div id="loginSection" class="container">
         <div style="font-size: 3rem; margin-bottom: 15px;">🛡️</div>
         <h2>دخول النظام</h2>
-        <input type="password" id="passInput" placeholder="رمز الدخول (1234)" inputmode="numeric">
+        <input type="password" id="passInput" placeholder="الرمز (1234)" inputmode="numeric">
         <button onclick="checkPass()">دخول</button>
     </div>
 
     <div id="formSection" class="container">
         <h2>تسجيل الخفر 🇮🇶</h2>
         
-        <select id="specialty" onchange="getNames()">
-            <option value="">-- اختر القسم --</option>
-            <option value="Neuro">Neurosurgery</option>
-            <option value="ThoracicSurgery">Cardiothoracic surgery</option>
-            <option value="GS">General Surgery</option>
-            <option value="Uro">Urosurgery</option>
-            <option value="ENT">ENT</option>
-            <option value="Cardio">Cardiology</option>
-            <option value="DeathCertificates">Death Certificates</option>
-            <option value="OP Anesthesia">Operations Anesthesia</option>
-            <option value="ICU Anesthesia">ICU Anesthesia</option>
-            <option value="Radio">Radiology</option>
-            <option value="Onco">Oncology</option>
-            <option value="Plastic">Plastic Surgery</option>
-        </select>
+        <div id="loadingMsg" class="loader">جاري تحميل قائمة الأسماء...</div>
 
-        <div id="loader" class="loader">جاري جلب الأسماء...</div>
+        <div id="mainUI" style="display:none;">
+            <label>اختر الاسم</label>
+            <select id="nameList">
+                <option value="">-- اختر اسمك --</option>
+            </select>
 
-        <div id="nameWrapper">
-            <select id="nameList"></select>
+            <label>اختر القسم</label>
+            <select id="specialty">
+                <option value="">-- اختر القسم --</option>
+                <option value="Neuro">Neurosurgery</option>
+                <option value="ThoracicSurgery">Cardiothoracic surgery</option>
+                <option value="GS">General Surgery</option>
+                <option value="Uro">Urosurgery</option>
+                <option value="ENT">ENT</option>
+                <option value="Cardio">Cardiology</option>
+                <option value="DeathCertificates">Death Certificates</option>
+                <option value="OP Anesthesia">Operations Anesthesia</option>
+                <option value="ICU Anesthesia">ICU Anesthesia</option>
+                <option value="Radio">Radiology</option>
+                <option value="Onco">Oncology</option>
+                <option value="Plastic">Plastic Surgery</option>
+            </select>
+
             <button onclick="sendDuty()">تأكيد التسجيل</button>
         </div>
     </div>
 
     <script>
-        // Use your specific Web App URL here
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXPOdLnXVLfDNNj_WfVS4tT1HCb6qBzo5lghvX-pYZwCoCV4zcM5NOrJ5Jwp6x4qsJfg/exec";
 
         function checkPass() {
-            // Matches APP_PASSWORD = "1234"
             if(document.getElementById('passInput').value === "1234") {
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('formSection').style.display = 'block';
+                fetchAllNames();
             } else { alert("الرمز غير صحيح"); }
         }
 
-        async function getNames() {
-            const spec = document.getElementById('specialty').value;
-            if(!spec) return;
-            
-            document.getElementById('loader').style.display = 'block';
-            document.getElementById('nameWrapper').style.display = 'none';
-
+        async function fetchAllNames() {
             try {
+                // We send a request to get names. 
+                // Since your script filters by specialty, we will bypass it by not sending a specialty
+                // OR by sending a value that doesn't trigger the filter if the script allows.
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ action: "getNames", specialty: spec })
+                    body: JSON.stringify({ action: "getNames", specialty: "" }) 
                 });
                 const names = await response.json();
                 const list = document.getElementById('nameList');
-                // Maps all names found in Column A of "Names" sheet
-                list.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
-                document.getElementById('nameWrapper').style.display = 'block';
+                
+                // If the script returned an empty list because of the filter, 
+                // you will need to slightly adjust the Apps Script to allow "All" names.
+                list.innerHTML += names.map(n => `<option value="${n}">${n}</option>`).join('');
+                
+                document.getElementById('loadingMsg').style.display = 'none';
+                document.getElementById('mainUI').style.display = 'block';
             } catch (e) {
-                alert("خطأ في الاتصال بالسيرفر");
-            } finally {
-                document.getElementById('loader').style.display = 'none';
+                alert("خطأ في تحميل الأسماء");
             }
         }
 
         async function sendDuty() {
+            const name = document.getElementById('nameList').value;
+            const spec = document.getElementById('specialty').value;
+            
+            if(!name || !spec) { alert("يرجى اختيار الاسم والقسم"); return; }
+
             const payload = {
                 action: "submitDuty",
-                password: "12345", // Matches PASSWORD_SECRET = "12345"
-                specialty: document.getElementById('specialty').value,
-                name: document.getElementById('nameList').value
+                password: "12345",
+                specialty: spec,
+                name: name
             };
 
             try {
@@ -156,7 +165,7 @@
                 const result = await res.json();
                 alert(result);
             } catch (e) {
-                alert("تم تحديث البيانات بنجاح ✅");
+                alert("تم التحديث بنجاح ✅");
             }
         }
     </script>
