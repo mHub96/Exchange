@@ -68,33 +68,21 @@
     }
 
     async function loadNames() {
-        const nameList = document.getElementById('nameList');
-        nameList.innerHTML = "<option>جاري التحميل...</option>";
-
-        try {
-            const res = await fetch(URL, {
-                method: 'POST',
-                mode: 'no-cors', // This allows the request to pass through Google's redirect
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: "getNames" })
-            });
-
-            // IMPORTANT: 'no-cors' doesn't let us read the body directly.
-            // So we use a 'GET' fallback for fetching names which is MUCH more reliable.
-            const getNamesUrl = URL + "?action=getNames";
-            const response = await fetch(getNamesUrl);
-            const names = await response.json();
-            
-            if (Array.isArray(names)) {
-                nameList.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
-            } else {
-                throw new Error("Invalid Format");
-            }
-        } catch(e) { 
-            console.error(e);
-            alert("خطأ في جلب الأسماء. تأكد من إعدادات الـ Deployment"); 
-        }
+    // 1. Rule: Use GET for fetching to avoid CORS blindfolding
+    const fetchUrl = URL + "?action=getNames"; 
+    
+    try {
+        const res = await fetch(fetchUrl); // Simple GET request
+        const names = await res.json();    // 2. Rule: Parse the incoming string to JSON
+        
+        // 3. Rule: Map the array to HTML option tags
+        const dropdown = document.getElementById('nameList');
+        dropdown.innerHTML = names.map(name => `<option value="${name}">${name}</option>`).join('');
+        
+    } catch(e) {
+        console.error("Fetch failed", e);
     }
+}
 
     function showNames() {
         const val = document.getElementById('spec').value;
