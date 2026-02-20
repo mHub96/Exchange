@@ -8,28 +8,31 @@
         :root { --bg: #000; --primary: #007aff; --glass: rgba(255,255,255,0.08); }
         body { margin: 0; background: var(--bg); color: white; font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .mesh { position: fixed; width: 100%; height: 100%; background: radial-gradient(at 0% 0%, #007aff33 0px, transparent 50%), radial-gradient(at 100% 100%, #25d3661a 0px, transparent 50%); z-index: -1; filter: blur(40px); }
-        .container { width: 92%; max-width: 380px; padding: 40px 25px; background: var(--glass); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); border-radius: 35px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
-        input, select { width: 100%; height: 55px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: white; font-size: 1rem; text-align: center; margin-bottom: 15px; outline: none; transition: 0.3s; }
-        button { width: 100%; height: 55px; background: white; color: black; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: 700; cursor: pointer; }
-        #mainSection, #nameSection { display: none; }
-        label { display: block; font-size: 0.8rem; opacity: 0.5; margin: 10px 10px 5px 0; text-align: right; }
+        .container { width: 90%; max-width: 400px; padding: 40px 30px; background: var(--glass); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); border-radius: 40px; text-align: center; }
+        h2 { font-weight: 600; margin-bottom: 30px; }
+        input, select { width: 100%; height: 60px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; color: white; font-size: 1.1rem; text-align: center; margin-bottom: 20px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); }
+        button { width: 100%; height: 60px; background: white; color: black; border: none; border-radius: 20px; font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        button:active { transform: scale(0.96); }
+        #mainUI, #nameArea { display: none; }
+        label { display: block; font-size: 0.9rem; opacity: 0.6; margin-bottom: 8px; text-align: right; margin-right: 10px; }
     </style>
 </head>
 <body>
     <div class="mesh"></div>
 
-    <div id="passSection" class="container">
-        <div style="font-size: 2.5rem; margin-bottom: 10px;">🔒</div>
+    <div id="loginUI" class="container">
+        <div style="font-size: 3rem; margin-bottom: 10px;">🛡️</div>
         <h2>دخول النظام</h2>
-        <input type="password" id="passInput" placeholder="أدخل رمز الوصول" onkeyup="if(event.key === 'Enter') checkPass()">
-        <button onclick="checkPass()">دخول</button>
+        <input type="password" id="pass" placeholder="أدخل الرمز" onkeyup="if(event.key==='Enter') login()">
+        <button onclick="login()">دخول</button>
     </div>
 
-    <div id="mainSection" class="container">
+    <div id="mainUI" class="container">
         <h2>تسجيل الخفر 🇮🇶</h2>
         
         <label>القسم الطبي</label>
-        <select id="specSelect" onchange="toggleNameSection()">
+        <select id="spec" onchange="showNames()">
             <option value="">-- اختر القسم --</option>
             <option value="NS">Neurosurgery</option>
             <option value="CT">Cardiothoracic surgery</option>
@@ -45,52 +48,53 @@
             <option value="PS">Plastic Surgery</option>
         </select>
 
-        <div id="nameSection">
+        <div id="nameArea">
             <label>اسم الطبيب</label>
-            <select id="nameList"><option>جاري تحميل الأسماء...</option></select>
+            <select id="nameList"></select>
             <button id="subBtn" onclick="submit()">تأكيد التسجيل</button>
         </div>
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXPOdLnXVLfDNNj_WfVS4tT1HCb6qBzo5lghvX-pYZwCoCV4zcM5NOrJ5Jwp6x4qsJfg/exec";
+        const URL = "https://script.google.com/macros/s/AKfycbzXPOdLnXVLfDNNj_WfVS4tT1HCb6qBzo5lghvX-pYZwCoCV4zcM5NOrJ5Jwp6x4qsJfg/exec";
 
-        function checkPass() {
-            if(document.getElementById('passInput').value === "1234") {
-                document.getElementById('passSection').style.display = 'none';
-                document.getElementById('mainSection').style.display = 'block';
-                fetchNames();
-            } else { alert("الرمز خطأ"); }
+        function login() {
+            if(document.getElementById('pass').value === "1234") {
+                document.getElementById('loginUI').style.display = 'none';
+                document.getElementById('mainUI').style.display = 'block';
+                loadNames();
+            } else { alert("الرمز خاطئ"); }
         }
 
-        async function fetchNames() {
+        async function loadNames() {
             try {
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({action: "getNames"}) });
+                const res = await fetch(URL, { method: 'POST', body: JSON.stringify({action: "getNames"}) });
                 const names = await res.json();
                 document.getElementById('nameList').innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
-            } catch(e) { alert("Error fetching names"); }
+            } catch(e) { alert("خطأ في جلب الأسماء"); }
         }
 
-        function toggleNameSection() {
-            const spec = document.getElementById('specSelect').value;
-            document.getElementById('nameSection').style.display = spec ? 'block' : 'none';
+        function showNames() {
+            const val = document.getElementById('spec').value;
+            document.getElementById('nameArea').style.display = val ? 'block' : 'none';
         }
 
         async function submit() {
             const btn = document.getElementById('subBtn');
-            btn.disabled = true; btn.innerText = "...";
+            btn.disabled = true; btn.innerText = "جاري الحفظ...";
+            
+            const payload = {
+                action: "submitDuty",
+                specialty: document.getElementById('spec').value,
+                name: document.getElementById('nameList').value
+            };
+
             try {
-                const res = await fetch(SCRIPT_URL, { 
-                    method: 'POST', 
-                    body: JSON.stringify({
-                        action: "submitDuty",
-                        specialty: document.getElementById('specSelect').value,
-                        name: document.getElementById('nameList').value
-                    }) 
-                });
+                const res = await fetch(URL, { method: 'POST', body: JSON.stringify(payload) });
                 const msg = await res.json();
                 alert(msg);
-            } catch(e) { alert("Success ✅"); }
+            } catch(e) { alert("تم التسجيل بنجاح ✅"); }
+            
             btn.disabled = false; btn.innerText = "تأكيد التسجيل";
         }
     </script>
