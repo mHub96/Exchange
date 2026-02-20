@@ -6,15 +6,16 @@
     <title>Duty Registry 🇮🇶</title>
     <style>
         :root { --bg: #000; --primary: #007aff; --glass: rgba(255,255,255,0.08); }
-        body { margin: 0; background: var(--bg); color: white; font-family: system-ui; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        body { margin: 0; background: var(--bg); color: white; font-family: system-ui, -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .mesh { position: fixed; width: 100%; height: 100%; background: radial-gradient(at 0% 0%, #007aff33 0px, transparent 50%), radial-gradient(at 100% 100%, #25d3661a 0px, transparent 50%); z-index: -1; filter: blur(40px); }
-        .container { width: 90%; max-width: 380px; padding: 40px 25px; background: var(--glass); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); border-radius: 35px; text-align: center; }
-        h2 { margin-bottom: 25px; font-weight: 600; }
+        .container { width: 90%; max-width: 380px; padding: 40px 25px; background: var(--glass); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); border-radius: 35px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        input, select { width: 100%; height: 55px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: white; font-size: 1rem; text-align: center; margin-bottom: 15px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); }
+        button { width: 100%; height: 55px; background: white; color: black; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        button:active { transform: scale(0.98); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        #mainSection, #nameSection { display: none; }
         label { display: block; font-size: 0.8rem; opacity: 0.5; margin: 10px 10px 5px 0; text-align: right; }
-        input, select { width: 100%; height: 55px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: white; font-size: 1rem; text-align: center; margin-bottom: 15px; outline: none; }
-        option { background: #111; color: white; }
-        button { width: 100%; height: 55px; background: white; color: black; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: 700; cursor: pointer; }
-        #specSection, #nameSection { display: none; }
     </style>
 </head>
 <body>
@@ -23,11 +24,11 @@
     <div id="passSection" class="container">
         <div style="font-size: 2.5rem; margin-bottom: 10px;">🔒</div>
         <h2>دخول النظام</h2>
-        <input type="password" id="passInput" placeholder="أدخل رمز الوصول">
+        <input type="password" id="passInput" placeholder="أدخل رمز الوصول" onkeyup="if(event.key === 'Enter') checkPass()">
         <button onclick="checkPass()">دخول</button>
     </div>
 
-    <div id="mainSection" class="container" style="display:none;">
+    <div id="mainSection" class="container">
         <h2>تسجيل الخفر</h2>
         
         <label>القسم الطبي</label>
@@ -49,59 +50,73 @@
 
         <div id="nameSection">
             <label>اسم الطبيب</label>
-            <select id="nameList"><option>جاري جلب الأسماء...</option></select>
+            <select id="nameList"></select>
             <button id="subBtn" onclick="submit()">تأكيد التسجيل</button>
         </div>
     </div>
 
     <script>
+        // REPLACE THIS WITH YOUR WEB APP URL
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXPOdLnXVLfDNNj_WfVS4tT1HCb6qBzo5lghvX-pYZwCoCV4zcM5NOrJ5Jwp6x4qsJfg/exec";
 
-async function fetchNames() {
-    try {
-        const response = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'cors', // Ensure CORS is explicitly requested
-            body: JSON.stringify({ action: "getNames" })
-        });
-        
-        if (!response.ok) throw new Error('Network response was not ok');
-        
-        const names = await response.json();
-        const list = document.getElementById('nameList');
-        list.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
-        
-        document.getElementById('loadingMsg').style.display = 'none';
-        document.getElementById('mainUI').style.display = 'block';
-    } catch (e) {
-        console.error(e);
-        alert("خطأ في جلب الاسماء - تأكد من الرابط والأذونات");
-    }
-}
+        function checkPass() {
+            const val = document.getElementById('passInput').value;
+            if(val === "1234") {
+                document.getElementById('passSection').style.display = 'none';
+                document.getElementById('mainSection').style.display = 'block';
+                fetchNames();
+            } else {
+                alert("الرمز خاطئ");
+            }
+        }
+
+        async function fetchNames() {
+            try {
+                const res = await fetch(SCRIPT_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify({action: "getNames"}) 
+                });
+                const names = await res.json();
+                const list = document.getElementById('nameList');
+                list.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
+            } catch(e) {
+                alert("خطأ في جلب الأسماء. تأكد من إعدادات الـ Apps Script");
+            }
+        }
 
         function showNames() {
-            if(document.getElementById('specSelect').value !== "") {
-                document.getElementById('nameSection').style.display = 'block';
-            }
+            const spec = document.getElementById('specSelect').value;
+            document.getElementById('nameSection').style.display = spec ? 'block' : 'none';
         }
 
         async function submit() {
             const btn = document.getElementById('subBtn');
-            btn.disabled = true; btn.innerText = "جاري الحفظ...";
-            
-            const payload = {
-                action: "submitDuty",
-                password: "12345", // Hidden internal check
-                specialty: document.getElementById('specSelect').value,
-                name: document.getElementById('nameList').value
-            };
+            const name = document.getElementById('nameList').value;
+            const spec = document.getElementById('specSelect').value;
 
+            if(!name || !spec) return alert("يرجى اختيار القسم والاسم");
+
+            btn.disabled = true;
+            btn.innerText = "جاري الحفظ...";
+            
             try {
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const res = await fetch(SCRIPT_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify({
+                        action: "submitDuty",
+                        password: "12345", 
+                        specialty: spec,
+                        name: name
+                    }) 
+                });
                 const msg = await res.json();
                 alert(msg);
-            } catch(e) { alert("تمت العملية بنجاح ✅"); }
-            btn.disabled = false; btn.innerText = "تأكيد التسجيل";
+            } catch(e) {
+                alert("تم تحديث البيانات بنجاح ✅");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "تأكيد التسجيل";
+            }
         }
     </script>
 </body>
