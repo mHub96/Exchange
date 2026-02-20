@@ -55,23 +55,29 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "PASTE_YOUR_NEW_DEPLOYMENT_URL_HERE";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXPOdLnXVLfDNNj_WfVS4tT1HCb6qBzo5lghvX-pYZwCoCV4zcM5NOrJ5Jwp6x4qsJfg/exec";
 
-        function checkPass() {
-            if(document.getElementById('passInput').value === "1234") {
-                document.getElementById('passSection').style.display = 'none';
-                document.getElementById('mainSection').style.display = 'block';
-                fetchNames();
-            } else { alert("الرمز خاطئ"); }
-        }
-
-        async function fetchNames() {
-            try {
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({action: "getNames"}) });
-                const names = await res.json();
-                document.getElementById('nameList').innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
-            } catch(e) { alert("خطأ في جلب الأسماء"); }
-        }
+async function fetchNames() {
+    try {
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'cors', // Ensure CORS is explicitly requested
+            body: JSON.stringify({ action: "getNames" })
+        });
+        
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const names = await response.json();
+        const list = document.getElementById('nameList');
+        list.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
+        
+        document.getElementById('loadingMsg').style.display = 'none';
+        document.getElementById('mainUI').style.display = 'block';
+    } catch (e) {
+        console.error(e);
+        alert("خطأ في جلب الاسماء - تأكد من الرابط والأذونات");
+    }
+}
 
         function showNames() {
             if(document.getElementById('specSelect').value !== "") {
