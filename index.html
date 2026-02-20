@@ -1,52 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
+<html dir="rtl" lang="ar">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Duty Registry 🇮🇶</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Duty Registry Pro 🇮🇶</title>
+    
     <style>
-        :root { --glass: rgba(255, 255, 255, 0.2); --glass-border: rgba(255, 255, 255, 0.3); }
-        body { 
-            margin: 0; padding: 0; height: 100vh; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-            font-family: 'Poppins', sans-serif; display: flex; align-items: center; justify-content: center;
+        :root {
+            --primary: #007aff;
+            --success: #25D366;
+            --bg: #000000;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
         }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: -apple-system, system-ui, sans-serif;
+            background: var(--bg);
+            color: white;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; overflow: hidden;
+        }
+
+        /* Mesh Background */
+        .mesh {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                radial-gradient(at 0% 0%, rgba(0, 122, 255, 0.2) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(37, 211, 102, 0.1) 0px, transparent 50%);
+            z-index: -1; filter: blur(40px);
+        }
+
         .container {
-            background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border); border-radius: 20px;
-            padding: 40px; width: 90%; max-width: 400px; text-align: center; color: white;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            width: 92%; max-width: 400px;
+            padding: 40px 25px;
+            background: var(--glass);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
+        h2 { font-weight: 700; font-size: 1.6rem; margin-bottom: 25px; letter-spacing: -1px; }
+
+        /* Input Styling */
         input, select {
-            width: 100%; padding: 12px; margin: 15px 0; border: none; border-radius: 10px;
-            background: rgba(255, 255, 255, 0.1); color: white; font-size: 16px; outline: none;
+            width: 100%; height: 60px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            color: white; font-size: 1rem; text-align: center;
+            margin-bottom: 20px; transition: 0.3s;
+            appearance: none;
         }
-        option { background: #764ba2; color: white; }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            background: rgba(255,255,255,0.1);
+        }
+
+        option { background: #1a1a1a; color: white; }
+
+        label {
+            display: block; font-size: 0.75rem; color: rgba(255,255,255,0.4);
+            margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;
+        }
+
         button {
-            width: 100%; padding: 12px; border: none; border-radius: 10px;
-            background: #4facfe; color: white; font-weight: bold; cursor: pointer; transition: 0.3s;
+            width: 100%; height: 60px;
+            background: white; color: black;
+            border: none; border-radius: 18px;
+            font-size: 1.1rem; font-weight: 700;
+            cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-        button:hover { background: #00f2fe; transform: translateY(-2px); }
-        #formSection { display: none; }
-        .loading { display: none; font-size: 12px; margin-top: 10px; }
+
+        button:active { transform: scale(0.97); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Logic Sections */
+        #formSection, #nameWrapper { display: none; }
+
+        /* Spinners */
+        .spin { width: 18px; height: 18px; border: 2px solid rgba(0,0,0,0.1); border-top-color: black; border-radius: 50%; animation: rot 0.8s linear infinite; }
+        @keyframes rot { to { transform: rotate(360deg); } }
+
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-8px);} 75% {transform: translateX(8px);} }
+        .shake { animation: shake 0.4s ease; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Medical Duty 🇮🇶</h2>
+    <div class="mesh"></div>
 
-    <div id="loginSection">
-        <input type="password" id="pass" placeholder="Enter System Password">
-        <button onclick="unlock()">Access System</button>
+    <div id="loginSection" class="container">
+        <div style="font-size: 3rem; margin-bottom: 15px;">🛡️</div>
+        <h2>دخول النظام</h2>
+        <input type="password" id="pass" placeholder="أدخل رمز المرور" inputmode="numeric">
+        <button onclick="unlock()">دخول</button>
     </div>
 
-    <div id="formSection">
-        <label>Select Specialty</label>
+    <div id="formSection" class="container">
+        <h2>تسجيل الخفر 🇮🇶</h2>
+        
+        <label>الاختصاص الطبي</label>
         <select id="specialty" onchange="fetchNames()">
-            <option value="">-- Choose --</option>
+            <option value="">-- اختر القسم --</option>
             <option value="Neuro">Neuro</option>
-            <option value="ThoracicSurgery">ThoracicSurgery</option>
+            <option value="ThoracicSurgery">Thoracic</option>
             <option value="Uro">Uro</option>
             <option value="ENT">ENT</option>
             <option value="Cardio">Cardio</option>
@@ -58,58 +124,97 @@
             <option value="Plastic">Plastic</option>
         </select>
 
-        <div id="nameWrapper" style="display:none;">
-            <label>Doctor Name</label>
-            <select id="nameList"></select>
-            <button onclick="submitData()">Confirm Duty</button>
+        <div id="loader" style="display:none; margin: 20px 0;">
+            <div class="spin" style="border-top-color: white; margin: 0 auto;"></div>
+            <p style="font-size: 0.7rem; opacity: 0.5; margin-top: 10px;">جاري جلب قائمة الأسماء...</p>
         </div>
-        <div id="loader" class="loading">Fetching names from Google Sheets...</div>
+
+        <div id="nameWrapper">
+            <label>اسم الطبيب الخفر</label>
+            <select id="nameList"></select>
+            
+            <button id="submitBtn" onclick="submitData()">
+                <span id="btnText">تأكيد الخفر</span>
+            </button>
+        </div>
     </div>
-</div>
 
-<script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXPOdLnXVLfDNNj_WfVS4tT1HCb6qBzo5lghvX-pYZwCoCV4zcM5NOrJ5Jwp6x4qsJfg/exec";
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXPOdLnXVLfDNNj_WfVS4tT1HCb6qBzo5lghvX-pYZwCoCV4zcM5NOrJ5Jwp6x4qsJfg/exec";
 
-    function unlock() {
-        const pass = document.getElementById('pass').value;
-        if(pass === "123") { // Your password
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('formSection').style.display = 'block';
-        } else { alert("Unauthorized access."); }
-    }
-
-    async function fetchNames() {
-        const spec = document.getElementById('specialty').value;
-        if (!spec) return;
-        document.getElementById('loader').style.display = 'block';
-
-        try {
-            const response = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: "getNames", specialty: spec })
-            });
-            const names = await response.json();
-            const list = document.getElementById('nameList');
-            list.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
-            document.getElementById('nameWrapper').style.display = 'block';
-        } catch (e) {
-            alert("Connection Error. Check Script URL and Permissions.");
-        } finally {
-            document.getElementById('loader').style.display = 'none';
+        function unlock() {
+            const passInput = document.getElementById('pass');
+            const loginBox = document.getElementById('loginSection');
+            
+            if(passInput.value === "123") {
+                loginBox.style.opacity = '0';
+                loginBox.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    loginBox.style.display = 'none';
+                    const main = document.getElementById('formSection');
+                    main.style.display = 'block';
+                    main.style.opacity = '0';
+                    setTimeout(() => main.style.opacity = '1', 50);
+                }, 400);
+            } else {
+                loginBox.classList.add('shake');
+                setTimeout(() => loginBox.classList.remove('shake'), 400);
+                passInput.value = "";
+            }
         }
-    }
 
-    async function submitData() {
-        const payload = {
-            action: "submitDuty",
-            password: document.getElementById('pass').value,
-            specialty: document.getElementById('specialty').value,
-            name: document.getElementById('nameList').value
-        };
-        const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-        const result = await res.text();
-        alert(result);
-    }
-</script>
+        async function fetchNames() {
+            const spec = document.getElementById('specialty').value;
+            const loader = document.getElementById('loader');
+            const wrapper = document.getElementById('nameWrapper');
+            
+            if (!spec) { wrapper.style.display = 'none'; return; }
+
+            loader.style.display = 'block';
+            wrapper.style.display = 'none';
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "getNames", specialty: spec })
+                });
+                const names = await response.json();
+                
+                const list = document.getElementById('nameList');
+                list.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
+                wrapper.style.display = 'block';
+            } catch (e) {
+                alert("خطأ في الاتصال بالسيرفر");
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        async function submitData() {
+            const btn = document.getElementById('submitBtn');
+            const txt = document.getElementById('btnText');
+            
+            btn.disabled = true;
+            txt.innerText = "جاري الحفظ...";
+
+            const payload = {
+                action: "submitDuty",
+                password: document.getElementById('pass').value,
+                specialty: document.getElementById('specialty').value,
+                name: document.getElementById('nameList').value
+            };
+
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const result = await res.text();
+                alert(result);
+            } catch (e) {
+                alert("تعذر الحفظ. حاول مرة أخرى.");
+            } finally {
+                btn.disabled = false;
+                txt.innerText = "تأكيد الخفر";
+            }
+        }
+    </script>
 </body>
 </html>
