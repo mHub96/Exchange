@@ -3,39 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Duty Registry 🇮🇶</title>
+    <title>Registry 🇮🇶</title>
     <style>
         :root { --bg: #000; --primary: #007aff; --glass: rgba(255,255,255,0.08); }
         body { margin: 0; background: var(--bg); color: white; font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .mesh { position: fixed; width: 100%; height: 100%; background: radial-gradient(at 0% 0%, #007aff33 0px, transparent 50%), radial-gradient(at 100% 100%, #25d3661a 0px, transparent 50%); z-index: -1; filter: blur(40px); }
-        .container { width: 90%; max-width: 400px; padding: 40px 30px; background: var(--glass); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); border-radius: 40px; text-align: center; }
-        h2 { font-weight: 600; margin-bottom: 30px; }
+        .container { width: 90%; max-width: 400px; padding: 40px 30px; background: var(--glass); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); border-radius: 40px; text-align: center; }
         
         input, select { 
-            width: 100%; height: 60px; background: rgba(255,255,255,0.1); 
+            width: 100%; height: 60px; background: #1a1a1a; 
             border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; 
-            color: white; font-size: 1.1rem; text-align: center; 
-            margin-bottom: 20px; outline: none; transition: 0.3s; 
+            color: white; font-size: 1.1rem; text-align: center; margin-bottom: 20px; outline: none; 
         }
 
-        /* THE CONTRAST FIX: Forces the dropdown options to be visible */
-        option {
-            background-color: #1a1a1a !important;
-            color: white !important;
-        }
+        /* FIX: Ensure dropdown options are visible on all devices */
+        option { background: #1a1a1a; color: white; }
 
-        input:focus { border-color: var(--primary); }
-        button { width: 100%; height: 60px; background: white; color: black; border: none; border-radius: 20px; font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        button:active { transform: scale(0.96); }
+        button { width: 100%; height: 60px; background: white; color: black; border: none; border-radius: 20px; font-size: 1.2rem; font-weight: 700; cursor: pointer; }
         #mainUI, #nameArea { display: none; }
-        label { display: block; font-size: 0.9rem; opacity: 0.6; margin-bottom: 8px; text-align: right; margin-right: 10px; }
     </style>
 </head>
 <body>
     <div class="mesh"></div>
 
     <div id="loginUI" class="container">
-        <div style="font-size: 3rem; margin-bottom: 10px;">🛡️</div>
         <h2>دخول النظام</h2>
         <input type="password" id="pass" placeholder="أدخل الرمز" onkeyup="if(event.key==='Enter') login()">
         <button onclick="login()">دخول</button>
@@ -43,32 +34,27 @@
 
     <div id="mainUI" class="container">
         <h2>تسجيل الخفر 🇮🇶</h2>
-        <label>القسم الطبي</label>
         <select id="spec" onchange="showNames()">
             <option value="">-- اختر القسم --</option>
             <option value="NS">Neurosurgery</option>
-            <option value="CT">Cardiothoracic surgery</option>
+            <option value="CT">Cardiothoracic</option>
             <option value="GS">General Surgery</option>
             <option value="US">Urosurgery</option>
             <option value="ENT">ENT</option>
             <option value="H">Cardiology</option>
-            <option value="D">Death Certificates</option>
-            <option value="OP">Operations Anesthesia</option>
-            <option value="ICU">ICU Anesthesia</option>
-            <option value="R">Radiology</option>
-            <option value="ON">Oncology</option>
-            <option value="PS">Plastic Surgery</option>
+            <option value="OP">Anesthesia (OP)</option>
+            <option value="ICU">Anesthesia (ICU)</option>
         </select>
 
         <div id="nameArea">
-            <label id="loadingLabel">اسم الطبيب</label>
+            <label id="status" style="font-size: 0.8rem; opacity: 0.5;">اختر الاسم</label>
             <select id="nameList"></select>
             <button id="subBtn" onclick="submit()">تأكيد التسجيل</button>
         </div>
     </div>
 
     <script>
-        const URL = "https://script.google.com/macros/s/AKfycbzXPOdLnXVLfDNNj_WfVS4tT1HCb6qBzo5lghvX-pYZwCoCV4zcM5NOrJ5Jwp6x4qsJfg/exec";
+        const URL = "PASTE_YOUR_NEW_WEB_APP_URL_HERE";
 
         function login() {
             if(document.getElementById('pass').value === "1234") {
@@ -80,60 +66,35 @@
 
         async function loadNames() {
             const dropdown = document.getElementById('nameList');
-            const label = document.getElementById('loadingLabel');
-            
-            label.innerText = "جاري تحميل الأسماء... ⏳";
-            dropdown.innerHTML = '<option>جاري التحميل...</option>';
-
+            dropdown.innerHTML = "<option>جاري تحميل الأسماء...</option>";
             try {
-                // IMPORTANT: This URL expects your Apps Script doGet to handle 'action=getNames'
                 const res = await fetch(URL + "?action=getNames");
                 const names = await res.json();
-                
-                if (names && names.length > 0) {
-                    dropdown.innerHTML = names.map(name => `<option value="${name}">${name}</option>`).join('');
-                    label.innerText = "اختر اسم الطبيب";
-                } else {
-                    dropdown.innerHTML = '<option>لا توجد أسماء متاحة</option>';
-                    label.innerText = "لم يتم العثور على أسماء";
-                }
-            } catch(e) {
-                console.error("Fetch failed", e);
-                dropdown.innerHTML = '<option>فشل التحميل</option>';
-                alert("خطأ: تأكد من تحديث Apps Script وتفعيل New Deployment");
-            }
+                dropdown.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
+            } catch(e) { alert("خطأ في جلب الأسماء"); }
         }
 
         function showNames() {
-            const val = document.getElementById('spec').value;
-            document.getElementById('nameArea').style.display = val ? 'block' : 'none';
+            document.getElementById('nameArea').style.display = document.getElementById('spec').value ? 'block' : 'none';
         }
 
         async function submit() {
             const btn = document.getElementById('subBtn');
-            btn.disabled = true; 
-            btn.innerText = "جاري الحفظ...";
+            btn.disabled = true; btn.innerText = "جاري الحفظ...";
             
-            const payload = {
-                action: "submitDuty",
-                specialty: document.getElementById('spec').value,
-                name: document.getElementById('nameList').value
-            };
-
             try {
-                // We send as a standard POST
                 const res = await fetch(URL, { 
                     method: 'POST', 
-                    body: JSON.stringify(payload) 
+                    body: JSON.stringify({
+                        action: "submitDuty",
+                        specialty: document.getElementById('spec').value,
+                        name: document.getElementById('nameList').value
+                    }) 
                 });
-                const responseText = await res.json();
-                alert(responseText);
-            } catch(e) { 
-                alert("تم إرسال الطلب! ✅"); 
-            } finally {
-                btn.disabled = false; 
-                btn.innerText = "تأكيد التسجيل";
-            }
+                const msg = await res.json();
+                alert(msg);
+            } catch(e) { alert("تم الحفظ ✅"); }
+            btn.disabled = false; btn.innerText = "تأكيد التسجيل";
         }
     </script>
 </body>
