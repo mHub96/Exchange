@@ -56,47 +56,79 @@
     </div>
 
     <script>
-        const URL = "https://script.google.com/macros/s/AKfycbzXPOdLnXVLfDNNj_WfVS4tT1HCb6qBzo5lghvX-pYZwCoCV4zcM5NOrJ5Jwp6x4qsJfg/exec";
+    // Make sure this URL matches your LATEST deployment URL
+    const URL = "https://script.google.com/macros/s/AKfycbzXPOdLnXVLfDNNj_WfVS4tT1HCb6qBzo5lghvX-pYZwCoCV4zcM5NOrJ5Jwp6x4qsJfg/exec";
 
-        function login() {
-            if(document.getElementById('pass').value === "1234") {
-                document.getElementById('loginUI').style.display = 'none';
-                document.getElementById('mainUI').style.display = 'block';
-                loadNames();
-            } else { alert("الرمز خاطئ"); }
-        }
+    function login() {
+        if(document.getElementById('pass').value === "1234") {
+            document.getElementById('loginUI').style.display = 'none';
+            document.getElementById('mainUI').style.display = 'block';
+            loadNames();
+        } else { alert("الرمز خاطئ"); }
+    }
 
-        async function loadNames() {
-            try {
-                const res = await fetch(URL, { method: 'POST', body: JSON.stringify({action: "getNames"}) });
-                const names = await res.json();
-                document.getElementById('nameList').innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
-            } catch(e) { alert("خطأ في جلب الأسماء"); }
-        }
+    async function loadNames() {
+        const nameList = document.getElementById('nameList');
+        nameList.innerHTML = "<option>جاري التحميل...</option>";
 
-        function showNames() {
-            const val = document.getElementById('spec').value;
-            document.getElementById('nameArea').style.display = val ? 'block' : 'none';
-        }
+        try {
+            const res = await fetch(URL, {
+                method: 'POST',
+                mode: 'no-cors', // This allows the request to pass through Google's redirect
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ action: "getNames" })
+            });
 
-        async function submit() {
-            const btn = document.getElementById('subBtn');
-            btn.disabled = true; btn.innerText = "جاري الحفظ...";
+            // IMPORTANT: 'no-cors' doesn't let us read the body directly.
+            // So we use a 'GET' fallback for fetching names which is MUCH more reliable.
+            const getNamesUrl = URL + "?action=getNames";
+            const response = await fetch(getNamesUrl);
+            const names = await response.json();
             
-            const payload = {
-                action: "submitDuty",
-                specialty: document.getElementById('spec').value,
-                name: document.getElementById('nameList').value
-            };
-
-            try {
-                const res = await fetch(URL, { method: 'POST', body: JSON.stringify(payload) });
-                const msg = await res.json();
-                alert(msg);
-            } catch(e) { alert("تم التسجيل بنجاح ✅"); }
-            
-            btn.disabled = false; btn.innerText = "تأكيد التسجيل";
+            if (Array.isArray(names)) {
+                nameList.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
+            } else {
+                throw new Error("Invalid Format");
+            }
+        } catch(e) { 
+            console.error(e);
+            alert("خطأ في جلب الأسماء. تأكد من إعدادات الـ Deployment"); 
         }
-    </script>
+    }
+
+    function showNames() {
+        const val = document.getElementById('spec').value;
+        document.getElementById('nameArea').style.display = val ? 'block' : 'none';
+    }
+
+    async function submit() {
+        const btn = document.getElementById('subBtn');
+        btn.disabled = true; 
+        btn.innerText = "جاري الحفظ...";
+        
+        const payload = {
+            action: "submitDuty",
+            specialty: document.getElementById('spec').value,
+            name: document.getElementById('nameList').value
+        };
+
+        try {
+            // Using 'text/plain' prevents the browser from triggering complex CORS pre-flights
+            await fetch(URL, { 
+                method: 'POST', 
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(payload) 
+            });
+            
+            alert("تم إرسال الطلب بنجاح ✅");
+        } catch(e) { 
+            alert("حدث خطأ أثناء الاتصال"); 
+        } finally {
+            btn.disabled = false; 
+            btn.innerText = "تأكيد التسجيل";
+        }
+    }
+</script>
 </body>
 </html>
