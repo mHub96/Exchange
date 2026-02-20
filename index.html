@@ -1,0 +1,65 @@
+<div dir="rtl" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; max-width: 400px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
+  <h2 style="color: #2c3e50;">نظام تسجيل الخفر اليومي</h2>
+  
+  <div id="loginSection">
+    <p>يرجى إدخال رمز المرور للمتابعة:</p>
+    <input type="password" id="pass" style="width: 100%; padding: 10px; margin-bottom: 10px;">
+    <button onclick="unlock()" style="width: 100%; padding: 10px; background: #3498db; color: white; border: none; cursor: pointer;">دخول</button>
+  </div>
+
+  <div id="formSection" style="display:none;">
+    <label>القسم الاختصاصي:</label>
+    <select id="specialty" onchange="fetchNames()" style="width: 100%; padding: 10px; margin-bottom: 20px;">
+      <option value="">-- اختر القسم --</option>
+      <option value="الجراحة العصبية">الجراحة العصبية</option>
+      <option value="جراحة الصدر">جراحة الصدر</option>
+      <option value="الجراحة العامة">الجراحة العامة</option>
+      </select>
+
+    <div id="nameWrapper" style="display:none;">
+      <label>اسم الطبيب الخفر (من قائمة الأسماء):</label>
+      <select id="nameList" style="width: 100%; padding: 10px; margin-bottom: 20px;"></select>
+      <button onclick="submitData()" style="width: 100%; padding: 10px; background: #27ae60; color: white; border: none;">تأكيد الحضور</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SCRIPT_URL = "YOUR_DEPLOYED_URL_HERE";
+
+  function unlock() {
+    const pass = document.getElementById('pass').value;
+    if(pass === "123") {
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('formSection').style.display = 'block';
+    } else { alert("الرمز غير صحيح"); }
+  }
+
+  async function fetchNames() {
+    const spec = document.getElementById('specialty').value;
+    if (!spec) return;
+
+    const res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: "getNames", specialty: spec })
+    });
+    const names = await res.json();
+    
+    const list = document.getElementById('nameList');
+    list.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
+    document.getElementById('nameWrapper').style.display = 'block';
+  }
+
+  async function submitData() {
+    const payload = {
+      action: "submitDuty",
+      password: document.getElementById('pass').value,
+      specialty: document.getElementById('specialty').value,
+      name: document.getElementById('nameList').value
+    };
+
+    const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+    const result = await res.text();
+    alert(result);
+  }
+</script>
