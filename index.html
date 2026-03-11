@@ -7,18 +7,17 @@
     <style>
         :root {
             --ios-blue: #007AFF;
-            --ios-bg: #000000;
-            --card-bg: rgba(28, 28, 30, 0.8);
-            --secondary-bg: #1C1C1E;
-            --separator: rgba(255, 255, 255, 0.1);
+            --ios-bg: #030303;
+            --panel-bg: rgba(30, 30, 32, 0.7);
+            --accent-glow: rgba(0, 122, 255, 0.3);
             --text-main: #FFFFFF;
-            --text-secondary: #8E8E93;
+            --text-sec: #A1A1A6;
         }
 
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
         }
 
         body {
@@ -27,145 +26,170 @@
             color: var(--text-main);
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh;
-            background-image: radial-gradient(circle at top right, #1c1c1e, #000000);
+            overflow: hidden;
+        }
+
+        /* Advanced Mesh Background */
+        .mesh {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: 
+                radial-gradient(at 0% 0%, #1a1a1a 0%, transparent 50%),
+                radial-gradient(at 100% 0%, #002b5e 0%, transparent 50%),
+                radial-gradient(at 50% 100%, #111 0%, transparent 50%);
         }
 
         .container {
-            width: 92%; max-width: 400px;
-            padding: 30px 20px;
-            background: var(--card-bg);
-            backdrop-filter: blur(25px) saturate(180%);
-            -webkit-backdrop-filter: blur(25px) saturate(180%);
-            border-radius: 38px;
-            border: 0.5px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            width: 92%; max-width: 380px;
+            padding: 40px 24px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border-radius: 44px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 0 0.5px rgba(255,255,255,0.2);
             text-align: center;
+            animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        h2 { font-weight: 600; font-size: 22px; letter-spacing: -0.5px; margin-bottom: 5px; }
-        #status, .subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 30px; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
 
-        /* iOS Inset Grouped List Style for Inputs/Selects */
-        .list-group {
-            background: var(--secondary-bg);
-            border-radius: 14px;
-            margin-bottom: 20px;
+        h2 { font-weight: 700; font-size: 26px; letter-spacing: -0.8px; margin: 15px 0 5px 0; }
+        .subtitle { font-size: 15px; color: var(--text-sec); margin-bottom: 35px; }
+
+        /* Stylish Input Group */
+        .ios-list {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
             overflow: hidden;
-            text-align: left;
         }
 
         select, input {
             width: 100%;
-            padding: 16px;
+            padding: 18px;
             background: transparent;
             border: none;
-            color: white !important;
+            color: white;
             font-size: 17px;
             outline: none;
-            display: block;
             appearance: none;
         }
 
-        /* Divider between list items */
-        .divider {
+        .separator {
             height: 0.5px;
-            background: var(--separator);
-            margin-left: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            margin-left: 18px;
         }
 
         input[type="password"] {
             text-align: center;
-            font-size: 32px;
-            letter-spacing: 15px;
+            font-size: 28px;
+            letter-spacing: 14px;
+            color: var(--ios-blue);
         }
 
-        button {
+        /* Advanced Button with Shimmer */
+        .btn-prime {
+            position: relative;
             width: 100%;
-            padding: 16px;
+            padding: 18px;
             background: var(--ios-blue);
             color: white;
             border: none;
-            border-radius: 14px;
+            border-radius: 18px;
             font-size: 17px;
             font-weight: 600;
-            margin-top: 10px;
-            transition: all 0.2s ease;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 122, 255, 0.3);
         }
 
-        button:active { transform: scale(0.97); opacity: 0.8; }
-        button:disabled { background: #3a3a3c; color: #8e8e93; }
+        .btn-prime::after {
+            content: '';
+            position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
 
-        .service-badge {
-            background: rgba(0, 122, 255, 0.15);
-            color: #409CFF;
-            padding: 5px 14px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 700;
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .btn-prime:active { transform: scale(0.96); brightness: 0.9; }
+        .btn-prime:disabled { background: #2c2c2e; color: #48484a; box-shadow: none; }
+
+        .badge {
             display: inline-block;
-            margin-bottom: 10px;
+            padding: 6px 12px;
+            background: var(--accent-glow);
+            color: #82bfff;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
         }
 
-        .info-card {
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 20px;
-            padding: 24px;
+        .info-box {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 24px;
+            padding: 30px;
             margin: 20px 0;
-            border: 0.5px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .name-label { font-size: 32px; font-weight: 700; margin-bottom: 15px; }
-        
-        .btn-row { display: flex; gap: 12px; margin-top: 25px; }
-        .action-btn {
-            flex: 1;
-            padding: 16px;
-            border-radius: 14px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+        .name-txt { font-size: 34px; font-weight: 800; letter-spacing: -1px; margin-bottom: 5px; }
+
+        .action-row { display: flex; gap: 12px; margin-top: 30px; }
+        .btn-sub {
+            flex: 1; padding: 16px; border-radius: 16px; text-decoration: none;
+            font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .call { background: white; color: black; }
-        .wa { background: #34C759; color: white; }
+        .white { background: #fff; color: #000; }
+        .green { background: #34C759; color: #fff; }
 
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
-    <div style="position: fixed; top: -100px; right: -100px; width: 300px; height: 300px; background: var(--ios-blue); filter: blur(100px); opacity: 0.15; z-index: -1; border-radius: 50%;"></div>
+    <div class="mesh"></div>
 
     <div id="entry-screen" class="container">
-        <div style="font-size: 50px; margin-bottom: 20px;">👤</div>
-        <h2 id="entry-title">Resident Portal</h2>
-        <p id="status">Secure Link Verified</p>
-        <div class="list-group">
+        <div style="font-size: 60px; filter: drop-shadow(0 0 20px var(--accent-glow));">🛡️</div>
+        <h2>Resident Portal</h2>
+        <p class="subtitle">Secure Iraqi Medical Network 🇮🇶</p>
+        <div class="ios-list">
             <input type="password" id="pw" inputmode="numeric" placeholder="••••" maxlength="4">
         </div>
-        <button id="entry-btn" onclick="handleEntry()" disabled>Continue</button>
+        <button id="entry-btn" class="btn-prime" onclick="handleEntry()" disabled>Verify Identity</button>
     </div>
 
     <div id="lookup-view" class="container hidden">
-        <div id="service-display" class="service-badge">SERVICE</div>
-        <div id="name-display" class="name-label">Loading...</div>
-        <div class="info-card">
-            <div style="color: var(--text-secondary); font-size: 12px; font-weight: 600; margin-bottom: 8px; letter-spacing: 0.5px;">DIRECT CONTACT</div>
-            <div id="phone-display" style="font-size: 20px; font-weight: 600; letter-spacing: 0.5px;">-</div>
+        <span class="badge" id="service-display">Cardiology</span>
+        <div class="name-txt" id="name-display">Dr. Name</div>
+        <div class="info-box">
+            <div style="color: var(--text-sec); font-size: 11px; font-weight: 700; margin-bottom: 10px;">ENCRYPTED LINE</div>
+            <div id="phone-display" style="font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums;">-</div>
         </div>
-        <div class="btn-row">
-            <a href="#" id="call-link" class="action-btn call">📞 Call</a>
-            <a href="#" id="wa-link" class="action-btn wa" style="display:none;">💬 WhatsApp</a>
+        <div class="action-row">
+            <a href="#" id="call-link" class="btn-sub white">Call</a>
+            <a href="#" id="wa-link" class="btn-sub green" style="display:none;">WhatsApp</a>
         </div>
-        <p id="time-stamp" style="font-size: 11px; color: var(--text-secondary); margin-top: 25px; opacity: 0.6;"></p>
     </div>
 
     <div id="register-view" class="container hidden">
-        <div class="service-badge">REGISTRY</div>
+        <span class="badge">Registry Update</span>
         <h2>Daily Duty</h2>
-        <p class="subtitle">Update today's on-call resident</p>
+        <p class="subtitle">Assign the current resident on-call</p>
         
-        <div class="list-group">
+        <div class="ios-list">
             <select id="spec-select" onchange="toggleNameSection()">
                 <option value="">Choose Specialty</option>
                 <option value="NS">Neuro</option>
@@ -182,12 +206,12 @@
                 <option value="PS">Plastic</option>
             </select>
             <div id="name-section" class="hidden">
-                <div class="divider"></div>
+                <div class="separator"></div>
                 <select id="name-list"></select>
             </div>
         </div>
 
-        <button id="submit-btn" onclick="submitRegistration()">Confirm Duty</button>
+        <button id="submit-btn" class="btn-prime" onclick="submitRegistration()">Confirm Duty</button>
     </div>
 
 <script>
