@@ -2,23 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>On-Call Pro</title>
     <style>
         :root {
             --ios-blue: #007AFF;
             --ios-bg: #000000;
-            --panel-bg: rgba(25, 25( 27, 0.75);
-            --accent-glow: rgba(0, 122, 255, 0.4);
+            --card-bg: rgba(28, 28, 30, 0.7); /* iOS Dark Mode Card */
+            --glass: rgba(255, 255, 255, 0.1);
             --text-main: #FFFFFF;
-            --text-sec: #A1A1A6;
-            --glass-border: rgba(255, 255, 255, 0.12);
+            --text-secondary: #8E8E93;
+            --input-bg: #2C2C2E; /* High contrast for dropdowns */
         }
 
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
@@ -27,198 +27,164 @@
             color: var(--text-main);
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh;
-            overflow: hidden;
+            background-image: radial-gradient(circle at top right, #1c1c1e, #000000);
         }
 
-        /* Sophisticated Mesh Background */
-        .mesh {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: 
-                radial-gradient(circle at 0% 0%, #1c1c1e 0%, transparent 40%),
-                radial-gradient(circle at 100% 100%, #001d3d 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, #0a0a0a 0%, #000 100%);
+        /* Abstract iOS Background Blobs */
+        .bg-blob {
+            position: fixed; width: 300px; height: 300px;
+            background: var(--ios-blue);
+            filter: blur(100px); opacity: 0.15; z-index: -1;
+            border-radius: 50%;
         }
 
         .container {
-            width: 90%; max-width: 380px;
-            padding: 40px 28px;
-            background: var(--panel-bg);
-            backdrop-filter: blur(50px) saturate(210%);
-            -webkit-backdrop-filter: blur(50px) saturate(210%);
-            border-radius: 48px; /* iOS Continuous Curve Style */
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 40px 80px rgba(0,0,0,0.7), inset 0 0 0 0.5px rgba(255,255,255,0.15);
+            width: 90%; max-width: 400px;
+            padding: 30px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 35px; /* iOS Squircle */
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
             text-align: center;
-            animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px) scale(0.96); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
+        h2 { font-weight: 600; font-size: 1.5rem; letter-spacing: -0.5px; margin-bottom: 5px; }
+        #status { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 30px; }
 
-        h2 { font-weight: 700; font-size: 28px; letter-spacing: -1px; margin: 12px 0 6px 0; }
-        .subtitle, #status { font-size: 15px; color: var(--text-sec); margin-bottom: 30px; display: block; }
-
-        /* Advanced Input Group */
-        .ios-list {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 22px;
-            margin-bottom: 25px;
-            border: 0.5px solid var(--glass-border);
-            overflow: hidden;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
-        }
-
+        /* FIXED DROPDOWNS & INPUTS FOR CONTRAST */
         select, input {
             width: 100%;
-            padding: 18px 20px;
-            background: transparent;
-            border: none;
+            padding: 18px;
+            margin-bottom: 15px;
+            background: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
             color: white !important;
-            font-size: 17px;
-            outline: none;
+            font-size: 1rem;
             appearance: none;
+            cursor: pointer;
         }
 
-        .separator {
-            height: 0.5px;
-            background: var(--glass-border);
-            margin-left: 20px;
+        /* Force PC Dropdown Options to be visible */
+        select option {
+            background-color: #1c1c1e;
+            color: white;
+            padding: 10px;
         }
 
         input[type="password"] {
             text-align: center;
-            font-size: 32px;
-            letter-spacing: 16px;
-            color: var(--ios-blue);
-            font-weight: 600;
+            font-size: 2rem;
+            letter-spacing: 15px;
         }
 
-        /* Prime Button with Glossy Finish */
-        .btn-prime {
-            position: relative;
+        button {
             width: 100%;
             padding: 18px;
             background: var(--ios-blue);
             color: white;
             border: none;
-            border-radius: 20px;
-            font-size: 17px;
+            border-radius: 15px;
+            font-size: 1rem;
             font-weight: 600;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 12px 24px rgba(0, 122, 255, 0.35);
+            margin-top: 10px;
+            transition: all 0.2s ease;
         }
 
-        .btn-prime::before {
-            content: '';
-            position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: 0.5s;
+        button:active { transform: scale(0.97); opacity: 0.8; }
+        button:disabled { background: #3a3a3c; color: #8e8e93; }
+
+        /* Lookup Result UI */
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .btn-prime:hover::before { left: 100%; }
-        .btn-prime:active { transform: scale(0.96); opacity: 0.9; }
-        .btn-prime:disabled { background: #2c2c2e; color: #636366; box-shadow: none; }
-
-        .badge {
+        .name-label { font-size: 2.2rem; font-weight: 700; color: white; margin: 10px 0; }
+        .service-badge {
+            background: rgba(0, 122, 255, 0.2);
+            color: var(--ios-blue);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
             display: inline-block;
-            padding: 6px 14px;
-            background: rgba(0, 122, 255, 0.15);
-            color: #4db3ff;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            margin-bottom: 12px;
         }
 
-        .info-box {
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 28px;
-            padding: 32px 20px;
-            margin: 24px 0;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+        .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+        .action-btn {
+            flex: 1;
+            padding: 15px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-
-        .name-txt { font-size: 36px; font-weight: 800; letter-spacing: -1.2px; margin-bottom: 8px; line-height: 1.1; }
-        
-        #time-stamp { font-size: 12px; color: var(--text-sec); margin-top: 20px; display: block; }
-
-        .action-row { display: flex; gap: 14px; margin-top: 30px; }
-        .btn-sub {
-            flex: 1; padding: 18px; border-radius: 18px; text-decoration: none;
-            font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: transform 0.2s;
-        }
-        .btn-sub:active { transform: scale(0.95); }
-        .white { background: #FFFFFF; color: #000000; }
-        .green { background: #34C759; color: #FFFFFF; }
+        .call { background: white; color: black; }
+        .wa { background: #25D366; color: white; }
 
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
-    <div class="mesh"></div>
+    <div class="bg-blob" style="top: -100px; right: -100px;"></div>
+    <div class="bg-blob" style="bottom: -100px; left: -100px; background: #5856D6;"></div>
 
     <div id="entry-screen" class="container">
-        <div style="font-size: 64px; filter: drop-shadow(0 0 20px var(--accent-glow));">🛡️</div>
+        <div style="font-size: 3rem; margin-bottom: 20px;">👤</div>
         <h2 id="entry-title">Resident Portal</h2>
-        <span id="status">Verifying Secure Link...</span>
-        <div class="ios-list">
-            <input type="password" id="pw" inputmode="numeric" placeholder="••••" maxlength="4">
-        </div>
-        <button id="entry-btn" class="btn-prime" onclick="handleEntry()" disabled>Verify Identity</button>
+        <p id="status">Secure Link Verified</p>
+        <input type="password" id="pw" inputmode="numeric" placeholder="••••" maxlength="4">
+        <button id="entry-btn" onclick="handleEntry()" disabled>Continue</button>
     </div>
 
     <div id="lookup-view" class="container hidden">
-        <span class="badge" id="service-display">Loading...</span>
-        <div class="name-txt" id="name-display">-</div>
-        <div class="info-box">
-            <div style="color: var(--text-sec); font-size: 11px; font-weight: 700; margin-bottom: 12px; letter-spacing: 1px;">ENCRYPTED LINE</div>
-            <div id="phone-display" style="font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums;">-</div>
+        <div id="service-display" class="service-badge">SERVICE</div>
+        <div id="name-display" class="name-label">Loading...</div>
+        <div class="info-card">
+            <div style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 5px;">DIRECT CONTACT</div>
+            <div id="phone-display" style="font-size: 1.4rem; font-weight: 600; letter-spacing: 1px;">-</div>
         </div>
-        <div class="action-row">
-            <a href="#" id="call-link" class="btn-sub white">📞 Call</a>
-            <a href="#" id="wa-link" class="btn-sub green" style="display:none;">💬 WhatsApp</a>
+        <div class="btn-row">
+            <a href="#" id="call-link" class="action-btn call"><span>📞</span> Call</a>
+            <a href="#" id="wa-link" class="action-btn wa" style="display:none;"><span>💬</span> WhatsApp</a>
         </div>
-        <span id="time-stamp"></span>
+        <p id="time-stamp" style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 25px; opacity: 0.5;"></p>
     </div>
 
     <div id="register-view" class="container hidden">
-        <span class="badge">Registry Update</span>
+        <div class="service-badge">REGISTRY</div>
         <h2>Daily Duty</h2>
-        <p class="subtitle">Assign the current resident on-call 🇮🇶</p>
+        <p style="color: var(--text-secondary); margin-bottom: 20px;">Update today's on-call resident</p>
         
-        <div class="ios-list">
-            <select id="spec-select" onchange="toggleNameSection()">
-                <option value="">Choose Specialty</option>
-                <option value="NS">Neuro</option>
-                <option value="CT">Thoracic</option>
-                <option value="GS">Surgery</option>
-                <option value="US">Uro</option>
-                <option value="ENT">ENT</option>
-                <option value="H">Cardio</option>
-                <option value="D">DeathCertificates</option>
-                <option value="OP">OP Anesthesia</option>
-                <option value="ICU">ICU Anesthesia</option>
-                <option value="R">Radio</option>
-                <option value="ON">Onco</option>
-                <option value="PS">Plastic</option>
-            </select>
-            <div id="name-section" class="hidden">
-                <div class="separator"></div>
-                <select id="name-list"></select>
-            </div>
-        </div>
+        <select id="spec-select" onchange="toggleNameSection()">
+            <option value="">Choose Specialty</option>
+            <option value="NS">Neuro</option>
+            <option value="CT">Thoracic</option>
+            <option value="GS">Surgery</option>
+            <option value="US">Uro</option>
+            <option value="ENT">ENT</option>
+            <option value="H">Cardio</option>
+            <option value="D">DeathCertificates</option>
+            <option value="OP">OP Anesthesia</option>
+            <option value="ICU">ICU Anesthesia</option>
+            <option value="R">Radio</option>
+            <option value="ON">Onco</option>
+            <option value="PS">Plastic</option>
+        </select>
 
-        <button id="submit-btn" class="btn-prime" onclick="submitRegistration()">Confirm Duty</button>
+        <div id="name-section" class="hidden">
+            <select id="name-list"></select>
+            <button id="submit-btn" onclick="submitRegistration()">Confirm Duty</button>
+        </div>
     </div>
 
 <script>
-    /* I HAVE LEFT YOUR SCRIPT EXACTLY AS PROVIDED */
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
     const service = urlParams.get('service');
@@ -226,7 +192,7 @@
     const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
 
     let serverData = null;
-    let allResidents = [];
+    let allResidents = []; // <--- Hidden local storage for the name list
 
     window.onload = async function() {
         if (mode === 'register') {
@@ -240,35 +206,47 @@
         }
     };
 
-    async function prepareRegister() {
-        document.getElementById('status').innerText = "Fetching Master List...";
-        try {
-            const response = await fetch(`${scriptUrl}?action=getNames`);
-            const data = await response.json(); 
-            allResidents = data.sort((a, b) => a[0].localeCompare(b[0], 'ar'));
-            document.getElementById('status').innerText = "Ready ✅";
-            document.getElementById('entry-btn').disabled = false;
-        } catch (e) { 
-            document.getElementById('status').innerText = "Offline Mode - Check Internet"; 
-        }
+async function prepareRegister() {
+    document.getElementById('status').innerText = "Fetching Master List...";
+    try {
+        const response = await fetch(`${scriptUrl}?action=getNames`);
+        const data = await response.json(); 
+        
+        // SORTING LOGIC: Sorts alphabetically by Name (index 0)
+        allResidents = data.sort((a, b) => a[0].localeCompare(b[0], 'ar'));
+        
+        document.getElementById('status').innerText = "Ready ✅";
+        document.getElementById('entry-btn').disabled = false;
+    } catch (e) { 
+        document.getElementById('status').innerText = "Offline Mode - Check Internet"; 
     }
+}
 
+    // THIS IS THE FILTERING MAGIC - NO FETCHING HERE!
     function toggleNameSection() {
         const selectedSpec = document.getElementById('spec-select').value;
         const nameSection = document.getElementById('name-section');
         const dropdown = document.getElementById('name-list');
+
         if (!selectedSpec) {
             nameSection.classList.add('hidden');
             return;
         }
+
         let filtered;
+
+        // NEW LOGIC: Check for Anesthesia (OP/ICU), Death Certificates (D), or standard filter
         if (selectedSpec === "OP" || selectedSpec === "ICU") {
+            // Show all Anesthesia residents (Code 'A')
             filtered = allResidents.filter(res => res[1] === "A");
         } else if (selectedSpec === "D") {
+            // Show everyone for Death Certificates
             filtered = allResidents;
         } else {
+            // Otherwise, filter by the specific specialty code in Column B
             filtered = allResidents.filter(res => res[1] === selectedSpec);
         }
+
         if (filtered.length > 0) {
             dropdown.innerHTML = filtered.map(res => `<option value="${res[0]}">${res[0]}</option>`).join('');
             nameSection.classList.remove('hidden');
@@ -278,6 +256,7 @@
         }
     }
 
+    // --- REST OF YOUR WORKING LOGIC ---
     async function prepareLookup() {
         try {
             const response = await fetch(`${scriptUrl}?service=${service}&ward=${ward || service}&json=true&t=${Date.now()}`);
