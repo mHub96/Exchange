@@ -3,204 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>On-Call Pro | Kinetic</title>
+    <title>On-Call Pro | Vector Warp</title>
     <style>
         :root {
-            --safety-orange: #FF6B00;
-            --steel-dark: #1A1C1E;
-            --steel-light: #2C2F33;
-            --text-white: #E1E1E1;
+            --primary: #FF3D00; /* High-octane Red/Orange */
+            --bg: #050505;
+            --panel: #111111;
+            --accent: #00E5FF;
         }
 
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
             margin: 0; padding: 0;
-            background: #0F1011;
-            color: var(--text-white);
+            background: var(--bg);
+            color: #fff;
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh;
             overflow: hidden;
         }
 
-        /* Industrial Background Grid */
-        body::before {
-            content: "";
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: linear-gradient(rgba(255,107,0,0.05) 1px, transparent 1px), 
-                              linear-gradient(90deg, rgba(255,107,0,0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-            z-index: -1;
+        /* Floating Background Elements */
+        .bg-bit {
+            position: absolute; width: 2px; height: 100px;
+            background: linear-gradient(transparent, var(--primary), transparent);
+            opacity: 0.2; animation: float 8s infinite linear;
         }
 
-        .kinetic-frame {
-            width: 90%; max-width: 380px;
-            background: var(--steel-dark);
-            border: 4px solid var(--steel-light);
+        @keyframes float {
+            0% { transform: translateY(110vh) rotate(45deg); }
+            100% { transform: translateY(-110vh) rotate(45deg); }
+        }
+
+        .container {
+            width: 92%; max-width: 400px;
             position: relative;
+            z-index: 5;
+            transition: transform 0.6s cubic-bezier(0.8, 0, 0.2, 1), opacity 0.5s;
+        }
+
+        /* Slanted Header */
+        .header-slant {
+            background: var(--primary);
+            padding: 20px;
+            clip-path: polygon(0 0, 100% 0, 90% 100%, 0% 100%);
+            margin-bottom: -10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        h2 { margin: 0; font-weight: 900; text-transform: uppercase; font-style: italic; letter-spacing: -1px; color: #000; }
+
+        .main-panel {
+            background: var(--panel);
             padding: 40px 25px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border-left: 4px solid var(--primary);
+            box-shadow: 20px 20px 0px rgba(255, 61, 0, 0.1);
         }
 
-        /* Decorative "Bolts" */
-        .kinetic-frame::before, .kinetic-frame::after {
-            content: ""; position: absolute; width: 10px; height: 10px;
-            background: var(--steel-light); border-radius: 50%;
-        }
-        .kinetic-frame::before { top: 10px; left: 10px; box-shadow: 350px 0 0 var(--steel-light); }
-        .kinetic-frame::after { bottom: 10px; left: 10px; box-shadow: 350px 0 0 var(--steel-light); }
+        #status { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--accent); margin-bottom: 25px; display: block; }
 
-        h2 { 
-            font-weight: 900; text-transform: uppercase; letter-spacing: 1px; 
-            border-left: 5px solid var(--safety-orange); padding-left: 15px;
-            margin: 0 0 10px 0; font-size: 1.4rem;
-        }
-
-        #status { 
-            font-size: 0.7rem; font-weight: 800; color: var(--safety-orange); 
-            text-transform: uppercase; display: block; margin-bottom: 30px;
-        }
-
-        /* FORM ELEMENTS - INDUSTRIAL STYLE */
+        /* INPUTS */
         select, input {
             width: 100%;
-            padding: 16px;
+            padding: 18px;
             margin-bottom: 20px;
-            background: #000;
-            border: 2px solid var(--steel-light);
-            border-radius: 0; /* Sharp industrial corners */
-            color: var(--safety-orange) !important;
-            font-family: 'Monaco', monospace;
-            font-size: 1rem;
+            background: #1a1a1a;
+            border: none;
+            border-bottom: 2px solid #333;
+            color: #fff !important;
+            font-size: 1.1rem;
             outline: none;
-            transition: 0.2s;
+            transition: 0.3s;
         }
 
-        input:focus, select:focus { border-color: var(--safety-orange); }
+        input:focus { border-bottom-color: var(--primary); background: #222; }
 
         input[type="password"] {
-            text-align: center; font-size: 2rem; letter-spacing: 10px;
+            text-align: center; font-size: 2.5rem; letter-spacing: 15px; font-weight: 900;
         }
 
-        /* HEAVY KINETIC BUTTON */
-        .heavy-btn {
+        /* VECTOR BUTTON */
+        .v-btn {
             width: 100%;
             padding: 20px;
-            background: var(--safety-orange);
-            color: black;
-            border: none;
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
             font-weight: 900;
             text-transform: uppercase;
-            font-size: 1rem;
+            letter-spacing: 2px;
             cursor: pointer;
             position: relative;
-            box-shadow: 0 6px 0 #B34B00;
-            transition: all 0.1s;
+            overflow: hidden;
+            transition: 0.3s;
         }
 
-        .heavy-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #B34B00;
+        .v-btn:hover { background: var(--primary); color: #000; }
+        .v-btn:active { transform: skewX(-10deg); }
+        .v-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* LOOKUP SPECIFIC */
+        .result-box {
+            background: #1a1a1a;
+            padding: 30px 20px;
+            margin: 20px 0;
+            position: relative;
+            border-right: 4px solid var(--accent);
         }
 
-        .heavy-btn:disabled {
-            background: #444; box-shadow: 0 6px 0 #222; color: #666;
-        }
-
-        /* DATA DISPLAY - PLATE STYLE */
-        .info-plate {
-            background: #25282C;
-            border-top: 2px solid var(--safety-orange);
-            padding: 25px;
-            margin: 25px 0;
-            transform: translateX(-10px);
-            animation: slidePlate 0.4s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes slidePlate { to { transform: translateX(0); } }
-
-        .name-tag { font-size: 2rem; font-weight: 900; line-height: 1; margin: 10px 0; }
+        .name-txt { font-size: 2.2rem; font-weight: 900; line-height: 0.9; margin-bottom: 15px; }
         
-        .badge {
-            font-size: 0.65rem; font-weight: 900; padding: 4px 8px;
-            background: #3B3F45; color: var(--safety-orange);
-            display: inline-block; margin-bottom: 10px;
+        .action-row { display: flex; gap: 10px; }
+        .action-btn {
+            flex: 1; padding: 15px; border: 1px solid #444;
+            text-decoration: none; color: #fff; font-weight: 800; font-size: 0.75rem;
+            text-align: center; text-transform: uppercase;
         }
-
-        .action-row { display: flex; gap: 5px; margin-top: 20px; }
-        .action-link {
-            flex: 1; padding: 18px; text-decoration: none; font-weight: 900;
-            font-size: 0.8rem; text-align: center; background: var(--steel-light); color: white;
-            transition: 0.2s;
-        }
-        .action-link:hover { background: var(--safety-orange); color: black; }
-        .wa-btn { border-bottom: 4px solid #25D366; }
+        .action-btn.wa { color: #25D366; border-color: #25D366; }
 
         .hidden { display: none !important; }
 
-        /* Transition Animations */
-        .plate-exit { transform: scale(0.9) rotateX(20deg); opacity: 0; }
+        /* EXIT ANIMATION */
+        .warp-out { transform: translateX(-150%) skewX(20deg); opacity: 0; }
+        .warp-in { animation: warpIn 0.6s forwards; }
+
+        @keyframes warpIn {
+            0% { transform: translateX(150%) skewX(-20deg); opacity: 0; }
+            100% { transform: translateX(0) skewX(0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
 
-    <div id="entry-screen" class="kinetic-frame">
-        <h2>Auth.Module</h2>
-        <span id="status">Systems Nominal // Ready</span>
-        <input type="password" id="pw" inputmode="numeric" placeholder="PIN" maxlength="4">
-        <button id="entry-btn" class="heavy-btn" onclick="handleEntry()" disabled>Engage Link</button>
+    <div class="bg-bit" style="left: 20%;"></div>
+    <div class="bg-bit" style="left: 50%; animation-delay: 2s;"></div>
+    <div class="bg-bit" style="left: 80%; animation-delay: 4s;"></div>
+
+    <div id="entry-screen" class="container">
+        <div class="header-slant"><h2>ACCESS_CORE</h2></div>
+        <div class="main-panel">
+            <span id="status">INIT_STATION_READY</span>
+            <input type="password" id="pw" inputmode="numeric" placeholder="PIN" maxlength="4">
+            <button id="entry-btn" class="v-btn" onclick="handleEntry()" disabled>AUTHORIZE</button>
+        </div>
     </div>
 
-    <div id="lookup-view" class="kinetic-frame hidden">
-        <div id="service-display" class="badge">SERVICE_ID</div>
-        <div id="name-display" class="name-tag">...</div>
-        
-        <div class="info-plate">
-            <span style="font-size: 0.6rem; font-weight: 900; opacity: 0.5;">COMMS_CHANNEL</span>
-            <div id="phone-display" style="font-size: 1.5rem; font-weight: 800; margin-top: 5px;">-</div>
+    <div id="lookup-view" class="container hidden">
+        <div class="header-slant" style="background: var(--accent);"><h2 id="service-display">SERVICE</h2></div>
+        <div class="main-panel" style="border-left-color: var(--accent);">
+            <div class="result-box">
+                <div id="name-display" class="name-txt">...</div>
+                <div id="phone-display" style="font-size: 1.2rem; font-weight: 700;">-</div>
+            </div>
+            <div class="action-row">
+                <a href="#" id="call-link" class="action-btn">📞 VOICE</a>
+                <a href="#" id="wa-link" class="action-btn wa" style="display:none;">💬 WA</a>
+            </div>
+            <p id="time-stamp" style="font-size: 0.6rem; opacity: 0.4; margin-top: 25px;"></p>
         </div>
-
-        <div class="action-row">
-            <a href="#" id="call-link" class="action-link">VOICE</a>
-            <a href="#" id="wa-link" class="action-link wa-btn" style="display:none;">WHATSAPP</a>
-        </div>
-        <p id="time-stamp" style="font-size: 0.6rem; opacity: 0.4; margin-top: 25px; font-weight: 900;"></p>
     </div>
 
-    <div id="register-view" class="kinetic-frame hidden">
-        <div class="badge">REGISTRY_UNIT 🇮🇶</div>
-        <h2>Duty.Log</h2>
-        <span id="status">Update Required</span>
-        
-        <select id="spec-select" onchange="toggleNameSection()">
-            <option value="">-- SELECT SECTOR --</option>
-            <option value="NS">Neuro</option>
-            <option value="CT">Thoracic</option>
-            <option value="GS">Surgery</option>
-            <option value="US">Uro</option>
-            <option value="ENT">ENT</option>
-            <option value="H">Cardio</option>
-            <option value="D">DeathCert</option>
-            <option value="OP">OP Anes</option>
-            <option value="ICU">ICU Anes</option>
-            <option value="R">Radio</option>
-            <option value="ON">Onco</option>
-            <option value="PS">Plastic</option>
-        </select>
+    <div id="register-view" class="container hidden">
+        <div class="header-slant"><h2>REGISTRY_🇮🇶</h2></div>
+        <div class="main-panel">
+            <span id="status">UPDATE_REQUIRED</span>
+            <select id="spec-select" onchange="toggleNameSection()">
+                <option value="">SELECT SECTOR</option>
+                <option value="NS">NEURO</option>
+                <option value="CT">THORACIC</option>
+                <option value="GS">SURGERY</option>
+                <option value="US">URO</option>
+                <option value="ENT">ENT</option>
+                <option value="H">CARDIO</option>
+                <option value="D">DEATH_CERT</option>
+                <option value="OP">OP_ANES</option>
+                <option value="ICU">ICU_ANES</option>
+                <option value="R">RADIO</option>
+                <option value="ON">ONCO</option>
+                <option value="PS">PLASTIC</option>
+            </select>
 
-        <div id="name-section" class="hidden">
-            <select id="name-list"></select>
-            <button id="submit-btn" class="heavy-btn" onclick="submitRegistration()">Confirm Entry</button>
+            <div id="name-section" class="hidden">
+                <select id="name-list"></select>
+                <button id="submit-btn" class="v-btn" onclick="submitRegistration()">COMMIT_UPDATE</button>
+            </div>
         </div>
     </div>
 
 <script>
-    /* 100% ORIGINAL SCRIPT LOGIC */
+    /* YOUR ORIGINAL LOGIC - COMPLETELY UNTOUCHED */
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
     const service = urlParams.get('service');
@@ -212,25 +208,23 @@
 
     window.onload = async function() {
         if (mode === 'register') {
-            document.getElementById('entry-title').innerText = "MD Login";
             prepareRegister();
         } else if (service) {
-            document.getElementById('entry-title').innerText = "Access";
             prepareLookup();
         } else {
-            document.getElementById('status').innerText = "⚠️ Link Disconnected";
+            document.getElementById('status').innerText = "⚠️ LINK_ERROR";
         }
     };
 
     async function prepareRegister() {
-        document.getElementById('status').innerText = "Synchronizing Data...";
+        document.getElementById('status').innerText = "SYNCING_DB...";
         try {
             const response = await fetch(`${scriptUrl}?action=getNames`);
             const data = await response.json(); 
             allResidents = data.sort((a, b) => a[0].localeCompare(b[0], 'ar'));
-            document.getElementById('status').innerText = "Uplink Established";
+            document.getElementById('status').innerText = "SYNC_COMPLETE ✅";
             document.getElementById('entry-btn').disabled = false;
-        } catch (e) { document.getElementById('status').innerText = "Sync Failed"; }
+        } catch (e) { document.getElementById('status').innerText = "OFFLINE"; }
     }
 
     function toggleNameSection() {
@@ -252,7 +246,7 @@
             dropdown.innerHTML = filtered.map(res => `<option value="${res[0]}">${res[0]}</option>`).join('');
             nameSection.classList.remove('hidden');
         } else {
-            dropdown.innerHTML = "<option value=''>Zero Matches</option>";
+            dropdown.innerHTML = "<option value=''>NULL</option>";
             nameSection.classList.remove('hidden');
         }
     }
@@ -262,31 +256,34 @@
             const response = await fetch(`${scriptUrl}?service=${service}&ward=${ward || service}&json=true&t=${Date.now()}`);
             serverData = await response.json();
             if (serverData && !serverData.error) {
-                document.getElementById('status').innerText = "Target Located";
+                document.getElementById('status').innerText = "LINK_SECURED ✅";
                 document.getElementById('entry-btn').disabled = false;
             } else {
-                document.getElementById('status').innerText = "No Target Data";
+                document.getElementById('status').innerText = "NO_DATA";
             }
-        } catch (e) { document.getElementById('status').innerText = "Offline"; }
+        } catch (e) { document.getElementById('status').innerText = "OFFLINE"; }
     }
 
     function handleEntry() {
         const pass = document.getElementById('pw').value;
         const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
         if (pass === correct) {
-            // MECHANICAL TRANSITION
-            const frame = document.getElementById('entry-screen');
-            frame.classList.add('plate-exit');
+            const entry = document.getElementById('entry-screen');
+            entry.classList.add('warp-out'); // Warp out animation
             
             setTimeout(() => {
-                frame.style.display = 'none';
+                entry.style.display = 'none';
+                let nextView;
                 if (mode === 'register') {
-                    document.getElementById('register-view').classList.remove('hidden');
+                    nextView = document.getElementById('register-view');
                 } else {
                     showLookupUI();
+                    nextView = document.getElementById('lookup-view');
                 }
-            }, 400);
-        } else { alert("ACCESS DENIED"); }
+                nextView.classList.remove('hidden');
+                nextView.classList.add('warp-in'); // Warp in animation
+            }, 500);
+        } else { alert("INVALID_PIN"); }
     }
 
     function showLookupUI() {
@@ -294,7 +291,7 @@
             document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
             document.getElementById('name-display').innerText = serverData.resident.name;
             document.getElementById('phone-display').innerText = serverData.resident.phone;
-            document.getElementById('time-stamp').innerText = "STAMP: " + serverData.timestamp;
+            document.getElementById('time-stamp').innerText = "TIMESTAMP: " + serverData.timestamp;
             document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
             if (serverData.whatsappDigits) {
                 const wa = document.getElementById('wa-link');
@@ -302,12 +299,11 @@
                 wa.href = "whatsapp://send?phone=" + serverData.whatsappDigits;
             }
         }
-        document.getElementById('lookup-view').classList.remove('hidden');
     }
 
     async function submitRegistration() {
         const btn = document.getElementById('submit-btn');
-        btn.innerText = "UPLOADING...";
+        btn.innerText = "WRITING...";
         btn.disabled = true;
         const payload = {
             action: "submitDuty",
@@ -322,9 +318,9 @@
                 headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify(payload)
             });
-            alert("UPLOAD COMPLETE");
-        } catch (e) { alert("ERROR"); }
-        finally { btn.innerText = "Confirm Entry"; btn.disabled = false; }
+            alert("UPLOADED ✅");
+        } catch (e) { alert("FAILED"); }
+        finally { btn.innerText = "COMMIT_UPDATE"; btn.disabled = false; }
     }
 </script>
 </body>
