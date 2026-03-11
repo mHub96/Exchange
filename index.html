@@ -2,78 +2,115 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MD Portal | Full System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MD Portal | Tactile</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; }
-        .animate-ripple { animation: ripple 0.8s ease-out; }
-        @keyframes ripple {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-            100% { box-shadow: 0 0 0 30px rgba(16, 185, 129, 0); }
+        :root {
+            --bg: #e0e5ec;
+            --shadow: #a3b1c6;
+            --highlight: #ffffff;
         }
-        /* Loading Shield to prevent "Ruined" looks during Tailwind load */
-        #shield { position: fixed; inset: 0; background: #0f172a; z-index: 100; transition: opacity 0.5s; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #4a5568; }
+
+        /* NEUMORPHIC OUTER SHADOW */
+        .neu-flat {
+            background: var(--bg);
+            box-shadow: 20px 20px 60px var(--shadow), -20px -20px 60px var(--highlight);
+        }
+
+        /* NEUMORPHIC INNER SHADOW (Recessed) */
+        .neu-inset {
+            background: var(--bg);
+            box-shadow: inset 6px 6px 12px var(--shadow), inset -6px -6px 12px var(--highlight);
+        }
+
+        /* TACTILE BUTTON PRESS */
+        .neu-btn {
+            background: var(--bg);
+            box-shadow: 8px 8px 16px var(--shadow), -8px -8px 16px var(--highlight);
+            transition: all 0.2s ease;
+        }
+        .neu-btn:active {
+            box-shadow: inset 4px 4px 8px var(--shadow), inset -4px -4px 8px var(--highlight);
+            transform: scale(0.98);
+        }
+
+        /* LOADING SHIELD */
+        #shield { position: fixed; inset: 0; background: var(--bg); z-index: 100; transition: opacity 0.5s; }
+        
+        /* THE "SUCCESS" STATE */
+        .btn-success {
+            background: #10b981 !important;
+            color: white !important;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4) !important;
+        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4 overflow-hidden">
 
     <div id="shield"></div>
 
-    <div class="fixed inset-0 z-[-1]">
-        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 blur-[120px] rounded-full"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-500/10 blur-[120px] rounded-full"></div>
-    </div>
-
-    <div id="main-card" class="w-full max-w-sm bg-slate-900/50 backdrop-blur-2xl border border-white/10 p-8 rounded-[2.5rem] shadow-2xl transition-all duration-500">
+    <div id="main-card" class="w-full max-w-sm neu-flat p-10 rounded-[3rem] transition-all duration-500">
         
         <div id="login-view">
-            <div class="text-center mb-8">
-                <h1 id="title-text" class="text-white text-2xl font-bold tracking-tight">System Access</h1>
-                <p id="status-text" class="text-slate-400 text-[0.6rem] mt-2 uppercase tracking-[0.2em]">Syncing Neural Link...</p>
+            <div class="text-center mb-10">
+                <h1 id="title-text" class="text-slate-800 text-2xl font-extrabold tracking-tight">Access Hub</h1>
+                <p id="status-text" class="text-slate-500 text-[0.6rem] mt-2 font-bold uppercase tracking-[0.3em]">Initializing 🇮🇶</p>
             </div>
-            <div class="space-y-6">
-                <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" 
-                    class="w-full bg-slate-950/50 border border-white/5 rounded-2xl py-5 text-center text-3xl tracking-[1.5rem] text-blue-400 focus:border-blue-500 outline-none shadow-inner">
+            
+            <div class="space-y-8">
+                <div class="neu-inset p-2 rounded-2xl">
+                    <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" 
+                        class="w-full bg-transparent py-4 text-center text-4xl tracking-[1rem] text-blue-600 outline-none">
+                </div>
+                
                 <button id="entry-btn" onclick="handleEntry()" 
-                    class="relative w-full py-5 bg-blue-600 text-white font-bold rounded-2xl transition-all shadow-lg active:scale-95 overflow-hidden">
+                    class="neu-btn w-full py-5 text-blue-600 font-extrabold rounded-2xl tracking-widest relative overflow-hidden">
                     <span id="btn-label">AUTHORIZE</span>
-                    <div id="spinner" class="hidden absolute inset-0 flex items-center justify-center bg-blue-600">
-                        <svg class="animate-spin h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    <div id="spinner" class="hidden absolute inset-0 flex items-center justify-center">
+                        <svg class="animate-spin h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                     </div>
                 </button>
             </div>
         </div>
 
-        <div id="register-view" class="hidden space-y-4">
-            <h2 class="text-white text-xl font-bold text-center mb-6">Daily Duty 🇮🇶</h2>
-            <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-slate-950 border border-white/10 rounded-xl p-4 text-white outline-none focus:border-blue-500">
-                <option value="">-- Sector --</option>
-                <option value="NS">Neuro</option><option value="CT">Thoracic</option>
-                <option value="GS">Surgery</option><option value="US">Uro</option>
-                <option value="ENT">ENT</option><option value="H">Cardio</option>
-                <option value="D">DeathCert</option><option value="OP">Anes (OP)</option>
-                <option value="ICU">Anes (ICU)</option><option value="R">Radio</option>
-                <option value="ON">Onco</option><option value="PS">Plastic</option>
-            </select>
-            <div id="name-section" class="hidden space-y-4">
-                <select id="name-list" class="w-full bg-slate-950 border border-white/10 rounded-xl p-4 text-white outline-none"></select>
-                <button id="submit-btn" onclick="submitRegistration()" class="w-full py-5 bg-blue-600 text-white font-bold rounded-2xl transition-all shadow-lg active:scale-95">
-                    COMMIT CHANGES
+        <div id="register-view" class="hidden space-y-6">
+            <h2 class="text-slate-800 text-xl font-extrabold text-center mb-4">Duty Update</h2>
+            <div class="neu-inset p-2 rounded-xl">
+                <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-transparent p-3 text-slate-700 font-bold outline-none">
+                    <option value="">-- Specialty --</option>
+                    <option value="NS">Neuro</option><option value="CT">Thoracic</option>
+                    <option value="GS">Surgery</option><option value="US">Uro</option>
+                    <option value="ENT">ENT</option><option value="H">Cardio</option>
+                    <option value="D">DeathCert</option><option value="OP">Anes (OP)</option>
+                    <option value="ICU">Anes (ICU)</option><option value="R">Radio</option>
+                    <option value="ON">Onco</option><option value="PS">Plastic</option>
+                </select>
+            </div>
+            <div id="name-section" class="hidden space-y-6">
+                <div class="neu-inset p-2 rounded-xl">
+                    <select id="name-list" class="w-full bg-transparent p-3 text-slate-700 outline-none font-medium"></select>
+                </div>
+                <button id="submit-btn" onclick="submitRegistration()" class="neu-btn w-full py-5 text-blue-600 font-extrabold rounded-2xl">
+                    COMMIT LOG
                 </button>
             </div>
         </div>
 
         <div id="lookup-view" class="hidden text-center">
-            <span id="service-display" class="bg-emerald-500/10 text-emerald-400 px-4 py-1 rounded-full text-[0.6rem] font-bold tracking-widest border border-emerald-500/20 uppercase">SERVICE</span>
-            <h2 id="name-display" class="text-white text-3xl font-bold mt-4">...</h2>
-            <p id="phone-display" class="text-slate-400 text-lg mt-1">-</p>
-            <div class="grid grid-cols-2 gap-3 mt-6">
-                <a href="#" id="call-link" class="p-4 bg-slate-800/50 rounded-3xl border border-white/5 text-white font-bold">CALL</a>
-                <a href="#" id="wa-link" class="hidden p-4 bg-emerald-500 text-white rounded-3xl font-bold">WHATSAPP</a>
+            <div class="neu-inset inline-block px-6 py-2 rounded-full mb-6">
+                <span id="service-display" class="text-blue-600 text-[0.65rem] font-extrabold tracking-widest uppercase">SERVICE</span>
             </div>
-            <div id="time-stamp" class="text-[0.6rem] text-slate-500 mt-8 font-mono"></div>
+            <h2 id="name-display" class="text-slate-800 text-3xl font-extrabold mb-2">...</h2>
+            <p id="phone-display" class="text-slate-500 font-bold text-lg mb-10">-</p>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <a href="#" id="call-link" class="neu-btn p-5 rounded-3xl text-blue-600 font-extrabold text-sm">VOICE</a>
+                <a href="#" id="wa-link" class="hidden p-5 bg-emerald-500 text-white rounded-3xl font-extrabold text-sm shadow-lg shadow-emerald-200">WHATSAPP</a>
+            </div>
+            <div id="time-stamp" class="text-[0.6rem] text-slate-400 mt-10 font-mono tracking-tighter uppercase"></div>
         </div>
     </div>
 
@@ -87,20 +124,18 @@
         let allResidents = [];
 
         window.onload = async function() {
-            // Remove shield after a tiny delay to allow Tailwind to paint
-            setTimeout(() => { document.getElementById('shield').style.opacity = '0'; 
+            setTimeout(() => { 
+                document.getElementById('shield').style.opacity = '0'; 
                 setTimeout(() => document.getElementById('shield').remove(), 500);
             }, 300);
 
             if (mode === 'register') {
-                document.getElementById('title-text').innerText = "Doctor Portal";
+                document.getElementById('title-text').innerText = "Doctor Hub";
                 const res = await fetch(`${scriptUrl}?action=getNames`);
                 allResidents = (await res.json()).sort((a,b) => a[0].localeCompare(b[0], 'ar'));
-                document.getElementById('status-text').innerText = "Database Linked";
             } else if (service) {
                 const res = await fetch(`${scriptUrl}?service=${service}&ward=${service}&json=true&t=${Date.now()}`);
                 serverData = await res.json();
-                document.getElementById('status-text').innerText = "Secure Link Active";
             }
         };
 
@@ -108,10 +143,7 @@
             const val = document.getElementById('spec-select').value;
             const list = document.getElementById('name-list');
             if (!val) { document.getElementById('name-section').classList.add('hidden'); return; }
-            
-            // Re-implementing the filter logic you needed
             let filtered = (val === "OP" || val === "ICU") ? allResidents.filter(r => r[1] === "A") : (val === "D" ? allResidents : allResidents.filter(r => r[1] === val));
-            
             list.innerHTML = filtered.map(r => `<option value="${r[0]}">${r[0]}</option>`).join('');
             document.getElementById('name-section').classList.remove('hidden');
         }
@@ -123,10 +155,13 @@
             
             if (pin === correct) {
                 document.getElementById('spinner').classList.remove('hidden');
+                document.getElementById('btn-label').classList.add('opacity-0');
+                
                 setTimeout(() => {
-                    btn.classList.replace('bg-blue-600', 'bg-emerald-500');
-                    btn.classList.add('animate-ripple');
-                    document.getElementById('btn-label').innerText = "GRANTED";
+                    btn.classList.add('btn-success');
+                    document.getElementById('spinner').classList.add('hidden');
+                    document.getElementById('btn-label').innerText = "SUCCESS";
+                    document.getElementById('btn-label').classList.remove('opacity-0');
                     
                     setTimeout(() => {
                         document.getElementById('login-view').classList.add('hidden');
@@ -146,11 +181,12 @@
             document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
             document.getElementById('name-display').innerText = serverData.resident.name;
             document.getElementById('phone-display').innerText = serverData.resident.phone;
-            document.getElementById('time-stamp').innerText = serverData.timestamp;
+            document.getElementById('time-stamp').innerText = "Sync Time: " + serverData.timestamp;
             document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
             if (serverData.whatsappDigits) {
-                document.getElementById('wa-link').classList.remove('hidden');
-                document.getElementById('wa-link').href = "whatsapp://send?phone=" + serverData.whatsappDigits;
+                const wa = document.getElementById('wa-link');
+                wa.classList.remove('hidden');
+                wa.href = "whatsapp://send?phone=" + serverData.whatsappDigits;
             }
         }
 
@@ -164,9 +200,8 @@
             };
             try {
                 await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                btn.classList.replace('bg-blue-600', 'bg-emerald-500');
-                btn.classList.add('animate-ripple');
-                btn.innerText = "SUCCESS ✅";
+                btn.classList.add('btn-success');
+                btn.innerText = "SAVED ✅";
             } catch (e) { alert("ERROR"); btn.innerText = "RETRY"; }
         }
     </script>
