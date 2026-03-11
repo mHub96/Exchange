@@ -25,53 +25,25 @@
             z-index: 10;
         }
 
-        .breathing {
-            animation: frameBreath 3s infinite ease-in-out;
-        }
-
+        .breathing { animation: frameBreath 3s infinite ease-in-out; }
         @keyframes frameBreath {
             0%, 100% { box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light), 0 0 0px transparent; }
             50% { box-shadow: 15px 15px 45px var(--shadow), -8px -8px 30px var(--light), 0 0 50px rgba(251, 191, 36, 0.7); }
         }
 
-        .tube-container {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            z-index: 20;
-            width: 100%;
-            height: 100%;
-        }
-
-        #tube-bg {
-            fill: none;
-            stroke: rgba(251, 191, 36, 0.03);
-            stroke-width: 4;
-        }
-
+        .tube-container { position: absolute; inset: 0; pointer-events: none; z-index: 20; width: 100%; height: 100%; }
+        #tube-bg { fill: none; stroke: rgba(251, 191, 36, 0.03); stroke-width: 4; }
         #tube-fluid {
-            fill: none;
-            stroke: var(--accent);
-            stroke-width: 5;
-            stroke-linecap: round;
+            fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round;
             filter: drop-shadow(0 0 12px var(--accent));
-            stroke-dasharray: 500 1200; 
-            stroke-dashoffset: 1700;
-            opacity: 0;
-            transition: opacity 0.4s;
+            stroke-dasharray: 500 1200; stroke-dashoffset: 1700;
+            opacity: 0; transition: opacity 0.4s;
         }
 
-        .loading-active #tube-fluid {
-            opacity: 1;
-            animation: seamlessFlow 2s linear infinite;
-        }
-
+        .loading-active #tube-fluid { opacity: 1; animation: seamlessFlow 2s linear infinite; }
         .loading-active.breathing { animation: none !important; }
 
-        @keyframes seamlessFlow {
-            from { stroke-dashoffset: 1700; }
-            to { stroke-dashoffset: 0; }
-        }
+        @keyframes seamlessFlow { from { stroke-dashoffset: 1700; } to { stroke-dashoffset: 0; } }
 
         .recessed-input {
             background: var(--bg);
@@ -84,13 +56,10 @@
             border-radius: 1.5rem;
             box-shadow: 10px 10px 20px var(--shadow), -5px -5px 15px var(--light);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            color: #64748b;
-            font-weight: 800;
+            color: #64748b; font-weight: 800;
         }
 
         .btn-register { background: var(--btn-grey); color: #e2e8f0; }
-
-        #call-link, #wa-link { font-size: 1.1rem; }
 
         .fetched-active {
             background: var(--accent) !important;
@@ -175,10 +144,16 @@
             </div>
             <h2 id="name-display" class="text-white text-3xl font-extrabold mb-1">...</h2>
             <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8">-</p>
-            <div class="flex flex-col gap-4 sm:flex-row sm:gap-3">
-                <a href="#" id="call-link" class="embossed-btn flex-1 py-6 px-2 uppercase tracking-tighter whitespace-nowrap">📞 SIM Call</a>
-                <a href="#" id="wa-link" class="hidden flex-1 py-6 px-2 bg-emerald-500/20 border border-emerald-500 text-emerald-500 rounded-[1.5rem] font-extrabold shadow-lg tracking-tighter whitespace-nowrap">💬 WhatsApp</a>
+            
+            <div class="flex flex-row gap-2 w-full">
+                <a href="#" id="call-link" class="embossed-btn flex-1 py-5 px-1 uppercase tracking-tighter whitespace-nowrap text-[0.75rem] sm:text-base">
+                    📞 SIM Call
+                </a>
+                <a href="#" id="wa-link" class="hidden flex-1 py-5 px-1 bg-emerald-500/20 border border-emerald-500 text-emerald-500 rounded-[1.5rem] font-extrabold shadow-lg tracking-tighter whitespace-nowrap text-[0.75rem] sm:text-base">
+                    💬 WhatsApp
+                </a>
             </div>
+            
             <p id="time-stamp" class="text-[0.55rem] text-slate-600 mt-10 font-mono tracking-widest uppercase"></p>
         </div>
     </div>
@@ -240,7 +215,7 @@
                 card.style.opacity = "1";
             }, 600);
         } else {
-            // SHAKE AND WARNING LOGIC
+            // CRIMSON SHAKE WARNING
             btn.classList.add('crimson-warning');
             btn.innerText = "INCORRECT PASSWORD!";
             pinField.value = "";
@@ -295,10 +270,7 @@
             btn.classList.add('fetched-active');
             btn.innerText = "SUCCESS ✅";
             
-            setTimeout(() => {
-                btn.classList.remove('fetched-active');
-                btn.innerText = "UPDATE";
-            }, 2000);
+            // Reverting logic removed as per request. Success state remains visible.
         } catch (e) { 
             card.classList.remove('loading-active');
             btn.innerText = "RETRY"; 
