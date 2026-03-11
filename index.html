@@ -2,23 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>On-Call Pro</title>
     <style>
         :root {
             --ios-blue: #007AFF;
             --ios-bg: #000000;
-            --card-bg: rgba(28, 28, 30, 0.7); /* iOS Dark Mode Card */
-            --glass: rgba(255, 255, 255, 0.1);
+            --card-bg: rgba(28, 28, 30, 0.8);
+            --secondary-bg: rgba(44, 44, 46, 0.6);
+            --separator: rgba(255, 255, 255, 0.1);
             --text-main: #FFFFFF;
-            --text-secondary: #8E8E93;
-            --input-bg: #2C2C2E; /* High contrast for dropdowns */
+            --text-sec: #8E8E93;
         }
 
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
         }
 
         body {
@@ -30,116 +30,116 @@
             background-image: radial-gradient(circle at top right, #1c1c1e, #000000);
         }
 
-        /* Abstract iOS Background Blobs */
-        .bg-blob {
-            position: fixed; width: 300px; height: 300px;
-            background: var(--ios-blue);
-            filter: blur(100px); opacity: 0.15; z-index: -1;
-            border-radius: 50%;
-        }
-
         .container {
-            width: 90%; max-width: 400px;
-            padding: 30px;
+            width: 92%; max-width: 380px;
+            padding: 34px 24px;
             background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 35px; /* iOS Squircle */
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border-radius: 38px;
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 25px 50px rgba(0,0,0,0.5);
             text-align: center;
         }
 
-        h2 { font-weight: 600; font-size: 1.5rem; letter-spacing: -0.5px; margin-bottom: 5px; }
-        #status { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 30px; }
+        h2 { font-weight: 700; font-size: 1.5rem; letter-spacing: -0.5px; margin: 10px 0 5px 0; }
+        #status, .subtitle { font-size: 0.9rem; color: var(--text-sec); margin-bottom: 25px; }
 
-        /* FIXED DROPDOWNS & INPUTS FOR CONTRAST */
-        select, input {
-            width: 100%;
-            padding: 18px;
-            margin-bottom: 15px;
-            background: var(--input-bg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            color: white !important;
-            font-size: 1rem;
-            appearance: none;
-            cursor: pointer;
+        /* Modern iOS Inset Grouped List */
+        .ios-group {
+            background: var(--secondary-bg);
+            border-radius: 14px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 0.5px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* Force PC Dropdown Options to be visible */
-        select option {
-            background-color: #1c1c1e;
-            color: white;
-            padding: 10px;
+        select, input {
+            width: 100%;
+            padding: 16px;
+            background: transparent;
+            border: none;
+            color: white !important;
+            font-size: 17px;
+            outline: none;
+            appearance: none;
+            display: block;
+        }
+
+        .divider {
+            height: 0.5px;
+            background: var(--separator);
+            margin-left: 16px;
         }
 
         input[type="password"] {
             text-align: center;
             font-size: 2rem;
-            letter-spacing: 15px;
+            letter-spacing: 12px;
+            font-weight: 600;
         }
 
         button {
             width: 100%;
-            padding: 18px;
+            padding: 16px;
             background: var(--ios-blue);
             color: white;
             border: none;
-            border-radius: 15px;
-            font-size: 1rem;
+            border-radius: 14px;
+            font-size: 17px;
             font-weight: 600;
-            margin-top: 10px;
             transition: all 0.2s ease;
         }
 
         button:active { transform: scale(0.97); opacity: 0.8; }
         button:disabled { background: #3a3a3c; color: #8e8e93; }
 
-        /* Lookup Result UI */
-        .info-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 20px;
-            margin: 20px 0;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .name-label { font-size: 2.2rem; font-weight: 700; color: white; margin: 10px 0; }
         .service-badge {
-            background: rgba(0, 122, 255, 0.2);
+            background: rgba(0, 122, 255, 0.15);
             color: var(--ios-blue);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
             display: inline-block;
+            margin-bottom: 8px;
         }
 
-        .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+        .info-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 20px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 0.5px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .name-label { font-size: 2.2rem; font-weight: 800; color: white; margin-bottom: 5px; }
+        
+        .btn-row { display: flex; gap: 12px; margin-top: 25px; }
         .action-btn {
             flex: 1;
             padding: 15px;
-            border-radius: 15px;
+            border-radius: 14px;
             text-decoration: none;
             font-weight: 600;
+            font-size: 16px;
             display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .call { background: white; color: black; }
-        .wa { background: #25D366; color: white; }
+        .wa { background: #34C759; color: white; }
 
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
-    <div class="bg-blob" style="top: -100px; right: -100px;"></div>
-    <div class="bg-blob" style="bottom: -100px; left: -100px; background: #5856D6;"></div>
-
     <div id="entry-screen" class="container">
-        <div style="font-size: 3rem; margin-bottom: 20px;">👤</div>
+        <div style="font-size: 3.5rem; margin-bottom: 10px;">👤</div>
         <h2 id="entry-title">Resident Portal</h2>
         <p id="status">Secure Link Verified</p>
-        <input type="password" id="pw" inputmode="numeric" placeholder="••••" maxlength="4">
+        <div class="ios-group">
+            <input type="password" id="pw" inputmode="numeric" placeholder="••••" maxlength="4" oninput="toggleEntryBtn()">
+        </div>
         <button id="entry-btn" onclick="handleEntry()" disabled>Continue</button>
     </div>
 
@@ -147,43 +147,46 @@
         <div id="service-display" class="service-badge">SERVICE</div>
         <div id="name-display" class="name-label">Loading...</div>
         <div class="info-card">
-            <div style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 5px;">DIRECT CONTACT</div>
+            <div style="color: var(--text-sec); font-size: 0.75rem; font-weight: 600; margin-bottom: 8px; letter-spacing: 0.5px;">MOBILE</div>
             <div id="phone-display" style="font-size: 1.4rem; font-weight: 600; letter-spacing: 1px;">-</div>
         </div>
         <div class="btn-row">
-            <a href="#" id="call-link" class="action-btn call"><span>📞</span> Call</a>
-            <a href="#" id="wa-link" class="action-btn wa" style="display:none;"><span>💬</span> WhatsApp</a>
+            <a href="#" id="call-link" class="action-btn call">Call</a>
+            <a href="#" id="wa-link" class="action-btn wa" style="display:none;">WhatsApp</a>
         </div>
-        <p id="time-stamp" style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 25px; opacity: 0.5;"></p>
+        <p id="time-stamp" style="font-size: 11px; color: var(--text-sec); margin-top: 20px; opacity: 0.6;"></p>
     </div>
 
     <div id="register-view" class="container hidden">
         <div class="service-badge">REGISTRY</div>
         <h2>Daily Duty</h2>
-        <p style="color: var(--text-secondary); margin-bottom: 20px;">Update today's on-call resident</p>
+        <p class="subtitle">Assign today's on-call resident 🇮🇶</p>
         
-        <select id="spec-select" onchange="toggleNameSection()">
-            <option value="">Choose Specialty</option>
-            <option value="NS">Neuro</option>
-            <option value="CT">Thoracic</option>
-            <option value="GS">Surgery</option>
-            <option value="US">Uro</option>
-            <option value="ENT">ENT</option>
-            <option value="H">Cardio</option>
-            <option value="D">DeathCertificates</option>
-            <option value="OP">OP Anesthesia</option>
-            <option value="ICU">ICU Anesthesia</option>
-            <option value="R">Radio</option>
-            <option value="ON">Onco</option>
-            <option value="PS">Plastic</option>
-        </select>
-
-        <div id="name-section" class="hidden">
-            <select id="name-list"></select>
-            <button id="submit-btn" onclick="submitRegistration()">Confirm Duty</button>
+        <div class="ios-group">
+            <select id="spec-select" onchange="toggleNameSection()">
+                <option value="">Choose Specialty</option>
+                <option value="NS">Neuro</option>
+                <option value="CT">Thoracic</option>
+                <option value="GS">Surgery</option>
+                <option value="US">Uro</option>
+                <option value="ENT">ENT</option>
+                <option value="H">Cardio</option>
+                <option value="D">DeathCertificates</option>
+                <option value="OP">OP Anesthesia</option>
+                <option value="ICU">ICU Anesthesia</option>
+                <option value="R">Radio</option>
+                <option value="ON">Onco</option>
+                <option value="PS">Plastic</option>
+            </select>
+            <div id="name-section" class="hidden">
+                <div class="divider"></div>
+                <select id="name-list"></select>
+            </div>
         </div>
-    </div>
 
+        <button id="submit-btn" onclick="submitRegistration()">Confirm Duty</button>
+    </div>
+    
 <script>
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
