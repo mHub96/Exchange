@@ -3,44 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MD Portal | Precision</title>
+    <title>MD Portal | Full System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; }
-        
-        /* Custom Keyframes for the "Ripple" completion effect */
+        .animate-ripple { animation: ripple 0.8s ease-out; }
         @keyframes ripple {
             0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
             100% { box-shadow: 0 0 0 30px rgba(16, 185, 129, 0); }
         }
-        .animate-ripple { animation: ripple 0.8s ease-out; }
-
-        /* Smoothly hiding views */
-        .view-transition { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* Loading Shield to prevent "Ruined" looks during Tailwind load */
+        #shield { position: fixed; inset: 0; background: #0f172a; z-index: 100; transition: opacity 0.5s; }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4 overflow-hidden">
+
+    <div id="shield"></div>
 
     <div class="fixed inset-0 z-[-1]">
         <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 blur-[120px] rounded-full"></div>
         <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-500/10 blur-[120px] rounded-full"></div>
     </div>
 
-    <div id="main-card" class="w-full max-w-sm bg-slate-900/50 backdrop-blur-2xl border border-white/10 p-8 rounded-[2.5rem] shadow-2xl view-transition">
+    <div id="main-card" class="w-full max-w-sm bg-slate-900/50 backdrop-blur-2xl border border-white/10 p-8 rounded-[2.5rem] shadow-2xl transition-all duration-500">
         
         <div id="login-view">
             <div class="text-center mb-8">
-                <h1 class="text-white text-2xl font-bold tracking-tight">System Access</h1>
-                <p id="status-text" class="text-slate-400 text-xs mt-2 uppercase tracking-widest">Awaiting Identity</p>
+                <h1 id="title-text" class="text-white text-2xl font-bold tracking-tight">System Access</h1>
+                <p id="status-text" class="text-slate-400 text-[0.6rem] mt-2 uppercase tracking-[0.2em]">Syncing Neural Link...</p>
             </div>
-
             <div class="space-y-6">
                 <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" 
-                    class="w-full bg-slate-950/50 border border-white/5 rounded-2xl py-5 text-center text-3xl tracking-[1.5rem] text-blue-400 focus:border-blue-500 outline-none transition-all shadow-inner">
-                
+                    class="w-full bg-slate-950/50 border border-white/5 rounded-2xl py-5 text-center text-3xl tracking-[1.5rem] text-blue-400 focus:border-blue-500 outline-none shadow-inner">
                 <button id="entry-btn" onclick="handleEntry()" 
-                    class="relative w-full py-5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all duration-300 shadow-[0_10px_20px_rgba(37,99,235,0.3)] active:scale-95 active:shadow-inner overflow-hidden">
+                    class="relative w-full py-5 bg-blue-600 text-white font-bold rounded-2xl transition-all shadow-lg active:scale-95 overflow-hidden">
                     <span id="btn-label">AUTHORIZE</span>
                     <div id="spinner" class="hidden absolute inset-0 flex items-center justify-center bg-blue-600">
                         <svg class="animate-spin h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
@@ -49,82 +46,99 @@
             </div>
         </div>
 
-        <div id="lookup-view" class="hidden opacity-0 scale-95 transition-all duration-500">
-            <div class="text-center mb-6">
-                <span id="service-display" class="bg-emerald-500/10 text-emerald-400 px-4 py-1 rounded-full text-[0.6rem] font-bold tracking-tighter uppercase border border-emerald-500/20">SERVICE</span>
-                <h2 id="name-display" class="text-white text-3xl font-bold mt-4 leading-tight">...</h2>
-                <p id="phone-display" class="text-slate-400 font-medium text-lg mt-1">-</p>
+        <div id="register-view" class="hidden space-y-4">
+            <h2 class="text-white text-xl font-bold text-center mb-6">Daily Duty 🇮🇶</h2>
+            <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-slate-950 border border-white/10 rounded-xl p-4 text-white outline-none focus:border-blue-500">
+                <option value="">-- Sector --</option>
+                <option value="NS">Neuro</option><option value="CT">Thoracic</option>
+                <option value="GS">Surgery</option><option value="US">Uro</option>
+                <option value="ENT">ENT</option><option value="H">Cardio</option>
+                <option value="D">DeathCert</option><option value="OP">Anes (OP)</option>
+                <option value="ICU">Anes (ICU)</option><option value="R">Radio</option>
+                <option value="ON">Onco</option><option value="PS">Plastic</option>
+            </select>
+            <div id="name-section" class="hidden space-y-4">
+                <select id="name-list" class="w-full bg-slate-950 border border-white/10 rounded-xl p-4 text-white outline-none"></select>
+                <button id="submit-btn" onclick="submitRegistration()" class="w-full py-5 bg-blue-600 text-white font-bold rounded-2xl transition-all shadow-lg active:scale-95">
+                    COMMIT CHANGES
+                </button>
             </div>
+        </div>
 
-            <div class="grid grid-cols-2 gap-3">
-                <a href="#" id="call-link" class="flex flex-col items-center justify-center p-4 bg-slate-800/50 rounded-3xl border border-white/5 hover:bg-slate-700 transition-colors">
-                    <span class="text-xs text-slate-400 mb-1">VOICE</span>
-                    <span class="text-white font-bold">CALL</span>
-                </a>
-                <a href="#" id="wa-link" class="hidden flex flex-col items-center justify-center p-4 bg-emerald-500 text-white rounded-3xl shadow-lg shadow-emerald-500/20">
-                    <span class="text-xs opacity-80 mb-1">SECURE</span>
-                    <span class="font-bold">WHATSAPP</span>
-                </a>
+        <div id="lookup-view" class="hidden text-center">
+            <span id="service-display" class="bg-emerald-500/10 text-emerald-400 px-4 py-1 rounded-full text-[0.6rem] font-bold tracking-widest border border-emerald-500/20 uppercase">SERVICE</span>
+            <h2 id="name-display" class="text-white text-3xl font-bold mt-4">...</h2>
+            <p id="phone-display" class="text-slate-400 text-lg mt-1">-</p>
+            <div class="grid grid-cols-2 gap-3 mt-6">
+                <a href="#" id="call-link" class="p-4 bg-slate-800/50 rounded-3xl border border-white/5 text-white font-bold">CALL</a>
+                <a href="#" id="wa-link" class="hidden p-4 bg-emerald-500 text-white rounded-3xl font-bold">WHATSAPP</a>
             </div>
-            <div id="time-stamp" class="text-[0.6rem] text-slate-500 text-center mt-8 font-mono"></div>
+            <div id="time-stamp" class="text-[0.6rem] text-slate-500 mt-8 font-mono"></div>
         </div>
     </div>
 
     <script>
-        // BACKEND LOGIC (Stayed Intact)
         const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode');
         const service = urlParams.get('service');
         const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
+
         let serverData = null;
+        let allResidents = [];
 
         window.onload = async function() {
-            if (service) {
-                try {
-                    const res = await fetch(`${scriptUrl}?service=${service}&ward=${service}&json=true&t=${Date.now()}`);
-                    serverData = await res.json();
-                    document.getElementById('status-text').innerText = "Terminal Linked 🇮🇶";
-                } catch (e) { document.getElementById('status-text').innerText = "Offline Mode"; }
+            // Remove shield after a tiny delay to allow Tailwind to paint
+            setTimeout(() => { document.getElementById('shield').style.opacity = '0'; 
+                setTimeout(() => document.getElementById('shield').remove(), 500);
+            }, 300);
+
+            if (mode === 'register') {
+                document.getElementById('title-text').innerText = "Doctor Portal";
+                const res = await fetch(`${scriptUrl}?action=getNames`);
+                allResidents = (await res.json()).sort((a,b) => a[0].localeCompare(b[0], 'ar'));
+                document.getElementById('status-text').innerText = "Database Linked";
+            } else if (service) {
+                const res = await fetch(`${scriptUrl}?service=${service}&ward=${service}&json=true&t=${Date.now()}`);
+                serverData = await res.json();
+                document.getElementById('status-text').innerText = "Secure Link Active";
             }
         };
+
+        function toggleNameSection() {
+            const val = document.getElementById('spec-select').value;
+            const list = document.getElementById('name-list');
+            if (!val) { document.getElementById('name-section').classList.add('hidden'); return; }
+            
+            // Re-implementing the filter logic you needed
+            let filtered = (val === "OP" || val === "ICU") ? allResidents.filter(r => r[1] === "A") : (val === "D" ? allResidents : allResidents.filter(r => r[1] === val));
+            
+            list.innerHTML = filtered.map(r => `<option value="${r[0]}">${r[0]}</option>`).join('');
+            document.getElementById('name-section').classList.remove('hidden');
+        }
 
         function handleEntry() {
             const pin = document.getElementById('pw').value;
             const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
             const btn = document.getElementById('entry-btn');
-            const spinner = document.getElementById('spinner');
-            const btnLabel = document.getElementById('btn-label');
-
+            
             if (pin === correct) {
-                // PHASE 1: LOADING
-                btnLabel.classList.add('opacity-0');
-                spinner.classList.remove('hidden');
-                
+                document.getElementById('spinner').classList.remove('hidden');
                 setTimeout(() => {
-                    // PHASE 2: COMPLETION ANIMATION
-                    spinner.classList.add('hidden');
-                    btn.classList.remove('bg-blue-600');
-                    btn.classList.add('bg-emerald-500', 'animate-ripple');
-                    btnLabel.innerText = "ACCESS GRANTED";
-                    btnLabel.classList.remove('opacity-0');
-
+                    btn.classList.replace('bg-blue-600', 'bg-emerald-500');
+                    btn.classList.add('animate-ripple');
+                    document.getElementById('btn-label').innerText = "GRANTED";
+                    
                     setTimeout(() => {
-                        // PHASE 3: VIEW TRANSITION
-                        const loginView = document.getElementById('login-view');
-                        const lookupView = document.getElementById('lookup-view');
-                        
-                        loginView.classList.add('opacity-0', 'scale-90');
-                        setTimeout(() => {
-                            loginView.classList.add('hidden');
+                        document.getElementById('login-view').classList.add('hidden');
+                        if (mode === 'register') {
+                            document.getElementById('register-view').classList.remove('hidden');
+                        } else {
                             showLookupUI();
-                            lookupView.classList.remove('hidden');
-                            setTimeout(() => lookupView.classList.remove('opacity-0', 'scale-95'), 50);
-                        }, 400);
+                            document.getElementById('lookup-view').classList.remove('hidden');
+                        }
                     }, 800);
-                }, 1200);
-            } else {
-                alert("Incorrect PIN");
-                document.getElementById('pw').value = "";
-            }
+                }, 1000);
+            } else { alert("ACCESS DENIED"); }
         }
 
         function showLookupUI() {
@@ -132,14 +146,28 @@
             document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
             document.getElementById('name-display').innerText = serverData.resident.name;
             document.getElementById('phone-display').innerText = serverData.resident.phone;
-            document.getElementById('time-stamp').innerText = "REF: " + serverData.timestamp;
+            document.getElementById('time-stamp').innerText = serverData.timestamp;
             document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
             if (serverData.whatsappDigits) {
-                const wa = document.getElementById('wa-link');
-                wa.classList.remove('hidden');
-                wa.classList.add('flex');
-                wa.href = "whatsapp://send?phone=" + serverData.whatsappDigits;
+                document.getElementById('wa-link').classList.remove('hidden');
+                document.getElementById('wa-link').href = "whatsapp://send?phone=" + serverData.whatsappDigits;
             }
+        }
+
+        async function submitRegistration() {
+            const btn = document.getElementById('submit-btn');
+            btn.innerText = "UPLOADING...";
+            const payload = {
+                action: "submitDuty",
+                specialty: document.getElementById('spec-select').value,
+                name: document.getElementById('name-list').value
+            };
+            try {
+                await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                btn.classList.replace('bg-blue-600', 'bg-emerald-500');
+                btn.classList.add('animate-ripple');
+                btn.innerText = "SUCCESS ✅";
+            } catch (e) { alert("ERROR"); btn.innerText = "RETRY"; }
         }
     </script>
 </body>
