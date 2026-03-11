@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>On-Call Pro | Plasma</title>
+    <style>
+        :root {
+            --plasma-1: #6366f1;
+            --plasma-2: #a855f7;
+            --plasma-3: #ec4899;
+            --btn-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0; padding: 0;
+            background: #09090b;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ANIMATED PLASMA BACKGROUND */
+        .plasma-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 0% 0%, var(--plasma-1) 0%, transparent 50%),
+                        radial-gradient(circle at 100% 100%, var(--plasma-2) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 50%, var(--plasma-3) 0%, transparent 50%);
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: shift 15s infinite alternate;
+            z-index: -1;
+        }
+
+        @keyframes shift {
+            0% { transform: scale(1) translate(0,0); }
+            100% { transform: scale(1.2) translate(5%, 5%); }
+        }
+
+        .glass-panel {
+            width: 90%; max-width: 400px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 40px 30px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: popIn 0.6s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        h2 { font-weight: 700; font-size: 1.8rem; margin: 0 0 10px 0; letter-spacing: -1px; }
+        #status { font-size: 0.8rem; opacity: 0.6; display: block; margin-bottom: 30px; }
+
+        /* INPUTS */
+        .input-group { position: relative; margin-bottom: 25px; }
+        select, input {
+            width: 100%; padding: 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: white !important; font-size: 1rem; outline: none;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--plasma-3); background: rgba(255,255,255,0.1); }
+        input[type="password"] { text-align: center; font-size: 2rem; letter-spacing: 15px; }
+
+        /* LIQUID LOADING BUTTON */
+        .liquid-btn {
+            width: 100%; padding: 20px;
+            background: var(--btn-bg);
+            border: none; border-radius: 15px;
+            color: white; font-weight: 700; text-transform: uppercase;
+            cursor: pointer; position: relative;
+            overflow: hidden; transition: 0.3s;
+        }
+
+        .liquid-btn .fill {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 0%;
+            background: linear-gradient(45deg, var(--plasma-1), var(--plasma-3));
+            transition: height 0.4s ease;
+            z-index: 1;
+        }
+
+        .liquid-btn span { position: relative; z-index: 2; }
+
+        .liquid-btn.loading .fill { height: 100%; }
+
+        /* LOOKUP SPECIFIC */
+        .data-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+            border-radius: 20px; padding: 25px; margin: 20px 0;
+            text-align: center;
+        }
+
+        .action-flex { display: flex; gap: 10px; margin-top: 25px; }
+        .action-pill {
+            flex: 1; padding: 15px; border-radius: 50px;
+            text-decoration: none; text-align: center; font-weight: 700;
+            background: white; color: black; transition: 0.3s;
+        }
+        .action-pill.wa { background: #25D366; color: white; }
+
+        .hidden { display: none !important; }
+
+        /* PAGE TRANSITION */
+        .slide-out { transform: translateY(-30px); opacity: 0; transition: 0.4s; }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="plasma-bg"></div>
+
+    <div id="entry-screen" class="glass-panel">
+        <h2>Nexus_Core</h2>
+        <span id="status">Waiting for authentication...</span>
+        <div class="input-group">
+            <input type="password" id="pw" inputmode="numeric" placeholder="PIN" maxlength="4">
+        </div>
+        <button id="entry-btn" class="liquid-btn" onclick="handleEntry()">
+            <div class="fill" id="btn-fill"></div>
+            <span>Initialize</span>
+        </button>
+    </div>
+
+    <div id="lookup-view" class="glass-panel hidden">
+        <span id="service-display" style="text-transform: uppercase; font-weight: 700; color: var(--plasma-3);">SERVICE</span>
+        <div class="data-card">
+            <div id="name-display" style="font-size: 2rem; font-weight: 700;">...</div>
+            <div id="phone-display" style="font-size: 1.1rem; opacity: 0.7; margin-top: 5px;">-</div>
+        </div>
+        <div class="action-flex">
+            <a href="#" id="call-link" class="action-pill">Call Unit</a>
+            <a href="#" id="wa-link" class="action-pill wa" style="display:none;">WhatsApp</a>
+        </div>
+        <p id="time-stamp" style="font-size: 0.6rem; opacity: 0.4; margin-top: 25px; text-align: center;"></p>
+    </div>
+
+    <div id="register-view" class="glass-panel hidden">
+        <h2>Update Log 🇮🇶</h2>
+        <div class="input-group">
+            <select id="spec-select" onchange="toggleNameSection()">
+                <option value="">Choose Specialty</option>
+                <option value="NS">Neuro</option>
+                <option value="CT">Thoracic</option>
+                <option value="GS">Surgery</option>
+                <option value="US">Uro</option>
+                <option value="ENT">ENT</option>
+                <option value="H">Cardio</option>
+                <option value="D">DeathCert</option>
+                <option value="OP">Anes (OP)</option>
+                <option value="ICU">Anes (ICU)</option>
+                <option value="R">Radio</option>
+                <option value="ON">Onco</option>
+                <option value="PS">Plastic</option>
+            </select>
+        </div>
+        <div id="name-section" class="hidden">
+            <div class="input-group">
+                <select id="name-list"></select>
+            </div>
+            <button id="submit-btn" class="liquid-btn" onclick="submitRegistration()">
+                <div class="fill" id="reg-fill"></div>
+                <span>Sync Record</span>
+            </button>
+        </div>
+    </div>
+
+<script>
+    /* ORIGINAL LOGIC RETAINED */
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+    const service = urlParams.get('service');
+    const ward = urlParams.get('ward');
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
+
+    let serverData = null;
+    let allResidents = [];
+
+    window.onload = async function() {
+        if (mode === 'register') {
+            const res = await fetch(`${scriptUrl}?action=getNames`);
+            allResidents = (await res.json()).sort((a,b) => a[0].localeCompare(b[0], 'ar'));
+            document.getElementById('status').innerText = "Registry Sync Complete";
+        } else if (service) {
+            const res = await fetch(`${scriptUrl}?service=${service}&ward=${ward || service}&json=true&t=${Date.now()}`);
+            serverData = await res.json();
+            document.getElementById('status').innerText = "Uplink Established";
+        }
+    };
+
+    function toggleNameSection() {
+        const val = document.getElementById('spec-select').value;
+        const list = document.getElementById('name-list');
+        if (!val) { document.getElementById('name-section').classList.add('hidden'); return; }
+        
+        let filtered = (val === "OP" || val === "ICU") ? allResidents.filter(r => r[1] === "A") : (val === "D" ? allResidents : allResidents.filter(r => r[1] === val));
+        
+        list.innerHTML = filtered.map(r => `<option value="${r[0]}">${r[0]}</option>`).join('');
+        document.getElementById('name-section').classList.remove('hidden');
+    }
+
+    function handleEntry() {
+        const pin = document.getElementById('pw').value;
+        const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
+        
+        if (pin === correct) {
+            const btn = document.getElementById('entry-btn');
+            btn.classList.add('loading'); // Trigger liquid fill
+            
+            setTimeout(() => {
+                document.getElementById('entry-screen').classList.add('slide-out');
+                setTimeout(() => {
+                    document.getElementById('entry-screen').style.display = 'none';
+                    if (mode === 'register') {
+                        document.getElementById('register-view').classList.remove('hidden');
+                    } else {
+                        showLookupUI();
+                        document.getElementById('lookup-view').classList.remove('hidden');
+                    }
+                }, 400);
+            }, 500);
+        } else { alert("ACCESS DENIED"); }
+    }
+
+    function showLookupUI() {
+        if (!serverData) return;
+        document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
+        document.getElementById('name-display').innerText = serverData.resident.name;
+        document.getElementById('phone-display').innerText = serverData.resident.phone;
+        document.getElementById('time-stamp').innerText = "Last Sync: " + serverData.timestamp;
+        document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
+        if (serverData.whatsappDigits) {
+            document.getElementById('wa-link').style.display = 'block';
+            document.getElementById('wa-link').href = "whatsapp://send?phone=" + serverData.whatsappDigits;
+        }
+    }
+
+    async function submitRegistration() {
+        const btn = document.getElementById('submit-btn');
+        btn.classList.add('loading');
+        const payload = {
+            action: "submitDuty",
+            specialty: document.getElementById('spec-select').value,
+            name: document.getElementById('name-list').value
+        };
+        try {
+            await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            alert("SUCCESS ✅");
+            btn.classList.remove('loading');
+        } catch (e) { alert("ERROR"); btn.classList.remove('loading'); }
+    }
+</script>
+</body>
+</html>
