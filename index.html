@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>On-Call Portal</title>
+    <title>MD Portal | Carbon Gold</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
@@ -139,8 +139,8 @@
         </div>
 
         <div id="lookup-view" class="hidden text-center">
-            <div class="recessed-input inline-block px-8 py-2 mb-6">
-                <span id="service-display" class="text-amber-500 text-[0.8rem] font-black tracking-widest uppercase">SERVICE</span>
+            <div class="recessed-input inline-block px-10 py-3 mb-6">
+                <span id="service-display" class="text-amber-500 text-[0.8rem] font-black tracking-[0.2em] uppercase">SERVICE</span>
             </div>
             <h2 id="name-display" class="text-white text-3xl font-extrabold mb-1">...</h2>
             <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8">-</p>
@@ -215,9 +215,8 @@
                 card.style.opacity = "1";
             }, 600);
         } else {
-            // CRIMSON SHAKE WARNING
             btn.classList.add('crimson-warning');
-            btn.innerText = "INCORRECT PASSWORD!";
+            btn.innerText = "INCORRECT PIN!";
             pinField.value = "";
             setTimeout(() => {
                 btn.classList.remove('crimson-warning');
@@ -270,10 +269,15 @@
             btn.classList.add('fetched-active');
             btn.innerText = "SUCCESS ✅";
             
-            // Reverting logic removed as per request. Success state remains visible.
+            // Revert button appearance only after 2 seconds
+            setTimeout(() => {
+                btn.classList.remove('fetched-active');
+                btn.innerText = "UPDATE";
+            }, 2000);
         } catch (e) { 
             card.classList.remove('loading-active');
             btn.innerText = "RETRY"; 
+            setTimeout(() => { btn.innerText = "UPDATE"; }, 2000);
         }
     }
 </script>
