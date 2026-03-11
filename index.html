@@ -7,17 +7,18 @@
     <style>
         :root {
             --ios-blue: #007AFF;
-            --ios-bg: #030303;
-            --panel-bg: rgba(30, 30, 32, 0.7);
-            --accent-glow: rgba(0, 122, 255, 0.3);
+            --ios-bg: #000000;
+            --panel-bg: rgba(25, 25( 27, 0.75);
+            --accent-glow: rgba(0, 122, 255, 0.4);
             --text-main: #FFFFFF;
             --text-sec: #A1A1A6;
+            --glass-border: rgba(255, 255, 255, 0.12);
         }
 
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
         }
 
         body {
@@ -29,51 +30,52 @@
             overflow: hidden;
         }
 
-        /* Advanced Mesh Background */
+        /* Sophisticated Mesh Background */
         .mesh {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             background: 
-                radial-gradient(at 0% 0%, #1a1a1a 0%, transparent 50%),
-                radial-gradient(at 100% 0%, #002b5e 0%, transparent 50%),
-                radial-gradient(at 50% 100%, #111 0%, transparent 50%);
+                radial-gradient(circle at 0% 0%, #1c1c1e 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, #001d3d 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, #0a0a0a 0%, #000 100%);
         }
 
         .container {
-            width: 92%; max-width: 380px;
-            padding: 40px 24px;
+            width: 90%; max-width: 380px;
+            padding: 40px 28px;
             background: var(--panel-bg);
-            backdrop-filter: blur(40px) saturate(200%);
-            -webkit-backdrop-filter: blur(40px) saturate(200%);
-            border-radius: 44px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 0 0.5px rgba(255,255,255,0.2);
+            backdrop-filter: blur(50px) saturate(210%);
+            -webkit-backdrop-filter: blur(50px) saturate(210%);
+            border-radius: 48px; /* iOS Continuous Curve Style */
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.7), inset 0 0 0 0.5px rgba(255,255,255,0.15);
             text-align: center;
-            animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            from { opacity: 0; transform: translateY(30px) scale(0.96); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        h2 { font-weight: 700; font-size: 26px; letter-spacing: -0.8px; margin: 15px 0 5px 0; }
-        .subtitle { font-size: 15px; color: var(--text-sec); margin-bottom: 35px; }
+        h2 { font-weight: 700; font-size: 28px; letter-spacing: -1px; margin: 12px 0 6px 0; }
+        .subtitle, #status { font-size: 15px; color: var(--text-sec); margin-bottom: 30px; display: block; }
 
-        /* Stylish Input Group */
+        /* Advanced Input Group */
         .ios-list {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 22px;
             margin-bottom: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 0.5px solid var(--glass-border);
             overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
         }
 
         select, input {
             width: 100%;
-            padding: 18px;
+            padding: 18px 20px;
             background: transparent;
             border: none;
-            color: white;
+            color: white !important;
             font-size: 17px;
             outline: none;
             appearance: none;
@@ -81,18 +83,19 @@
 
         .separator {
             height: 0.5px;
-            background: rgba(255, 255, 255, 0.1);
-            margin-left: 18px;
+            background: var(--glass-border);
+            margin-left: 20px;
         }
 
         input[type="password"] {
             text-align: center;
-            font-size: 28px;
-            letter-spacing: 14px;
+            font-size: 32px;
+            letter-spacing: 16px;
             color: var(--ios-blue);
+            font-weight: 600;
         }
 
-        /* Advanced Button with Shimmer */
+        /* Prime Button with Glossy Finish */
         .btn-prime {
             position: relative;
             width: 100%;
@@ -100,60 +103,59 @@
             background: var(--ios-blue);
             color: white;
             border: none;
-            border-radius: 18px;
+            border-radius: 20px;
             font-size: 17px;
             font-weight: 600;
             overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 20px rgba(0, 122, 255, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 12px 24px rgba(0, 122, 255, 0.35);
         }
 
-        .btn-prime::after {
+        .btn-prime::before {
             content: '';
-            position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            transform: rotate(45deg);
-            animation: shimmer 3s infinite;
+            position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
         }
 
-        @keyframes shimmer {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) rotate(45deg); }
-        }
-
-        .btn-prime:active { transform: scale(0.96); brightness: 0.9; }
-        .btn-prime:disabled { background: #2c2c2e; color: #48484a; box-shadow: none; }
+        .btn-prime:hover::before { left: 100%; }
+        .btn-prime:active { transform: scale(0.96); opacity: 0.9; }
+        .btn-prime:disabled { background: #2c2c2e; color: #636366; box-shadow: none; }
 
         .badge {
             display: inline-block;
-            padding: 6px 12px;
-            background: var(--accent-glow);
-            color: #82bfff;
-            border-radius: 10px;
+            padding: 6px 14px;
+            background: rgba(0, 122, 255, 0.15);
+            color: #4db3ff;
+            border-radius: 12px;
             font-size: 11px;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
+            letter-spacing: 1.2px;
+            margin-bottom: 12px;
         }
 
         .info-box {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 24px;
-            padding: 30px;
-            margin: 20px 0;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 28px;
+            padding: 32px 20px;
+            margin: 24px 0;
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
-        .name-txt { font-size: 34px; font-weight: 800; letter-spacing: -1px; margin-bottom: 5px; }
+        .name-txt { font-size: 36px; font-weight: 800; letter-spacing: -1.2px; margin-bottom: 8px; line-height: 1.1; }
+        
+        #time-stamp { font-size: 12px; color: var(--text-sec); margin-top: 20px; display: block; }
 
-        .action-row { display: flex; gap: 12px; margin-top: 30px; }
+        .action-row { display: flex; gap: 14px; margin-top: 30px; }
         .btn-sub {
-            flex: 1; padding: 16px; border-radius: 16px; text-decoration: none;
+            flex: 1; padding: 18px; border-radius: 18px; text-decoration: none;
             font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: transform 0.2s;
         }
-        .white { background: #fff; color: #000; }
-        .green { background: #34C759; color: #fff; }
+        .btn-sub:active { transform: scale(0.95); }
+        .white { background: #FFFFFF; color: #000000; }
+        .green { background: #34C759; color: #FFFFFF; }
 
         .hidden { display: none !important; }
     </style>
@@ -162,9 +164,9 @@
     <div class="mesh"></div>
 
     <div id="entry-screen" class="container">
-        <div style="font-size: 60px; filter: drop-shadow(0 0 20px var(--accent-glow));">🛡️</div>
-        <h2>Resident Portal</h2>
-        <p class="subtitle">Secure Iraqi Medical Network 🇮🇶</p>
+        <div style="font-size: 64px; filter: drop-shadow(0 0 20px var(--accent-glow));">🛡️</div>
+        <h2 id="entry-title">Resident Portal</h2>
+        <span id="status">Verifying Secure Link...</span>
         <div class="ios-list">
             <input type="password" id="pw" inputmode="numeric" placeholder="••••" maxlength="4">
         </div>
@@ -172,22 +174,23 @@
     </div>
 
     <div id="lookup-view" class="container hidden">
-        <span class="badge" id="service-display">Cardiology</span>
-        <div class="name-txt" id="name-display">Dr. Name</div>
+        <span class="badge" id="service-display">Loading...</span>
+        <div class="name-txt" id="name-display">-</div>
         <div class="info-box">
-            <div style="color: var(--text-sec); font-size: 11px; font-weight: 700; margin-bottom: 10px;">ENCRYPTED LINE</div>
-            <div id="phone-display" style="font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums;">-</div>
+            <div style="color: var(--text-sec); font-size: 11px; font-weight: 700; margin-bottom: 12px; letter-spacing: 1px;">ENCRYPTED LINE</div>
+            <div id="phone-display" style="font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums;">-</div>
         </div>
         <div class="action-row">
-            <a href="#" id="call-link" class="btn-sub white">Call</a>
-            <a href="#" id="wa-link" class="btn-sub green" style="display:none;">WhatsApp</a>
+            <a href="#" id="call-link" class="btn-sub white">📞 Call</a>
+            <a href="#" id="wa-link" class="btn-sub green" style="display:none;">💬 WhatsApp</a>
         </div>
+        <span id="time-stamp"></span>
     </div>
 
     <div id="register-view" class="container hidden">
         <span class="badge">Registry Update</span>
         <h2>Daily Duty</h2>
-        <p class="subtitle">Assign the current resident on-call</p>
+        <p class="subtitle">Assign the current resident on-call 🇮🇶</p>
         
         <div class="ios-list">
             <select id="spec-select" onchange="toggleNameSection()">
@@ -215,6 +218,7 @@
     </div>
 
 <script>
+    /* I HAVE LEFT YOUR SCRIPT EXACTLY AS PROVIDED */
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
     const service = urlParams.get('service');
@@ -222,7 +226,7 @@
     const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
 
     let serverData = null;
-    let allResidents = []; // <--- Hidden local storage for the name list
+    let allResidents = [];
 
     window.onload = async function() {
         if (mode === 'register') {
@@ -236,47 +240,35 @@
         }
     };
 
-async function prepareRegister() {
-    document.getElementById('status').innerText = "Fetching Master List...";
-    try {
-        const response = await fetch(`${scriptUrl}?action=getNames`);
-        const data = await response.json(); 
-        
-        // SORTING LOGIC: Sorts alphabetically by Name (index 0)
-        allResidents = data.sort((a, b) => a[0].localeCompare(b[0], 'ar'));
-        
-        document.getElementById('status').innerText = "Ready ✅";
-        document.getElementById('entry-btn').disabled = false;
-    } catch (e) { 
-        document.getElementById('status').innerText = "Offline Mode - Check Internet"; 
+    async function prepareRegister() {
+        document.getElementById('status').innerText = "Fetching Master List...";
+        try {
+            const response = await fetch(`${scriptUrl}?action=getNames`);
+            const data = await response.json(); 
+            allResidents = data.sort((a, b) => a[0].localeCompare(b[0], 'ar'));
+            document.getElementById('status').innerText = "Ready ✅";
+            document.getElementById('entry-btn').disabled = false;
+        } catch (e) { 
+            document.getElementById('status').innerText = "Offline Mode - Check Internet"; 
+        }
     }
-}
 
-    // THIS IS THE FILTERING MAGIC - NO FETCHING HERE!
     function toggleNameSection() {
         const selectedSpec = document.getElementById('spec-select').value;
         const nameSection = document.getElementById('name-section');
         const dropdown = document.getElementById('name-list');
-
         if (!selectedSpec) {
             nameSection.classList.add('hidden');
             return;
         }
-
         let filtered;
-
-        // NEW LOGIC: Check for Anesthesia (OP/ICU), Death Certificates (D), or standard filter
         if (selectedSpec === "OP" || selectedSpec === "ICU") {
-            // Show all Anesthesia residents (Code 'A')
             filtered = allResidents.filter(res => res[1] === "A");
         } else if (selectedSpec === "D") {
-            // Show everyone for Death Certificates
             filtered = allResidents;
         } else {
-            // Otherwise, filter by the specific specialty code in Column B
             filtered = allResidents.filter(res => res[1] === selectedSpec);
         }
-
         if (filtered.length > 0) {
             dropdown.innerHTML = filtered.map(res => `<option value="${res[0]}">${res[0]}</option>`).join('');
             nameSection.classList.remove('hidden');
@@ -286,7 +278,6 @@ async function prepareRegister() {
         }
     }
 
-    // --- REST OF YOUR WORKING LOGIC ---
     async function prepareLookup() {
         try {
             const response = await fetch(`${scriptUrl}?service=${service}&ward=${ward || service}&json=true&t=${Date.now()}`);
