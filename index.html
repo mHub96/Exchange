@@ -3,132 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MD Portal | Tactile Fix</title>
+    <title>MD Portal | Cyber-Steel</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #d1d9e6; margin: 0; }
-        .stage-3d { perspective: 1200px; }
-
-        /* THE CONSOLE PLATE */
-        .console-3d {
-            transform-style: preserve-3d;
-            transform: rotateX(12deg);
-            background: #e0e6ed;
-            border-radius: 2rem;
-            box-shadow: 
-                20px 20px 60px #bebebe,
-                -20px -20px 60px #ffffff,
-                inset 2px 2px 5px rgba(255,255,255,0.5);
-            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        :root {
+            --steel-dark: #0f1218;
+            --steel-light: #1e2530;
+            --neon-blue: #00f2ff;
+            --neon-green: #00ff88;
         }
 
-        /* 3D BUTTON CONSTRUCTION */
-        .btn-3d-wrap {
-            position: relative;
-            width: 100%;
-            height: 64px;
-            transform-style: preserve-3d;
-            cursor: pointer;
-            margin-top: 20px;
+        body { 
+            font-family: 'Space Grotesk', sans-serif; 
+            background: var(--steel-dark);
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 30px 30px;
+            margin: 0; overflow: hidden;
         }
 
-        .btn-3d-face {
+        .stage-3d { perspective: 1000px; }
+
+        /* THE METALLIC PANEL */
+        .panel-3d {
+            transform-style: preserve-3d;
+            transform: rotateX(15deg);
+            background: var(--steel-light);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+            transition: all 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        /* HEAVY SLAB BUTTON */
+        .slab-wrap {
+            position: relative; height: 60px;
+            transform-style: preserve-3d;
+            margin-top: 25px;
+        }
+
+        .slab-face {
             position: absolute; inset: 0;
-            background: #2563eb;
-            color: white; font-weight: 800;
+            background: linear-gradient(145deg, #232a36, #1a1f29);
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            color: var(--neon-blue);
+            font-weight: 700; font-size: 0.9rem; letter-spacing: 2px;
             display: flex; align-items: center; justify-content: center;
-            border-radius: 1rem;
-            transform: translateZ(12px); /* Height of button */
-            transition: transform 0.1s, background 0.3s;
-            pointer-events: none; /* Let the shield handle clicks */
-            z-index: 2;
+            transform: translateZ(15px);
+            transition: all 0.1s, color 0.4s, border 0.4s, box-shadow 0.4s;
+            pointer-events: none;
         }
 
-        .btn-3d-side {
-            position: absolute; bottom: 0; left: 5%; width: 90%; height: 15px;
-            background: #1e3a8a;
-            transform-origin: top; transform: rotateX(-90deg) translateZ(-52px);
-            border-radius: 0 0 1rem 1rem;
-            z-index: 1;
+        .slab-side {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 15px;
+            background: #0a0d12;
+            transform-origin: top; transform: rotateX(-90deg) translateZ(-45px);
         }
 
-        /* INVISIBLE CLICK SHIELD: This ensures the button works every time */
-        .click-shield {
-            position: absolute; inset: -5px;
-            z-index: 10;
-            cursor: pointer;
+        .click-shield { position: absolute; inset: -10px; z-index: 10; cursor: pointer; }
+
+        /* Pressed State */
+        .slab-wrap:active .slab-face { transform: translateZ(5px); }
+        
+        /* Success Glow */
+        .slab-wrap.success .slab-face {
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
         }
 
-        /* Press Animation */
-        .btn-3d-wrap:active .btn-3d-face { transform: translateZ(4px); background: #1d4ed8; }
-        .btn-3d-wrap:active .btn-3d-side { height: 7px; }
-
-        .recessed {
-            background: #d1d9e6;
-            box-shadow: inset 6px 6px 12px #b8c1cc, inset -6px -6px 12px #ffffff;
-            border-radius: 1rem;
+        .input-recess {
+            background: #0a0d12;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.5);
+            border-radius: 4px;
         }
 
         .hidden { display: none !important; }
+        .slam-out { transform: translateZ(-200px) rotateX(90deg); opacity: 0; }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4 stage-3d">
 
-    <div id="main-card" class="console-3d w-full max-w-sm p-8 transition-all">
+    <div id="main-card" class="panel-3d w-full max-w-sm p-10">
         
         <div id="login-view">
-            <div class="text-center mb-8">
-                <h1 class="text-slate-800 text-2xl font-bold">Secure Access</h1>
-                <p id="status-text" class="text-slate-500 text-[0.6rem] uppercase tracking-widest mt-1">Ready for Identity</p>
+            <div class="mb-10 border-l-4 border-cyan-500 pl-4">
+                <h1 class="text-white text-xl font-bold uppercase tracking-tighter">Medical_Core_v3</h1>
+                <p id="status-text" class="text-cyan-500/60 text-[0.6rem] font-bold uppercase mt-1">Status: System_Idle</p>
             </div>
             
-            <div class="recessed p-2 mb-6">
-                <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" 
-                    class="w-full bg-transparent p-4 text-center text-3xl tracking-[1rem] text-blue-600 outline-none">
+            <div class="input-recess p-2 mb-8">
+                <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="----" 
+                    class="w-full bg-transparent p-4 text-center text-4xl tracking-[1.5rem] text-white outline-none font-bold">
             </div>
             
-            <div class="btn-3d-wrap" id="entry-trigger">
+            <div class="slab-wrap" id="login-btn-wrap">
                 <div class="click-shield" onclick="handleEntry()"></div>
-                <div class="btn-3d-face" id="btn-label">AUTHORIZE</div>
-                <div class="btn-3d-side"></div>
+                <div class="slab-face" id="btn-label">INITIATE_AUTH</div>
+                <div class="slab-side"></div>
             </div>
         </div>
 
         <div id="register-view" class="hidden">
-            <h2 class="text-slate-800 text-xl font-bold text-center mb-6">Update Duty 🇮🇶</h2>
-            <div class="recessed p-2 mb-4">
-                <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-transparent p-3 text-slate-700 outline-none">
-                    <option value="">-- Sector --</option>
-                    <option value="NS">Neuro</option><option value="CT">Thoracic</option>
-                    <option value="GS">Surgery</option><option value="US">Uro</option>
-                    <option value="ENT">ENT</option><option value="H">Cardio</option>
-                    <option value="D">DeathCert</option><option value="OP">Anes (OP)</option>
-                    <option value="ICU">Anes (ICU)</option><option value="R">Radio</option>
-                    <option value="ON">Onco</option><option value="PS">Plastic</option>
+            <h2 class="text-white text-lg font-bold mb-6 flex items-center gap-2">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                DUTY_UPDATE_LOG 🇮🇶
+            </h2>
+            <div class="input-recess mb-4">
+                <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-transparent p-4 text-white outline-none appearance-none">
+                    <option class="bg-slate-900" value="">[ SELECT_SECTOR ]</option>
+                    <option class="bg-slate-900" value="NS">Neuro</option><option class="bg-slate-900" value="CT">Thoracic</option>
+                    <option class="bg-slate-900" value="GS">Surgery</option><option class="bg-slate-900" value="US">Uro</option>
+                    <option class="bg-slate-900" value="ENT">ENT</option><option class="bg-slate-900" value="H">Cardio</option>
+                    <option class="bg-slate-900" value="D">DeathCert</option><option class="bg-slate-900" value="OP">Anes (OP)</option>
+                    <option class="bg-slate-900" value="ICU">Anes (ICU)</option><option class="bg-slate-900" value="R">Radio</option>
+                    <option class="bg-slate-900" value="ON">Onco</option><option class="bg-slate-900" value="PS">Plastic</option>
                 </select>
             </div>
-            <div id="name-section" class="hidden space-y-4">
-                <div class="recessed p-2">
-                    <select id="name-list" class="w-full bg-transparent p-3 text-slate-700 outline-none"></select>
+            <div id="name-section" class="hidden">
+                <div class="input-recess mb-6">
+                    <select id="name-list" class="w-full bg-transparent p-4 text-white outline-none appearance-none"></select>
                 </div>
-                <div class="btn-3d-wrap">
+                <div class="slab-wrap" id="reg-btn-wrap">
                     <div class="click-shield" onclick="submitRegistration()"></div>
-                    <div class="btn-3d-face" id="reg-btn-label">COMMIT LOG</div>
-                    <div class="btn-3d-side"></div>
+                    <div class="slab-face" id="reg-label">UPLOAD_RECORDS</div>
+                    <div class="slab-side"></div>
                 </div>
             </div>
         </div>
 
-        <div id="lookup-view" class="hidden text-center">
-            <span id="service-display" class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-[0.6rem] font-bold border border-blue-200">SERVICE</span>
-            <h2 id="name-display" class="text-slate-800 text-3xl font-bold mt-4 leading-tight">...</h2>
-            <p id="phone-display" class="text-slate-500 text-lg mt-1">-</p>
-            <div class="grid grid-cols-2 gap-4 mt-8">
-                <a href="#" id="call-link" class="recessed p-4 text-slate-700 font-bold active:scale-95 transition-transform">CALL</a>
-                <a href="#" id="wa-link" class="hidden p-4 bg-emerald-500 text-white rounded-2xl font-bold shadow-lg shadow-emerald-200">WHATSAPP</a>
+        <div id="lookup-view" class="hidden text-left">
+            <div class="mb-8">
+                <div id="service-display" class="text-emerald-400 text-[0.6rem] font-bold tracking-[0.3em] uppercase">---</div>
+                <h2 id="name-display" class="text-white text-4xl font-bold mt-2">...</h2>
+                <p id="phone-display" class="text-white/40 text-lg font-mono">---</p>
             </div>
-            <p id="time-stamp" class="text-[0.6rem] text-slate-400 mt-8 font-mono"></p>
+            
+            <div class="grid grid-cols-1 gap-4">
+                <a href="#" id="call-link" class="input-recess p-4 text-white font-bold flex justify-between items-center hover:bg-white/5 transition-all">
+                    <span>VOICE_COMMS</span>
+                    <span class="text-emerald-500">>></span>
+                </a>
+                <a href="#" id="wa-link" class="hidden bg-emerald-500/10 border border-emerald-500/50 p-4 text-emerald-400 font-bold flex justify-between items-center">
+                    <span>WHATSAPP_LINK</span>
+                    <span>>></span>
+                </a>
+            </div>
+            <p id="time-stamp" class="text-[0.5rem] text-white/20 mt-10 font-mono tracking-widest"></p>
         </div>
     </div>
 
@@ -145,11 +167,11 @@
         if (mode === 'register') {
             const res = await fetch(`${scriptUrl}?action=getNames`);
             allResidents = (await res.json()).sort((a,b) => a[0].localeCompare(b[0], 'ar'));
-            document.getElementById('status-text').innerText = "Database Linked";
+            document.getElementById('status-text').innerText = "Database_Secure";
         } else if (service) {
             const res = await fetch(`${scriptUrl}?service=${service}&ward=${service}&json=true&t=${Date.now()}`);
             serverData = await res.json();
-            document.getElementById('status-text').innerText = "Secure Link Active";
+            document.getElementById('status-text').innerText = "Handshake_Complete";
         }
     };
 
@@ -158,30 +180,37 @@
         const list = document.getElementById('name-list');
         if (!val) { document.getElementById('name-section').classList.add('hidden'); return; }
         let filtered = (val === "OP" || val === "ICU") ? allResidents.filter(r => r[1] === "A") : (val === "D" ? allResidents : allResidents.filter(r => r[1] === val));
-        list.innerHTML = filtered.map(r => `<option value="${r[0]}">${r[0]}</option>`).join('');
+        list.innerHTML = filtered.map(r => `<option class="bg-slate-900" value="${r[0]}">${r[0]}</option>`).join('');
         document.getElementById('name-section').classList.remove('hidden');
     }
 
     function handleEntry() {
         const pin = document.getElementById('pw').value;
         const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
+        const wrap = document.getElementById('login-btn-wrap');
         const label = document.getElementById('btn-label');
 
         if (pin === correct) {
-            label.innerText = "ACCESS GRANTED";
-            label.style.background = "#10b981"; // Shift to green
+            wrap.classList.add('success');
+            label.innerText = "ACCESS_GRANTED";
             
             setTimeout(() => {
-                document.getElementById('login-view').classList.add('hidden');
-                if (mode === 'register') {
-                    document.getElementById('register-view').classList.remove('hidden');
-                } else {
-                    showLookupUI();
-                    document.getElementById('lookup-view').classList.remove('hidden');
-                }
-            }, 600);
+                const card = document.getElementById('main-card');
+                card.classList.add('slam-out');
+                
+                setTimeout(() => {
+                    document.getElementById('login-view').classList.add('hidden');
+                    if (mode === 'register') {
+                        document.getElementById('register-view').classList.remove('hidden');
+                    } else {
+                        showLookupUI();
+                        document.getElementById('lookup-view').classList.remove('hidden');
+                    }
+                    card.classList.remove('slam-out');
+                }, 600);
+            }, 800);
         } else {
-            alert("ACCESS DENIED");
+            alert("SECURITY_ALERT: INCORRECT_PIN");
             document.getElementById('pw').value = "";
         }
     }
@@ -191,7 +220,7 @@
         document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
         document.getElementById('name-display').innerText = serverData.resident.name;
         document.getElementById('phone-display').innerText = serverData.resident.phone;
-        document.getElementById('time-stamp').innerText = serverData.timestamp;
+        document.getElementById('time-stamp').innerText = "REF_ID: " + serverData.timestamp;
         document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
         if (serverData.whatsappDigits) {
             const wa = document.getElementById('wa-link');
@@ -201,18 +230,21 @@
     }
 
     async function submitRegistration() {
-        const label = document.getElementById('reg-btn-label');
+        const wrap = document.getElementById('reg-btn-wrap');
+        const label = document.getElementById('reg-label');
         label.innerText = "UPLOADING...";
+        
         const payload = {
             action: "submitDuty",
             specialty: document.getElementById('spec-select').value,
             name: document.getElementById('name-list').value
         };
+
         try {
             await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            label.innerText = "SUCCESS ✅";
-            label.style.background = "#10b981";
-        } catch (e) { label.innerText = "RETRY"; }
+            wrap.classList.add('success');
+            label.innerText = "RECORDS_SAVED";
+        } catch (e) { label.innerText = "UPLOAD_FAILED"; }
     }
 </script>
 </body>
