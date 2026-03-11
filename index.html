@@ -12,7 +12,7 @@
             --light: #2a2d34;
             --shadow: #0d0e11;
             --accent: #fbbf24;
-            --success: #10b981;
+            --crimson: #e11d48;
             --btn-grey: #33373e;
         }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; }
@@ -39,7 +39,7 @@
             background: var(--bg);
             border-radius: 1.5rem;
             box-shadow: 10px 10px 20px var(--shadow), -5px -5px 15px var(--light);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             color: #64748b;
             font-weight: 800;
         }
@@ -58,7 +58,22 @@
         .fetched-active {
             background: var(--accent) !important;
             color: #1a1c20 !important;
-            box-shadow: 0 0 25px rgba(251, 191, 36, 0.4), -5px -5px 15px var(--light) !important;
+            box-shadow: 0 0 25px rgba(251, 191, 36, 0.5), -5px -5px 15px var(--light) !important;
+        }
+
+        /* WARNING STATE */
+        .crimson-warning {
+            background: var(--crimson) !important;
+            color: white !important;
+            box-shadow: 0 0 20px rgba(225, 29, 72, 0.4) !important;
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
         }
 
         #shield { position: fixed; inset: 0; background: var(--bg); z-index: 100; transition: opacity 0.5s; }
@@ -111,7 +126,7 @@
                     <select id="name-list" class="w-full bg-transparent p-4 text-slate-300 outline-none"></select>
                 </div>
                 <button id="submit-btn" onclick="submitRegistration()" class="embossed-btn btn-register w-full py-6 uppercase tracking-widest">
-                    Update
+                    UPDATE
                 </button>
             </div>
         </div>
@@ -124,10 +139,10 @@
             <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8">-</p>
             
             <div class="flex flex-col gap-4 sm:flex-row sm:gap-3">
-                <a href="#" id="call-link" class="embossed-btn flex-1 py-5 px-2 text-[0.7rem] uppercase tracking-tighter whitespace-nowrap">
+                <a href="#" id="call-link" class="embossed-btn flex-1 py-6 px-2 text-sm uppercase tracking-tighter whitespace-nowrap">
                     📞 SIM Call
                 </a>
-                <a href="#" id="wa-link" class="hidden flex-1 py-5 px-2 bg-emerald-500/20 border border-emerald-500 text-emerald-500 rounded-[1.5rem] font-extrabold text-[0.7rem] shadow-lg tracking-tighter whitespace-nowrap">
+                <a href="#" id="wa-link" class="hidden flex-1 py-6 px-2 bg-emerald-500/20 border border-emerald-500 text-emerald-500 rounded-[1.5rem] font-extrabold text-sm shadow-lg tracking-tighter whitespace-nowrap">
                     💬 WhatsApp
                 </a>
             </div>
@@ -174,8 +189,13 @@
         const val = document.getElementById('spec-select').value;
         const list = document.getElementById('name-list');
         if (!val) { document.getElementById('name-section').classList.add('hidden'); return; }
+        
         let filtered = (val === "OP" || val === "ICU") ? allResidents.filter(r => r[1] === "A") : (val === "D" ? allResidents : allResidents.filter(r => r[1] === val));
-        list.innerHTML = filtered.map(r => `<option value="${r[0]}" class="bg-[#1a1c20]">${r[0]}</option>`).join('');
+        
+        // Add a null placeholder first
+        list.innerHTML = `<option value="">-- Choose Doctor --</option>` + 
+                        filtered.map(r => `<option value="${r[0]}" class="bg-[#1a1c20]">${r[0]}</option>`).join('');
+        
         document.getElementById('name-section').classList.remove('hidden');
     }
 
@@ -217,13 +237,25 @@
 
     async function submitRegistration() {
         const btn = document.getElementById('submit-btn');
+        const doctorName = document.getElementById('name-list').value;
         const originalText = "UPDATE";
         
+        // SAFETY CHECK: If no doctor is selected
+        if (!doctorName) {
+            btn.classList.add('crimson-warning');
+            btn.innerText = "CHOOSE A NAME FIRST!";
+            setTimeout(() => {
+                btn.classList.remove('crimson-warning');
+                btn.innerText = originalText;
+            }, 2000);
+            return;
+        }
+
         btn.innerText = "UPLOADING...";
         const payload = {
             action: "submitDuty",
             specialty: document.getElementById('spec-select').value,
-            name: document.getElementById('name-list').value
+            name: doctorName
         };
         try {
             await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
