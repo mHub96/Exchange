@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>On-Call Pro | Origami</title>
+    <style>
+        :root {
+            --primary: #6366f1; /* Indigo */
+            --accent: #f43f5e;  /* Rose */
+            --bg: #0f172a;
+            --surface: #1e293b;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            font-family: 'Lexend', system-ui, sans-serif;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background: var(--bg);
+            color: #fff;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh;
+            perspective: 1000px; /* Essential for 3D */
+            overflow: hidden;
+        }
+
+        /* Shifting Mesh Background */
+        .mesh {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                linear-gradient(217deg, rgba(99,102,241,.1), rgba(255,0,0,0) 70.71%),
+                linear-gradient(127deg, rgba(244,63,94,.1), rgba(0,255,0,0) 70.71%);
+            z-index: -1;
+        }
+
+        .container {
+            width: 90%; max-width: 400px;
+            background: var(--surface);
+            padding: 40px 30px;
+            border-radius: 0px; /* Sharp edges feel more like folded paper */
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* The "Folded" look */
+        .container::before {
+            content: ''; position: absolute; top: 0; right: 0;
+            width: 0; height: 0;
+            border-style: solid;
+            border-width: 0 40px 40px 0;
+            border-color: transparent var(--bg) transparent transparent;
+        }
+
+        h2 { font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 10px 0; font-size: 1.2rem; }
+        #status { font-size: 0.75rem; color: var(--primary); font-weight: 600; text-transform: uppercase; margin-bottom: 30px; display: block; }
+
+        /* INPUTS */
+        select, input {
+            width: 100%;
+            padding: 18px;
+            margin-bottom: 20px;
+            background: rgba(0,0,0,0.2);
+            border: 2px solid #334155;
+            border-radius: 4px;
+            color: #fff !important;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--primary); transform: translateZ(10px); }
+
+        input[type="password"] {
+            text-align: center; font-size: 2rem; letter-spacing: 15px; font-weight: 900;
+        }
+
+        /* KINETIC BUTTONS */
+        .k-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translateZ(0px);
+        }
+
+        .k-btn:hover { background: #4f46e5; transform: translateZ(20px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .k-btn:active { transform: translateZ(5px); }
+        .k-btn:disabled { background: #475569; cursor: not-allowed; transform: none; }
+
+        /* LOOKUP SPECIFIC */
+        .data-card {
+            background: rgba(0,0,0,0.2);
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid var(--accent);
+            transform: translateZ(15px);
+        }
+
+        .name-display { font-size: 1.8rem; font-weight: 800; margin: 10px 0; }
+        
+        .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .action-btn {
+            text-decoration: none; padding: 15px; text-align: center;
+            font-weight: 800; font-size: 0.8rem; border: 2px solid var(--primary);
+            color: #fff; transition: 0.3s;
+        }
+        .action-btn:hover { background: var(--primary); }
+
+        .hidden { display: none !important; }
+
+        /* 3D TRANSITIONS */
+        .fold-away { transform: rotateY(-90deg) scale(0.8); opacity: 0; }
+        .unfold-in { animation: unfold 0.8s forwards; }
+
+        @keyframes unfold {
+            0% { transform: rotateY(90deg) scale(0.8); opacity: 0; }
+            100% { transform: rotateY(0deg) scale(1); opacity: 1; }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="mesh"></div>
+
+    <div id="entry-screen" class="container">
+        <h2 id="entry-title">Resident Portal</h2>
+        <span id="status">Syncing Uplink...</span>
+        <input type="password" id="pw" inputmode="numeric" placeholder="••••" maxlength="4">
+        <button id="entry-btn" class="k-btn" onclick="handleEntry()" disabled>Verify Identity</button>
+    </div>
+
+    <div id="lookup-view" class="container hidden">
+        <h2 id="service-display" style="color:var(--accent)">SERVICE</h2>
+        <div class="data-card">
+            <span style="font-size: 0.6rem; opacity: 0.5;">ON-CALL NOW</span>
+            <div id="name-display" class="name-display">...</div>
+            <div id="phone-display" style="color: var(--primary); font-weight: 800;">-</div>
+        </div>
+        <div class="action-row">
+            <a href="#" id="call-link" class="action-btn">VOICE CALL</a>
+            <a href="#" id="wa-link" class="action-btn" style="display:none; border-color: #25D366; color: #25D366;">WHATSAPP</a>
+        </div>
+        <p id="time-stamp" style="font-size: 0.6rem; opacity: 0.4; margin-top: 25px;"></p>
+    </div>
+
+    <div id="register-view" class="container hidden">
+        <h2 style="color:var(--primary)">Daily Duty 🇮🇶</h2>
+        <span class="status">Registry Update</span>
+        
+        <select id="spec-select" onchange="toggleNameSection()" style="margin-top:20px;">
+            <option value="">-- Select Specialty --</option>
+            <option value="NS">Neuro</option>
+            <option value="CT">Thoracic</option>
+            <option value="GS">Surgery</option>
+            <option value="US">Uro</option>
+            <option value="ENT">ENT</option>
+            <option value="H">Cardio</option>
+            <option value="D">DeathCert</option>
+            <option value="OP">OP Anesthesia</option>
+            <option value="ICU">ICU Anesthesia</option>
+            <option value="R">Radio</option>
+            <option value="ON">Onco</option>
+            <option value="PS">Plastic</option>
+        </select>
+
+        <div id="name-section" class="hidden">
+            <select id="name-list"></select>
+            <button id="submit-btn" class="k-btn" onclick="submitRegistration()">Update Record</button>
+        </div>
+    </div>
+
+<script>
+    /* YOUR ORIGINAL LOGIC - COMPLETELY UNTOUCHED */
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+    const service = urlParams.get('service');
+    const ward = urlParams.get('ward');
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
+
+    let serverData = null;
+    let allResidents = [];
+
+    window.onload = async function() {
+        if (mode === 'register') {
+            document.getElementById('entry-title').innerText = "Medical Login";
+            prepareRegister();
+        } else if (service) {
+            document.getElementById('entry-title').innerText = "Clinical Access";
+            prepareLookup();
+        } else {
+            document.getElementById('status').innerText = "⚠️ Link Void";
+        }
+    };
+
+    async function prepareRegister() {
+        document.getElementById('status').innerText = "Accessing Records...";
+        try {
+            const response = await fetch(`${scriptUrl}?action=getNames`);
+            const data = await response.json(); 
+            allResidents = data.sort((a, b) => a[0].localeCompare(b[0], 'ar'));
+            document.getElementById('status').innerText = "Database Linked";
+            document.getElementById('entry-btn').disabled = false;
+        } catch (e) { document.getElementById('status').innerText = "Sync Failed"; }
+    }
+
+    function toggleNameSection() {
+        const selectedSpec = document.getElementById('spec-select').value;
+        const nameSection = document.getElementById('name-section');
+        const dropdown = document.getElementById('name-list');
+        if (!selectedSpec) { nameSection.classList.add('hidden'); return; }
+
+        let filtered;
+        if (selectedSpec === "OP" || selectedSpec === "ICU") {
+            filtered = allResidents.filter(res => res[1] === "A");
+        } else if (selectedSpec === "D") {
+            filtered = allResidents;
+        } else {
+            filtered = allResidents.filter(res => res[1] === selectedSpec);
+        }
+
+        if (filtered.length > 0) {
+            dropdown.innerHTML = filtered.map(res => `<option value="${res[0]}">${res[0]}</option>`).join('');
+            nameSection.classList.remove('hidden');
+        } else {
+            dropdown.innerHTML = "<option value=''>Empty</option>";
+            nameSection.classList.remove('hidden');
+        }
+    }
+
+    async function prepareLookup() {
+        try {
+            const response = await fetch(`${scriptUrl}?service=${service}&ward=${ward || service}&json=true&t=${Date.now()}`);
+            serverData = await response.json();
+            if (serverData && !serverData.error) {
+                document.getElementById('status').innerText = "Authentication Ready";
+                document.getElementById('entry-btn').disabled = false;
+            } else {
+                document.getElementById('status').innerText = "No Records Found";
+            }
+        } catch (e) { document.getElementById('status').innerText = "Connection Error"; }
+    }
+
+    function handleEntry() {
+        const pass = document.getElementById('pw').value;
+        const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
+        if (pass === correct) {
+            // 3D FOLD TRANSITION
+            const entry = document.getElementById('entry-screen');
+            entry.classList.add('fold-away');
+            
+            setTimeout(() => {
+                entry.style.display = 'none';
+                let next;
+                if (mode === 'register') {
+                    next = document.getElementById('register-view');
+                } else {
+                    showLookupUI();
+                    next = document.getElementById('lookup-view');
+                }
+                next.classList.remove('hidden');
+                next.classList.add('unfold-in');
+            }, 800);
+        } else { alert("ACCESS DENIED"); }
+    }
+
+    function showLookupUI() {
+        if (serverData) {
+            document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
+            document.getElementById('name-display').innerText = serverData.resident.name;
+            document.getElementById('phone-display').innerText = serverData.resident.phone;
+            document.getElementById('time-stamp').innerText = "Last Update: " + serverData.timestamp;
+            document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
+            if (serverData.whatsappDigits) {
+                const wa = document.getElementById('wa-link');
+                wa.style.display = 'block';
+                wa.href = "whatsapp://send?phone=" + serverData.whatsappDigits;
+            }
+        }
+    }
+
+    async function submitRegistration() {
+        const btn = document.getElementById('submit-btn');
+        btn.innerText = "Saving...";
+        btn.disabled = true;
+        const payload = {
+            action: "submitDuty",
+            specialty: document.getElementById('spec-select').value,
+            name: document.getElementById('name-list').value
+        };
+        try {
+            await fetch(scriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(payload)
+            });
+            alert("Resident Updated ✅");
+        } catch (e) { alert("Error Saving"); }
+        finally { btn.innerText = "Update Record"; btn.disabled = false; }
+    }
+</script>
+</body>
+</html>
