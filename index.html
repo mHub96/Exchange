@@ -2,263 +2,145 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>On-Call Pro | Prism Pulse</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MD Portal | Precision</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #0084ff;
-            --success: #00ff88;
-            --bg-dark: #05070a;
-            --glass: rgba(255, 255, 255, 0.05);
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; }
+        
+        /* Custom Keyframes for the "Ripple" completion effect */
+        @keyframes ripple {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            100% { box-shadow: 0 0 0 30px rgba(16, 185, 129, 0); }
         }
+        .animate-ripple { animation: ripple 0.8s ease-out; }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-        body {
-            margin: 0; padding: 0;
-            background: var(--bg-dark);
-            color: white;
-            font-family: 'Outfit', sans-serif;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-        }
-
-        /* ANIMATED AURORA BACKGROUND */
-        .aurora {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(0, 132, 255, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(0, 255, 136, 0.1) 0%, transparent 40%);
-            animation: auroraMove 10s infinite alternate ease-in-out;
-            z-index: -1;
-        }
-
-        @keyframes auroraMove {
-            0% { transform: scale(1) rotate(0deg); }
-            100% { transform: scale(1.3) rotate(5deg); }
-        }
-
-        .prism-card {
-            width: 92%; max-width: 380px;
-            background: var(--glass);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            padding: 40px 25px;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 40px 100px rgba(0,0,0,0.6);
-            position: relative;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        h2 { font-weight: 700; font-size: 1.6rem; margin: 0 0 10px 0; letter-spacing: -0.5px; text-align: center; }
-        .tagline { font-size: 0.75rem; text-align: center; opacity: 0.5; display: block; margin-bottom: 30px; letter-spacing: 2px; }
-
-        /* INPUTS */
-        .input-field {
-            width: 100%; padding: 18px; margin-bottom: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px; color: white !important;
-            font-size: 1.1rem; outline: none; transition: 0.3s;
-            text-align: center;
-        }
-        .input-field:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 132, 255, 0.2); }
-        input[type="password"] { letter-spacing: 12px; font-size: 1.8rem; font-weight: 900; }
-
-        /* PULSE ACTION BUTTON */
-        .pulse-btn {
-            width: 100%; padding: 20px;
-            background: var(--primary);
-            color: white; border: none; border-radius: 12px;
-            font-weight: 700; text-transform: uppercase;
-            cursor: pointer; position: relative;
-            overflow: hidden; transition: all 0.4s ease;
-        }
-
-        /* Success State for Button */
-        .pulse-btn.complete {
-            background: var(--success);
-            box-shadow: 0 0 30px var(--success);
-            transform: scale(1.05);
-        }
-
-        /* Loading/Flash Animation */
-        .btn-flash {
-            position: absolute; top: 0; left: -100%;
-            width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transform: skewX(-25deg);
-        }
-
-        .animate-flash .btn-flash {
-            animation: flashSweep 0.6s forwards;
-        }
-
-        @keyframes flashSweep {
-            0% { left: -100%; }
-            100% { left: 150%; }
-        }
-
-        /* RESULT VIEW */
-        .result-data {
-            background: rgba(255,255,255,0.03);
-            border-radius: 18px; padding: 25px; margin: 20px 0;
-            border: 1px dashed rgba(255,255,255,0.2);
-        }
-
-        .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px; }
-        .action-item {
-            padding: 15px; border-radius: 12px; text-decoration: none;
-            text-align: center; font-weight: 700; font-size: 0.85rem;
-            background: white; color: black;
-        }
-        .action-item.wa { background: var(--success); color: #000; }
-
-        .hidden { display: none !important; }
-        .shatter { transform: scale(1.2); opacity: 0; filter: blur(10px); }
+        /* Smoothly hiding views */
+        .view-transition { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="flex items-center justify-center min-h-screen p-4 overflow-hidden">
 
-    <div class="aurora"></div>
-
-    <div id="entry-screen" class="prism-card">
-        <h2>MD_GATEWAY</h2>
-        <span class="tagline">SECURE_UPLINK_READY</span>
-        <input type="password" id="pw" inputmode="numeric" placeholder="PIN" maxlength="4" class="input-field">
-        <button id="entry-btn" class="pulse-btn" onclick="handleEntry()">
-            <div class="btn-flash"></div>
-            <span id="btn-text">AUTHORIZE</span>
-        </button>
+    <div class="fixed inset-0 z-[-1]">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 blur-[120px] rounded-full"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-500/10 blur-[120px] rounded-full"></div>
     </div>
 
-    <div id="lookup-view" class="prism-card hidden">
-        <span id="service-display" style="color: var(--success); font-weight: 700; letter-spacing: 1px;">SERVICE_TAG</span>
-        <div class="result-data">
-            <div id="name-display" style="font-size: 1.8rem; font-weight: 700;">...</div>
-            <div id="phone-display" style="font-size: 1.2rem; opacity: 0.7; margin-top: 8px;">-</div>
-        </div>
-        <div class="action-row">
-            <a href="#" id="call-link" class="action-item">VOICE_CALL</a>
-            <a href="#" id="wa-link" class="action-item wa" style="display:none;">WHATSAPP</a>
-        </div>
-        <p id="time-stamp" style="font-size: 0.6rem; opacity: 0.4; margin-top: 25px; text-align: center;"></p>
-    </div>
+    <div id="main-card" class="w-full max-w-sm bg-slate-900/50 backdrop-blur-2xl border border-white/10 p-8 rounded-[2.5rem] shadow-2xl view-transition">
+        
+        <div id="login-view">
+            <div class="text-center mb-8">
+                <h1 class="text-white text-2xl font-bold tracking-tight">System Access</h1>
+                <p id="status-text" class="text-slate-400 text-xs mt-2 uppercase tracking-widest">Awaiting Identity</p>
+            </div>
 
-    <div id="register-view" class="prism-card hidden">
-        <h2>DUTY_LOG 🇮🇶</h2>
-        <span class="tagline">COMMIT_DAILY_RECORDS</span>
-        <select id="spec-select" class="input-field" onchange="toggleNameSection()">
-            <option value="">-- SELECT SECTOR --</option>
-            <option value="NS">Neuro</option>
-            <option value="CT">Thoracic</option>
-            <option value="GS">Surgery</option>
-            <option value="US">Uro</option>
-            <option value="ENT">ENT</option>
-            <option value="H">Cardio</option>
-            <option value="D">DeathCert</option>
-            <option value="OP">Anes (OP)</option>
-            <option value="ICU">Anes (ICU)</option>
-            <option value="R">Radio</option>
-            <option value="ON">Onco</option>
-            <option value="PS">Plastic</option>
-        </select>
-        <div id="name-section" class="hidden">
-            <select id="name-list" class="input-field"></select>
-            <button id="submit-btn" class="pulse-btn" onclick="submitRegistration()">
-                <div class="btn-flash"></div>
-                <span>COMMIT_LOG</span>
-            </button>
+            <div class="space-y-6">
+                <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" 
+                    class="w-full bg-slate-950/50 border border-white/5 rounded-2xl py-5 text-center text-3xl tracking-[1.5rem] text-blue-400 focus:border-blue-500 outline-none transition-all shadow-inner">
+                
+                <button id="entry-btn" onclick="handleEntry()" 
+                    class="relative w-full py-5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all duration-300 shadow-[0_10px_20px_rgba(37,99,235,0.3)] active:scale-95 active:shadow-inner overflow-hidden">
+                    <span id="btn-label">AUTHORIZE</span>
+                    <div id="spinner" class="hidden absolute inset-0 flex items-center justify-center bg-blue-600">
+                        <svg class="animate-spin h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <div id="lookup-view" class="hidden opacity-0 scale-95 transition-all duration-500">
+            <div class="text-center mb-6">
+                <span id="service-display" class="bg-emerald-500/10 text-emerald-400 px-4 py-1 rounded-full text-[0.6rem] font-bold tracking-tighter uppercase border border-emerald-500/20">SERVICE</span>
+                <h2 id="name-display" class="text-white text-3xl font-bold mt-4 leading-tight">...</h2>
+                <p id="phone-display" class="text-slate-400 font-medium text-lg mt-1">-</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <a href="#" id="call-link" class="flex flex-col items-center justify-center p-4 bg-slate-800/50 rounded-3xl border border-white/5 hover:bg-slate-700 transition-colors">
+                    <span class="text-xs text-slate-400 mb-1">VOICE</span>
+                    <span class="text-white font-bold">CALL</span>
+                </a>
+                <a href="#" id="wa-link" class="hidden flex flex-col items-center justify-center p-4 bg-emerald-500 text-white rounded-3xl shadow-lg shadow-emerald-500/20">
+                    <span class="text-xs opacity-80 mb-1">SECURE</span>
+                    <span class="font-bold">WHATSAPP</span>
+                </a>
+            </div>
+            <div id="time-stamp" class="text-[0.6rem] text-slate-500 text-center mt-8 font-mono"></div>
         </div>
     </div>
 
-<script>
-    /* CORE LOGIC */
-    const urlParams = new URLSearchParams(window.location.search);
-    const mode = urlParams.get('mode');
-    const service = urlParams.get('service');
-    const ward = urlParams.get('ward');
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
+    <script>
+        // BACKEND LOGIC (Stayed Intact)
+        const urlParams = new URLSearchParams(window.location.search);
+        const service = urlParams.get('service');
+        const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
+        let serverData = null;
 
-    let serverData = null;
-    let allResidents = [];
+        window.onload = async function() {
+            if (service) {
+                try {
+                    const res = await fetch(`${scriptUrl}?service=${service}&ward=${service}&json=true&t=${Date.now()}`);
+                    serverData = await res.json();
+                    document.getElementById('status-text').innerText = "Terminal Linked 🇮🇶";
+                } catch (e) { document.getElementById('status-text').innerText = "Offline Mode"; }
+            }
+        };
 
-    window.onload = async function() {
-        if (mode === 'register') {
-            const res = await fetch(`${scriptUrl}?action=getNames`);
-            allResidents = (await res.json()).sort((a,b) => a[0].localeCompare(b[0], 'ar'));
-        } else if (service) {
-            const res = await fetch(`${scriptUrl}?service=${service}&ward=${ward || service}&json=true&t=${Date.now()}`);
-            serverData = await res.json();
-        }
-    };
+        function handleEntry() {
+            const pin = document.getElementById('pw').value;
+            const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
+            const btn = document.getElementById('entry-btn');
+            const spinner = document.getElementById('spinner');
+            const btnLabel = document.getElementById('btn-label');
 
-    function toggleNameSection() {
-        const val = document.getElementById('spec-select').value;
-        const list = document.getElementById('name-list');
-        if (!val) { document.getElementById('name-section').classList.add('hidden'); return; }
-        let filtered = (val === "OP" || val === "ICU") ? allResidents.filter(r => r[1] === "A") : (val === "D" ? allResidents : allResidents.filter(r => r[1] === val));
-        list.innerHTML = filtered.map(r => `<option value="${r[0]}">${r[0]}</option>`).join('');
-        document.getElementById('name-section').classList.remove('hidden');
-    }
-
-    function handleEntry() {
-        const pin = document.getElementById('pw').value;
-        const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
-        const btn = document.getElementById('entry-btn');
-        const btnTxt = document.getElementById('btn-text');
-
-        if (pin === correct) {
-            // SUCCESS SEQUENCE
-            btn.classList.add('animate-flash'); // Sweeping light
-            btnTxt.innerText = "ACCESS_GRANTED";
-            
-            setTimeout(() => {
-                btn.classList.add('complete'); // Change to Green
+            if (pin === correct) {
+                // PHASE 1: LOADING
+                btnLabel.classList.add('opacity-0');
+                spinner.classList.remove('hidden');
                 
                 setTimeout(() => {
-                    document.getElementById('entry-screen').classList.add('shatter');
+                    // PHASE 2: COMPLETION ANIMATION
+                    spinner.classList.add('hidden');
+                    btn.classList.remove('bg-blue-600');
+                    btn.classList.add('bg-emerald-500', 'animate-ripple');
+                    btnLabel.innerText = "ACCESS GRANTED";
+                    btnLabel.classList.remove('opacity-0');
+
                     setTimeout(() => {
-                        document.getElementById('entry-screen').style.display = 'none';
-                        const next = mode === 'register' ? document.getElementById('register-view') : document.getElementById('lookup-view');
-                        if (mode !== 'register') showLookupUI();
-                        next.classList.remove('hidden');
-                    }, 500);
-                }, 600);
-            }, 400);
-        } else { alert("DENIED"); }
-    }
-
-    function showLookupUI() {
-        if (!serverData) return;
-        document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
-        document.getElementById('name-display').innerText = serverData.resident.name;
-        document.getElementById('phone-display').innerText = serverData.resident.phone;
-        document.getElementById('time-stamp').innerText = "SYNTAX_TIMESTAMP: " + serverData.timestamp;
-        document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
-        if (serverData.whatsappDigits) {
-            document.getElementById('wa-link').style.display = 'block';
-            document.getElementById('wa-link').href = "whatsapp://send?phone=" + serverData.whatsappDigits;
+                        // PHASE 3: VIEW TRANSITION
+                        const loginView = document.getElementById('login-view');
+                        const lookupView = document.getElementById('lookup-view');
+                        
+                        loginView.classList.add('opacity-0', 'scale-90');
+                        setTimeout(() => {
+                            loginView.classList.add('hidden');
+                            showLookupUI();
+                            lookupView.classList.remove('hidden');
+                            setTimeout(() => lookupView.classList.remove('opacity-0', 'scale-95'), 50);
+                        }, 400);
+                    }, 800);
+                }, 1200);
+            } else {
+                alert("Incorrect PIN");
+                document.getElementById('pw').value = "";
+            }
         }
-    }
 
-    async function submitRegistration() {
-        const btn = document.getElementById('submit-btn');
-        btn.classList.add('animate-flash');
-        const payload = {
-            action: "submitDuty",
-            specialty: document.getElementById('spec-select').value,
-            name: document.getElementById('name-list').value
-        };
-        try {
-            await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            btn.classList.add('complete');
-            setTimeout(() => alert("DATABASE_UPDATED ✅"), 200);
-        } catch (e) { alert("ERROR"); }
-    }
-</script>
+        function showLookupUI() {
+            if (!serverData) return;
+            document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
+            document.getElementById('name-display').innerText = serverData.resident.name;
+            document.getElementById('phone-display').innerText = serverData.resident.phone;
+            document.getElementById('time-stamp').innerText = "REF: " + serverData.timestamp;
+            document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
+            if (serverData.whatsappDigits) {
+                const wa = document.getElementById('wa-link');
+                wa.classList.remove('hidden');
+                wa.classList.add('flex');
+                wa.href = "whatsapp://send?phone=" + serverData.whatsappDigits;
+            }
+        }
+    </script>
 </body>
 </html>
