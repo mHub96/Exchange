@@ -106,7 +106,7 @@
             <h2 class="text-white text-xl font-extrabold text-center mb-2">Duty Update 🇮🇶</h2>
             <div class="recessed-input p-2">
                 <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none appearance-none">
-                    <option value="" class="bg-[#1a1c20]">Sector</option>
+                    <option value="" class="bg-[#1a1c20]">SPECIALTY</option>
                     <option value="NS" class="bg-[#1a1c20]">Neurosurgery</option>
                     <option value="CT" class="bg-[#1a1c20]">Cardiothoracic Surgery</option>
                     <option value="GS" class="bg-[#1a1c20]">General Surgery</option>
@@ -193,7 +193,7 @@
         let filtered = (val === "OP" || val === "ICU") ? allResidents.filter(r => r[1] === "A") : (val === "D" ? allResidents : allResidents.filter(r => r[1] === val));
         
         // Add a null placeholder first
-        list.innerHTML = `<option value="">-- Who's On-Call Today --</option>` + 
+        list.innerHTML = `<option value="">-- Who's On-Call Today? --</option>` + 
                         filtered.map(r => `<option value="${r[0]}" class="bg-[#1a1c20]">${r[0]}</option>`).join('');
         
         document.getElementById('name-section').classList.remove('hidden');
