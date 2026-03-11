@@ -25,7 +25,6 @@
             z-index: 10;
         }
 
-        /* AMBIENT BREATHING */
         .breathing {
             animation: frameBreath 3s infinite ease-in-out;
         }
@@ -35,7 +34,6 @@
             50% { box-shadow: 15px 15px 45px var(--shadow), -8px -8px 30px var(--light), 0 0 50px rgba(251, 191, 36, 0.7); }
         }
 
-        /* THE FLUORESCENT TUBE SVG */
         .tube-container {
             position: absolute;
             inset: 0;
@@ -57,20 +55,17 @@
             stroke-width: 5;
             stroke-linecap: round;
             filter: drop-shadow(0 0 12px var(--accent));
-            /* Seamless dash: length of fluid, then space */
             stroke-dasharray: 500 1200; 
             stroke-dashoffset: 1700;
             opacity: 0;
             transition: opacity 0.4s;
         }
 
-        /* SEAMLESS FLOW ANIMATION */
         .loading-active #tube-fluid {
             opacity: 1;
             animation: seamlessFlow 2s linear infinite;
         }
 
-        /* Stop breathing when fluid starts */
         .loading-active.breathing { animation: none !important; }
 
         @keyframes seamlessFlow {
@@ -78,7 +73,6 @@
             to { stroke-dashoffset: 0; }
         }
 
-        /* UI ELEMENTS */
         .recessed-input {
             background: var(--bg);
             border-radius: 1.5rem;
@@ -96,7 +90,6 @@
 
         .btn-register { background: var(--btn-grey); color: #e2e8f0; }
 
-        /* Larger text for action buttons as requested earlier */
         #call-link, #wa-link { font-size: 1.1rem; }
 
         .fetched-active {
@@ -232,9 +225,12 @@
     }
 
     function handleEntry() {
-        const pin = document.getElementById('pw').value;
+        const pinField = document.getElementById('pw');
+        const pin = pinField.value;
+        const btn = document.getElementById('entry-btn');
         const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
         const card = document.getElementById('main-card');
+        
         if (pin === correct) {
             card.style.opacity = "0";
             setTimeout(() => {
@@ -243,7 +239,16 @@
                 else { showLookupUI(); document.getElementById('lookup-view').classList.remove('hidden'); }
                 card.style.opacity = "1";
             }, 600);
-        } else { alert("DENIED"); document.getElementById('pw').value = ""; }
+        } else {
+            // SHAKE AND WARNING LOGIC
+            btn.classList.add('crimson-warning');
+            btn.innerText = "INCORRECT PASSWORD!";
+            pinField.value = "";
+            setTimeout(() => {
+                btn.classList.remove('crimson-warning');
+                btn.innerText = "Authorize";
+            }, 2000);
+        }
     }
 
     function showLookupUI() {
@@ -272,7 +277,6 @@
             return;
         }
 
-        // TRIGGER SEAMLESS FLOW
         card.classList.add('loading-active');
         btn.innerText = "UPLOADING...";
 
