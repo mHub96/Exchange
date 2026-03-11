@@ -3,145 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MD Portal | Obsidian Core</title>
+    <title>MD Portal | Embossed</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --neon: #00f2ff; --neon-dark: #0066cc; --gold: #f43f5e; }
-        body { font-family: 'Orbitron', sans-serif; background: #020617; margin: 0; overflow: hidden; perspective: 1500px; }
+        :root {
+            --bg: #e6eef4;
+            --light: #ffffff;
+            --shadow: #c8d4e2;
+            --accent: #3b82f6;
+            --success: #10b981;
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #5a6b81; }
 
-        /* DEEP SPACE GRID */
-        .space-grid {
-            position: fixed; inset: 0;
-            background-image: 
-                linear-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
-            background-size: 60px 60px;
-            transform: rotateX(60deg) translateY(-200px);
-            z-index: -1; opacity: 0.5;
+        /* THE EMBOSSED CARD */
+        .embossed-card {
+            background: var(--bg);
+            border-radius: 3rem;
+            box-shadow: 25px 25px 50px var(--shadow), -25px -25px 50px var(--light);
         }
 
-        /* FLOATING 3D CONSOLE */
-        .console-container {
-            transform-style: preserve-3d;
-            transform: rotateX(15deg) rotateY(-5deg);
-            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s;
+        /* RECESSED INPUT (Carved into the screen) */
+        .recessed-input {
+            background: var(--bg);
+            border-radius: 1.5rem;
+            box-shadow: inset 8px 8px 16px var(--shadow), inset -8px -8px 16px var(--light);
         }
 
-        .base-plate {
-            background: #0f172a;
-            border: 2px solid #1e293b;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.9), 0 0 40px rgba(0, 242, 255, 0.1);
-            transform-style: preserve-3d;
+        /* EMBOSSED BUTTON (Coming out of the screen) */
+        .embossed-btn {
+            background: var(--bg);
+            border-radius: 1.5rem;
+            box-shadow: 8px 8px 20px var(--shadow), -8px -8px 20px var(--light);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: #7a8ba3;
+            font-weight: 800;
         }
 
-        .glass-top {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transform: translateZ(30px); /* Lifts the glass above the base */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        .embossed-btn:active {
+            box-shadow: inset 4px 4px 8px var(--shadow), inset -4px -4px 8px var(--light);
+            transform: scale(0.97);
         }
 
-        /* 3D MECHANICAL BUTTON */
-        .btn-3d-wrap {
-            position: relative; height: 60px;
-            transform-style: preserve-3d;
-            cursor: pointer;
+        /* DYNAMIC COLOR CHANGE WHEN FETCHED */
+        .fetched-active {
+            background: var(--success);
+            color: white;
+            box-shadow: 8px 8px 20px rgba(16, 185, 129, 0.3), -8px -8px 20px var(--light);
         }
-        .btn-3d-face {
-            position: absolute; inset: 0;
-            background: linear-gradient(135deg, var(--neon-dark), #001133);
-            border: 1px solid var(--neon);
-            color: var(--neon); font-weight: 900;
-            display: flex; align-items: center; justify-content: center;
-            transform: translateZ(15px);
-            transition: transform 0.1s;
-        }
-        .btn-3d-depth {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 15px;
-            background: #002244;
-            transform: rotateX(-90deg) translateZ(7.5px);
-            transform-origin: bottom;
-        }
-        .btn-3d-wrap:active .btn-3d-face { transform: translateZ(5px); }
 
-        /* HUD ELEMENTS */
-        .hud-line { height: 1px; background: linear-gradient(90deg, transparent, var(--neon), transparent); margin: 15px 0; }
-        
-        .pulse-border { animation: borderGlow 2s infinite; }
-        @keyframes borderGlow { 0%, 100% { border-color: rgba(0, 242, 255, 0.3); } 50% { border-color: var(--neon); } }
-
-        .fly-forward { transform: translateZ(500px) rotateX(0deg); opacity: 0; }
+        #shield { position: fixed; inset: 0; background: var(--bg); z-index: 100; transition: opacity 0.5s; }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         .hidden { display: none !important; }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
 
-    <div class="space-grid"></div>
+    <div id="shield"></div>
 
-    <div id="main-console" class="console-container w-full max-w-sm">
-        <div class="base-plate p-1 rounded-[2rem]">
-            <div class="glass-top p-8 rounded-[2rem] border-t-2 border-cyan-400/30">
-                
-                <div id="login-view">
-                    <div class="text-center mb-6">
-                        <div class="text-cyan-400 text-[0.6rem] tracking-[0.4em] uppercase mb-1">Satellite Link</div>
-                        <h1 id="title-text" class="text-white text-xl font-black uppercase tracking-widest">MD Portal 🇮🇶</h1>
-                        <div class="hud-line"></div>
-                        <p id="status-text" class="text-cyan-500/50 text-[0.55rem] font-bold tracking-widest uppercase">Awaiting Identity...</p>
-                    </div>
-
-                    <div class="space-y-6">
-                        <div class="bg-black/40 border-b-2 border-cyan-500/30 p-4 rounded-lg">
-                            <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="----" 
-                                class="w-full bg-transparent text-center text-4xl tracking-[1.5rem] text-cyan-300 outline-none">
-                        </div>
-                        
-                        <div class="btn-3d-wrap" onclick="handleEntry()">
-                            <div class="btn-3d-face" id="btn-label">INIT_LOGIN</div>
-                            <div class="btn-3d-depth"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="register-view" class="hidden">
-                    <h2 class="text-white text-sm font-bold text-center mb-6 tracking-widest uppercase">Duty_Registry</h2>
-                    <div class="space-y-4">
-                        <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-slate-900/80 border border-cyan-500/30 p-4 text-cyan-400 text-xs outline-none uppercase">
-                            <option value="">-- SECTOR --</option>
-                            <option value="NS">Neuro</option><option value="CT">Thoracic</option>
-                            <option value="GS">Surgery</option><option value="US">Uro</option>
-                            <option value="ENT">ENT</option><option value="H">Cardio</option>
-                            <option value="D">DeathCert</option><option value="OP">Anes (OP)</option>
-                            <option value="ICU">Anes (ICU)</option><option value="R">Radio</option>
-                            <option value="ON">Onco</option><option value="PS">Plastic</option>
-                        </select>
-                        <div id="name-section" class="hidden space-y-4">
-                            <select id="name-list" class="w-full bg-slate-900/80 border border-cyan-500/30 p-4 text-white text-xs outline-none"></select>
-                            <div class="btn-3d-wrap" onclick="submitRegistration()">
-                                <div class="btn-3d-face" id="reg-btn-label">COMMIT_LOG</div>
-                                <div class="btn-3d-depth"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="lookup-view" class="hidden text-center">
-                    <div id="service-display" class="text-cyan-400 text-[0.6rem] font-bold tracking-[0.5em] mb-4">ACCESS_GRANTED</div>
-                    <div class="bg-cyan-500/5 p-6 rounded-2xl border border-cyan-500/20 mb-8">
-                        <h2 id="name-display" class="text-white text-2xl font-black mb-2 uppercase">...</h2>
-                        <p id="phone-display" class="text-cyan-500/60 font-mono text-lg tracking-widest">--</p>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <a href="#" id="call-link" class="p-4 border border-cyan-500/40 text-cyan-400 font-bold text-[0.6rem] tracking-widest hover:bg-cyan-400/10 transition-all">VOICE_CHANNEL</a>
-                        <a href="#" id="wa-link" class="hidden p-4 bg-emerald-600/20 border border-emerald-500 text-emerald-400 font-bold text-[0.6rem] tracking-widest">SECURE_WA</a>
-                    </div>
-                    <div id="time-stamp" class="text-[0.5rem] text-slate-500 mt-10 font-mono uppercase tracking-tighter"></div>
-                </div>
-
+    <div id="main-card" class="w-full max-w-sm embossed-card p-10 transition-all duration-700">
+        
+        <div id="login-view">
+            <div class="text-center mb-10">
+                <h1 class="text-slate-700 text-2xl font-extrabold tracking-tight">On-Call Portal</h1>
+                <p id="status-text" class="text-[0.6rem] mt-2 uppercase font-bold tracking-[0.3em] pulse">Syncing Link...</p>
             </div>
+            
+            <div class="space-y-8">
+                <div class="recessed-input p-2">
+                    <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" 
+                        class="w-full bg-transparent py-5 text-center text-4xl tracking-[1rem] text-slate-600 outline-none">
+                </div>
+                
+                <button id="entry-btn" onclick="handleEntry()" class="embossed-btn w-full py-6 tracking-widest">
+                    AUTHORIZE
+                </button>
+            </div>
+        </div>
+
+        <div id="register-view" class="hidden space-y-6">
+            <h2 class="text-slate-700 text-xl font-extrabold text-center mb-2">Duty Log 🇮🇶</h2>
+            <div class="recessed-input p-2">
+                <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-transparent p-4 text-slate-700 font-bold outline-none appearance-none">
+                    <option value="">-- Sector --</option>
+                    <option value="NS">Neuro</option><option value="CT">Thoracic</option>
+                    <option value="GS">Surgery</option><option value="US">Uro</option>
+                    <option value="ENT">ENT</option><option value="H">Cardio</option>
+                    <option value="D">DeathCert</option><option value="OP">Anes (OP)</option>
+                    <option value="ICU">Anes (ICU)</option><option value="R">Radio</option>
+                    <option value="ON">Onco</option><option value="PS">Plastic</option>
+                </select>
+            </div>
+            <div id="name-section" class="hidden space-y-6">
+                <div class="recessed-input p-2">
+                    <select id="name-list" class="w-full bg-transparent p-4 text-slate-700 outline-none"></select>
+                </div>
+                <button id="submit-btn" onclick="submitRegistration()" class="embossed-btn w-full py-6 text-slate-500">
+                    COMMIT CHANGES
+                </button>
+            </div>
+        </div>
+
+        <div id="lookup-view" class="hidden text-center">
+            <div class="recessed-input inline-block px-8 py-2 mb-6">
+                <span id="service-display" class="text-slate-500 text-[0.6rem] font-black tracking-widest uppercase">SERVICE</span>
+            </div>
+            <h2 id="name-display" class="text-slate-800 text-3xl font-extrabold mb-1">...</h2>
+            <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8">-</p>
+            
+            <div class="grid grid-cols-2 gap-6">
+                <a href="#" id="call-link" class="embossed-btn p-5 text-sm">VOICE</a>
+                <a href="#" id="wa-link" class="hidden p-5 bg-emerald-500 text-white rounded-[1.5rem] font-extrabold text-sm shadow-lg shadow-emerald-200">WHATSAPP</a>
+            </div>
+            <p id="time-stamp" class="text-[0.55rem] text-slate-400 mt-10 font-mono tracking-widest uppercase"></p>
         </div>
     </div>
 
@@ -155,7 +130,15 @@
     let allResidents = [];
 
     window.onload = async function() {
+        // Remove loading shield
+        setTimeout(() => { 
+            document.getElementById('shield').style.opacity = '0'; 
+            setTimeout(() => document.getElementById('shield').remove(), 500);
+        }, 300);
+
+        const btn = document.getElementById('entry-btn');
         const status = document.getElementById('status-text');
+
         try {
             if (mode === 'register') {
                 const res = await fetch(`${scriptUrl}?action=getNames`);
@@ -164,9 +147,16 @@
                 const res = await fetch(`${scriptUrl}?service=${service}&ward=${service}&json=true&t=${Date.now()}`);
                 serverData = await res.json();
             }
-            status.innerText = "Connection_Secure";
-            status.style.color = "#00f2ff";
-        } catch (e) { status.innerText = "Link_Failure"; }
+            
+            // DATA FETCHED: Change button color and update status
+            btn.classList.add('fetched-active');
+            status.innerText = "Connection Secure 🇮🇶";
+            status.classList.remove('pulse');
+            status.style.color = "#10b981";
+        } catch (e) {
+            status.innerText = "Offline Mode";
+            status.classList.remove('pulse');
+        }
     };
 
     function toggleNameSection() {
@@ -174,34 +164,32 @@
         const list = document.getElementById('name-list');
         if (!val) { document.getElementById('name-section').classList.add('hidden'); return; }
         let filtered = (val === "OP" || val === "ICU") ? allResidents.filter(r => r[1] === "A") : (val === "D" ? allResidents : allResidents.filter(r => r[1] === val));
-        list.innerHTML = filtered.map(r => `<option value="${r[0]}" class="bg-slate-900">${r[0]}</option>`).join('');
+        list.innerHTML = filtered.map(r => `<option value="${r[0]}">${r[0]}</option>`).join('');
         document.getElementById('name-section').classList.remove('hidden');
     }
 
     function handleEntry() {
         const pin = document.getElementById('pw').value;
         const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
-        const console = document.getElementById('main-console');
+        const card = document.getElementById('main-card');
 
         if (pin === correct) {
-            document.getElementById('btn-label').innerText = "AUTHORIZED";
-            document.getElementById('btn-label').style.background = "#10b981";
+            card.style.transform = "scale(0.9) translateY(20px)";
+            card.style.opacity = "0";
             
             setTimeout(() => {
-                console.classList.add('fly-forward');
-                setTimeout(() => {
-                    document.getElementById('login-view').classList.add('hidden');
-                    if (mode === 'register') {
-                        document.getElementById('register-view').classList.remove('hidden');
-                    } else {
-                        showLookupUI();
-                        document.getElementById('lookup-view').classList.remove('hidden');
-                    }
-                    console.classList.remove('fly-forward');
-                }, 800);
-            }, 500);
+                document.getElementById('login-view').classList.add('hidden');
+                if (mode === 'register') {
+                    document.getElementById('register-view').classList.remove('hidden');
+                } else {
+                    showLookupUI();
+                    document.getElementById('lookup-view').classList.remove('hidden');
+                }
+                card.style.transform = "scale(1) translateY(0)";
+                card.style.opacity = "1";
+            }, 600);
         } else {
-            alert("SECURITY_EXCEPTION");
+            alert("ACCESS DENIED");
             document.getElementById('pw').value = "";
         }
     }
@@ -211,17 +199,19 @@
         document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
         document.getElementById('name-display').innerText = serverData.resident.name;
         document.getElementById('phone-display').innerText = serverData.resident.phone;
-        document.getElementById('time-stamp').innerText = "STAMP: " + serverData.timestamp;
+        document.getElementById('time-stamp').innerText = "Ref ID: " + serverData.timestamp;
         document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
         if (serverData.whatsappDigits) {
-            document.getElementById('wa-link').classList.remove('hidden');
-            document.getElementById('wa-link').href = "whatsapp://send?phone=" + serverData.whatsappDigits;
+            const wa = document.getElementById('wa-link');
+            wa.classList.remove('hidden');
+            wa.href = "whatsapp://send?phone=" + serverData.whatsappDigits;
         }
     }
 
     async function submitRegistration() {
-        const label = document.getElementById('reg-btn-label');
-        label.innerText = "UPLOADING...";
+        const btn = document.getElementById('submit-btn');
+        btn.innerText = "UPLOADING...";
+        btn.classList.add('pulse');
         const payload = {
             action: "submitDuty",
             specialty: document.getElementById('spec-select').value,
@@ -229,9 +219,10 @@
         };
         try {
             await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            label.innerText = "UPLOADED ✅";
-            label.style.background = "#10b981";
-        } catch (e) { label.innerText = "RETRY"; }
+            btn.classList.remove('pulse');
+            btn.classList.add('fetched-active');
+            btn.innerText = "SAVED ✅";
+        } catch (e) { btn.innerText = "RETRY"; }
     }
 </script>
 </body>
