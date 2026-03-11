@@ -3,132 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>On-Call Pro | Tactical Deck</title>
+    <title>On-Call Pro | Blueprint</title>
     <style>
         :root {
-            --bg: #e0e5ec;
-            --shadow-light: #ffffff;
-            --shadow-dark: #a3b1c6;
-            --primary: #448aff;
-            --text: #4d5d7d;
-            --accent: #ff5252;
+            --paper: #0047AB; /* Engineering Blue */
+            --ink: #FFFFFF;
+            --ink-dim: rgba(255, 255, 255, 0.6);
+            --grid: rgba(255, 255, 255, 0.1);
+            --highlight: #00FFCC; /* Glow Cyan */
         }
 
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            font-family: 'Segoe UI', Roboto, Helvetica, sans-serif;
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Courier New', Courier, monospace; }
 
         body {
             margin: 0; padding: 20px;
-            background: var(--bg);
-            color: var(--text);
+            background-color: var(--paper);
+            background-image: 
+                linear-gradient(var(--grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--ink);
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh;
         }
 
-        .deck {
-            width: 100%; max-width: 420px;
-            padding: 35px 25px;
-            background: var(--bg);
-            border-radius: 40px;
-            box-shadow: 20px 20px 60px var(--shadow-dark), 
-                        -20px -20px 60px var(--shadow-light);
-            text-align: center;
+        .terminal {
+            width: 100%; max-width: 400px;
+            border: 2px solid var(--ink);
+            padding: 30px;
+            position: relative;
+            background: var(--paper);
+            box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
         }
 
-        h2 { font-weight: 800; font-size: 1.4rem; color: var(--text); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
-        #status { font-size: 0.75rem; font-weight: 600; color: var(--shadow-dark); margin-bottom: 30px; display: block; }
+        /* Loading Spinner */
+        .loader {
+            width: 20px; height: 20px;
+            border: 2px solid var(--ink);
+            border-top-color: var(--highlight);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
 
-        /* NEUMORPHIC INPUTS */
-        .neu-inset {
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        h2 { font-size: 1.2rem; margin: 0 0 20px 0; text-transform: uppercase; border-bottom: 2px solid var(--ink); padding-bottom: 10px; }
+
+        .status-bar { font-size: 0.7rem; margin-bottom: 20px; text-transform: uppercase; color: var(--highlight); }
+
+        /* Blueprint Style Inputs */
+        select, input {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             margin-bottom: 20px;
-            background: var(--bg);
-            border: none;
-            border-radius: 15px;
-            box-shadow: inset 6px 6px 12px var(--shadow-dark), 
-                        inset -6px -6px 12px var(--shadow-light);
-            color: var(--text);
+            background: transparent;
+            border: 1px solid var(--ink);
+            color: var(--ink) !important;
             font-size: 1rem;
+            border-radius: 0;
             outline: none;
         }
 
+        select option { background: var(--paper); color: white; }
+
         input[type="password"] {
-            text-align: center; font-size: 1.5rem; letter-spacing: 10px; font-weight: 900;
+            text-align: center; font-size: 1.8rem; letter-spacing: 15px; background: rgba(255,255,255,0.05);
         }
 
-        /* NEUMORPHIC BUTTONS */
-        .neu-btn {
+        button {
             width: 100%;
-            padding: 18px;
-            margin-top: 10px;
-            background: var(--bg);
-            border: none;
-            border-radius: 15px;
-            box-shadow: 6px 6px 12px var(--shadow-dark), 
-                        -6px -6px 12px var(--shadow-light);
-            color: var(--primary);
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: 0.2s all ease;
-        }
-
-        .neu-btn:active {
-            box-shadow: inset 4px 4px 8px var(--shadow-dark), 
-                        inset -4px -4px 8px var(--shadow-light);
-            transform: scale(0.98);
-        }
-
-        .neu-btn:disabled { color: var(--shadow-dark); cursor: not-allowed; }
-
-        /* LOOKUP SPECIFIC STYLE */
-        .info-display {
-            padding: 25px;
-            border-radius: 30px;
-            margin: 20px 0;
-            box-shadow: inset 8px 8px 16px var(--shadow-dark), 
-                        inset -8px -8px 16px var(--shadow-light);
-            background: var(--bg);
-        }
-
-        .service-badge {
-            color: var(--primary);
-            font-size: 0.8rem;
-            font-weight: 900;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .name-label { font-size: 1.8rem; font-weight: 800; color: var(--text); margin: 5px 0; }
-        .phone-val { font-size: 1.3rem; font-weight: 700; color: var(--primary); margin-top: 10px; }
-
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
-        .action-link {
             padding: 15px;
-            border-radius: 15px;
-            text-decoration: none;
-            font-weight: 800;
-            font-size: 0.8rem;
-            background: var(--bg);
-            box-shadow: 5px 5px 10px var(--shadow-dark), 
-                        -5px -5px 10px var(--shadow-light);
-            color: var(--text);
+            background: var(--ink);
+            color: var(--paper);
+            border: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.2s;
         }
 
-        .action-link.wa { color: #25D366; }
+        button:active { filter: invert(1); }
+        button:disabled { background: var(--ink-dim); cursor: not-allowed; }
 
-        /* REGISTRY SPECIFIC STYLE */
-        .registry-panel {
-            margin-top: 20px;
-            padding: 20px;
-            border-radius: 25px;
-            box-shadow: 8px 8px 16px var(--shadow-dark), 
-                        -8px -8px 16px var(--shadow-light);
+        /* UI Sections */
+        .info-box { border: 1px dashed var(--ink); padding: 20px; margin: 20px 0; position: relative; }
+        .label { font-size: 0.6rem; position: absolute; top: -10px; left: 10px; background: var(--paper); padding: 0 5px; color: var(--highlight); }
+
+        .big-text { font-size: 1.8rem; font-weight: bold; margin: 10px 0; }
+        
+        .action-row { display: flex; gap: 10px; }
+        .btn-outline {
+            flex: 1; text-align: center; padding: 12px; border: 1px solid var(--ink);
+            text-decoration: none; color: var(--ink); font-size: 0.8rem; font-weight: bold;
         }
 
         .hidden { display: none !important; }
@@ -136,62 +105,57 @@
 </head>
 <body>
 
-    <div class="deck">
+    <div class="terminal">
         <div id="entry-screen">
-            <div style="font-size: 2.5rem; margin-bottom: 10px;">🛡️</div>
-            <h2>Secure Gateway</h2>
-            <span id="status">Syncing Neural Link...</span>
-            <input type="password" id="pw" class="neu-inset" inputmode="numeric" placeholder="••••" maxlength="4">
-            <button id="entry-btn" class="neu-btn" onclick="handleEntry()" disabled>Authorize Access</button>
+            <h2>System_Auth_v3</h2>
+            <div class="status-bar"><span id="loader-icon" class="loader"></span><span id="status">Initializing...</span></div>
+            <input type="password" id="pw" inputmode="numeric" placeholder="PIN" maxlength="4">
+            <button id="entry-btn" onclick="handleEntry()" disabled>Access_Link</button>
         </div>
 
         <div id="lookup-view" class="hidden">
-            <h2>Live Status</h2>
-            <span id="status">On-Call Data Active</span>
-            <div class="info-display">
-                <span id="service-display" class="service-badge">SERVICE</span>
-                <div id="name-display" class="name-label">...</div>
-                <div id="phone-display" class="phone-val">-</div>
+            <h2 id="service-display">SERVICE_NAME</h2>
+            <div class="status-bar">Live_Feed_Active</div>
+            <div class="info-box">
+                <span class="label">ON_CALL_PERSONNEL</span>
+                <div id="name-display" class="big-text">---</div>
+                <div id="phone-display" style="color: var(--highlight);">---</div>
             </div>
-            <div class="btn-grid">
-                <a href="#" id="call-link" class="action-link">📞 CALL</a>
-                <a href="#" id="wa-link" class="action-link wa" style="display:none;">💬 WA</a>
+            <div class="action-row">
+                <a href="#" id="call-link" class="btn-outline">VOICE_CALL</a>
+                <a href="#" id="wa-link" class="btn-outline" style="display:none; color: #00FFCC; border-color: #00FFCC;">WHATSAPP</a>
             </div>
-            <p id="time-stamp" style="font-size: 0.6rem; margin-top: 20px; opacity: 0.6;"></p>
+            <p id="time-stamp" style="font-size: 0.6rem; margin-top: 20px; opacity: 0.7;"></p>
         </div>
 
         <div id="register-view" class="hidden">
-            <div style="font-size: 1.5rem; margin-bottom: 5px;">✍️</div>
-            <h2>Registry Deck</h2>
-            <span id="status">Database Master Console 🇮🇶</span>
+            <h2>Duty_Registry</h2>
+            <div class="status-bar">Mode: Database_Update 🇮🇶</div>
             
-            <div class="registry-panel">
-                <select id="spec-select" class="neu-inset" onchange="toggleNameSection()">
-                    <option value="">Select Specialty</option>
-                    <option value="NS">Neuro</option>
-                    <option value="CT">Thoracic</option>
-                    <option value="GS">Surgery</option>
-                    <option value="US">Uro</option>
-                    <option value="ENT">ENT</option>
-                    <option value="H">Cardio</option>
-                    <option value="D">DeathCertificates</option>
-                    <option value="OP">OP Anesthesia</option>
-                    <option value="ICU">ICU Anesthesia</option>
-                    <option value="R">Radio</option>
-                    <option value="ON">Onco</option>
-                    <option value="PS">Plastic</option>
-                </select>
+            <select id="spec-select" onchange="toggleNameSection()">
+                <option value="">[SELECT_SPECIALTY]</option>
+                <option value="NS">NEURO</option>
+                <option value="CT">THORACIC</option>
+                <option value="GS">SURGERY</option>
+                <option value="US">URO</option>
+                <option value="ENT">ENT</option>
+                <option value="H">CARDIO</option>
+                <option value="D">DEATH_CERT</option>
+                <option value="OP">OP_ANESTHESIA</option>
+                <option value="ICU">ICU_ANESTHESIA</option>
+                <option value="R">RADIO</option>
+                <option value="ON">ONCO</option>
+                <option value="PS">PLASTIC</option>
+            </select>
 
-                <div id="name-section" class="hidden">
-                    <select id="name-list" class="neu-inset"></select>
-                    <button id="submit-btn" class="neu-btn" onclick="submitRegistration()">Commit Update</button>
-                </div>
+            <div id="name-section" class="hidden">
+                <select id="name-list"></select>
+                <button id="submit-btn" onclick="submitRegistration()">Commit_Changes</button>
             </div>
         </div>
     </div>
 
 <script>
-    // CORE LOGIC REMAINS UNTOUCHED
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
     const service = urlParams.get('service');
@@ -203,25 +167,40 @@
 
     window.onload = async function() {
         if (mode === 'register') {
-            document.getElementById('entry-title').innerText = "Registry Access";
-            prepareRegister();
+            await prepareRegister();
         } else if (service) {
-            document.getElementById('entry-title').innerText = "Ward Access";
-            prepareLookup();
+            await prepareLookup();
         } else {
-            document.getElementById('status').innerText = "⚠️ LINK ERROR";
+            updateStatus("Error: No_Service_ID", false);
         }
     };
 
+    function updateStatus(text, showLoader) {
+        document.getElementById('status').innerText = text;
+        document.getElementById('loader-icon').style.display = showLoader ? 'inline-block' : 'none';
+    }
+
     async function prepareRegister() {
-        document.getElementById('status').innerText = "Syncing Records...";
+        updateStatus("Syncing_Registry...", true);
         try {
             const response = await fetch(`${scriptUrl}?action=getNames`);
-            const data = await response.json(); 
-            allResidents = data.sort((a, b) => a[0].localeCompare(b[0], 'ar'));
-            document.getElementById('status').innerText = "Database Online ✅";
+            allResidents = await response.json();
+            allResidents.sort((a, b) => a[0].localeCompare(b[0], 'ar'));
+            updateStatus("Registry_Synced", false);
             document.getElementById('entry-btn').disabled = false;
-        } catch (e) { document.getElementById('status').innerText = "Offline Mode"; }
+        } catch (e) { updateStatus("Offline_Error", false); }
+    }
+
+    async function prepareLookup() {
+        updateStatus("Fetching_Duty...", true);
+        try {
+            const response = await fetch(`${scriptUrl}?service=${service}&ward=${ward || service}&json=true&t=${Date.now()}`);
+            serverData = await response.json();
+            if (serverData && !serverData.error) {
+                updateStatus("Link_Ready", false);
+                document.getElementById('entry-btn').disabled = false;
+            } else { updateStatus("No_Duty_Assigned", false); }
+        } catch (e) { updateStatus("Link_Failed", false); }
     }
 
     function toggleNameSection() {
@@ -229,47 +208,28 @@
         const nameSection = document.getElementById('name-section');
         const dropdown = document.getElementById('name-list');
         if (!selectedSpec) { nameSection.classList.add('hidden'); return; }
-        let filtered;
-        if (selectedSpec === "OP" || selectedSpec === "ICU") {
-            filtered = allResidents.filter(res => res[1] === "A");
-        } else if (selectedSpec === "D") {
-            filtered = allResidents;
-        } else {
-            filtered = allResidents.filter(res => res[1] === selectedSpec);
-        }
-        if (filtered.length > 0) {
-            dropdown.innerHTML = filtered.map(res => `<option value="${res[0]}">${res[0]}</option>`).join('');
-            nameSection.classList.remove('hidden');
-        } else {
-            dropdown.innerHTML = "<option value=''>Empty Records</option>";
-            nameSection.classList.remove('hidden');
-        }
-    }
+        
+        let filtered = (selectedSpec === "OP" || selectedSpec === "ICU") ? 
+                       allResidents.filter(res => res[1] === "A") : 
+                       (selectedSpec === "D" ? allResidents : allResidents.filter(res => res[1] === selectedSpec));
 
-    async function prepareLookup() {
-        try {
-            const response = await fetch(`${scriptUrl}?service=${service}&ward=${ward || service}&json=true&t=${Date.now()}`);
-            serverData = await response.json();
-            if (serverData && !serverData.error) {
-                document.getElementById('status').innerText = "Authorized ✅";
-                document.getElementById('entry-btn').disabled = false;
-            } else {
-                document.getElementById('status').innerText = "No Duty Found";
-            }
-        } catch (e) { document.getElementById('status').innerText = "Network Error"; }
+        dropdown.innerHTML = filtered.length ? 
+            filtered.map(res => `<option value="${res[0]}">${res[0]}</option>`).join('') : 
+            "<option value=''>Empty</option>";
+        nameSection.classList.remove('hidden');
     }
 
     function handleEntry() {
         const pass = document.getElementById('pw').value;
         const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
         if (pass === correct) {
-            document.getElementById('entry-screen').style.display = 'none';
+            document.getElementById('entry-screen').classList.add('hidden');
             if (mode === 'register') {
                 document.getElementById('register-view').classList.remove('hidden');
             } else {
                 showLookupUI();
             }
-        } else { alert("INVALID CREDENTIALS"); }
+        } else { alert("ACCESS_DENIED"); }
     }
 
     function showLookupUI() {
@@ -277,7 +237,7 @@
             document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
             document.getElementById('name-display').innerText = serverData.resident.name;
             document.getElementById('phone-display').innerText = serverData.resident.phone;
-            document.getElementById('time-stamp').innerText = "SYNCED: " + serverData.timestamp;
+            document.getElementById('time-stamp').innerText = "Update_Ref: " + serverData.timestamp;
             document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
             if (serverData.whatsappDigits) {
                 const wa = document.getElementById('wa-link');
@@ -290,7 +250,7 @@
 
     async function submitRegistration() {
         const btn = document.getElementById('submit-btn');
-        btn.innerText = "COMMITTING...";
+        btn.innerText = "WRITING...";
         btn.disabled = true;
         const payload = {
             action: "submitDuty",
@@ -298,16 +258,10 @@
             name: document.getElementById('name-list').value
         };
         try {
-            await fetch(scriptUrl, {
-                method: 'POST',
-                mode: 'no-cors',
-                cache: 'no-cache',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(payload)
-            });
-            alert("REGISTRY UPDATED");
-        } catch (e) { alert("SYNC FAILED"); }
-        finally { btn.innerText = "Commit Update"; btn.disabled = false; }
+            await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            alert("DB_UPDATED_SUCCESS");
+        } catch (e) { alert("WRITE_ERROR"); }
+        finally { btn.innerText = "Commit_Changes"; btn.disabled = false; }
     }
 </script>
 </body>
