@@ -3,196 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>On-Call Pro | Neon Terminal</title>
+    <title>On-Call Pro | Kinetic</title>
     <style>
         :root {
-            --neon-blue: #00f3ff;
-            --neon-pink: #ff00ff;
-            --neon-yellow: #fff200;
-            --bg-dark: #0a0a0f;
-            --panel-bg: rgba(16, 16, 28, 0.9);
+            --safety-orange: #FF6B00;
+            --steel-dark: #1A1C1E;
+            --steel-light: #2C2F33;
+            --text-white: #E1E1E1;
         }
 
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
-            font-family: 'Share Tech Mono', monospace; /* Very tech/retro vibe */
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
         body {
             margin: 0; padding: 0;
-            background: var(--bg-dark);
-            color: var(--neon-blue);
+            background: #0F1011;
+            color: var(--text-white);
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh;
             overflow: hidden;
         }
 
-        /* CRT Scanline Effect */
-        body::after {
-            content: " ";
-            position: fixed; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 118, 0.06));
-            background-size: 100% 4px, 3px 100%;
-            pointer-events: none;
-            z-index: 10;
+        /* Industrial Background Grid */
+        body::before {
+            content: "";
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(255,107,0,0.05) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(255,107,0,0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
         }
 
-        .terminal-container {
+        .kinetic-frame {
             width: 90%; max-width: 380px;
-            padding: 30px;
-            background: var(--panel-bg);
-            border: 2px solid var(--neon-blue);
-            box-shadow: 0 0 15px var(--neon-blue), inset 0 0 10px var(--neon-blue);
+            background: var(--steel-dark);
+            border: 4px solid var(--steel-light);
             position: relative;
-            animation: flicker 0.15s infinite alternate;
+            padding: 40px 25px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        @keyframes flicker {
-            0% { opacity: 0.95; } 100% { opacity: 1; }
+        /* Decorative "Bolts" */
+        .kinetic-frame::before, .kinetic-frame::after {
+            content: ""; position: absolute; width: 10px; height: 10px;
+            background: var(--steel-light); border-radius: 50%;
         }
+        .kinetic-frame::before { top: 10px; left: 10px; box-shadow: 350px 0 0 var(--steel-light); }
+        .kinetic-frame::after { bottom: 10px; left: 10px; box-shadow: 350px 0 0 var(--steel-light); }
 
         h2 { 
-            text-transform: uppercase; letter-spacing: 4px; font-size: 1.5rem; 
-            text-shadow: 0 0 10px var(--neon-blue); margin-bottom: 5px;
+            font-weight: 900; text-transform: uppercase; letter-spacing: 1px; 
+            border-left: 5px solid var(--safety-orange); padding-left: 15px;
+            margin: 0 0 10px 0; font-size: 1.4rem;
         }
 
-        .status-tag {
-            font-size: 0.7rem; color: var(--neon-yellow);
-            text-transform: uppercase; margin-bottom: 25px; display: block;
+        #status { 
+            font-size: 0.7rem; font-weight: 800; color: var(--safety-orange); 
+            text-transform: uppercase; display: block; margin-bottom: 30px;
         }
 
-        /* INPUTS */
+        /* FORM ELEMENTS - INDUSTRIAL STYLE */
         select, input {
             width: 100%;
-            padding: 12px;
+            padding: 16px;
             margin-bottom: 20px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--neon-blue);
-            color: var(--neon-blue) !important;
-            font-size: 1.1rem;
+            background: #000;
+            border: 2px solid var(--steel-light);
+            border-radius: 0; /* Sharp industrial corners */
+            color: var(--safety-orange) !important;
+            font-family: 'Monaco', monospace;
+            font-size: 1rem;
             outline: none;
-            transition: 0.3s;
+            transition: 0.2s;
         }
+
+        input:focus, select:focus { border-color: var(--safety-orange); }
 
         input[type="password"] {
             text-align: center; font-size: 2rem; letter-spacing: 10px;
         }
 
-        /* THE GLITCH BUTTON */
-        .neon-btn {
+        /* HEAVY KINETIC BUTTON */
+        .heavy-btn {
             width: 100%;
-            padding: 15px;
-            background: transparent;
-            color: var(--neon-pink);
-            border: 2px solid var(--neon-pink);
-            font-weight: bold;
+            padding: 20px;
+            background: var(--safety-orange);
+            color: black;
+            border: none;
+            font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            font-size: 1rem;
             cursor: pointer;
             position: relative;
-            transition: 0.2s;
-            overflow: hidden;
-            box-shadow: 0 0 10px var(--neon-pink);
+            box-shadow: 0 6px 0 #B34B00;
+            transition: all 0.1s;
         }
 
-        .neon-btn:hover {
-            background: var(--neon-pink);
-            color: white;
-            box-shadow: 0 0 30px var(--neon-pink);
-            text-shadow: 2px 2px #ff0000, -2px -2px #0000ff;
-        }
-
-        .neon-btn:active {
+        .heavy-btn:active {
             transform: translateY(4px);
-            filter: hue-rotate(90deg);
+            box-shadow: 0 2px 0 #B34B00;
         }
 
-        .neon-btn:disabled {
-            border-color: #333; color: #333; box-shadow: none;
+        .heavy-btn:disabled {
+            background: #444; box-shadow: 0 6px 0 #222; color: #666;
         }
 
-        /* LOOKUP SPECIFIC */
-        .data-readout {
-            border: 1px solid var(--neon-blue);
-            margin: 20px 0;
-            padding: 20px;
-            background: rgba(0, 243, 255, 0.05);
-            position: relative;
+        /* DATA DISPLAY - PLATE STYLE */
+        .info-plate {
+            background: #25282C;
+            border-top: 2px solid var(--safety-orange);
+            padding: 25px;
+            margin: 25px 0;
+            transform: translateX(-10px);
+            animation: slidePlate 0.4s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .data-readout::before {
-            content: "SECURE_DATA_STREAM";
-            position: absolute; top: -8px; left: 10px;
-            background: var(--bg-dark);
-            font-size: 0.6rem; padding: 0 5px; color: var(--neon-yellow);
-        }
+        @keyframes slidePlate { to { transform: translateX(0); } }
 
-        .name-display { font-size: 2rem; color: #fff; text-shadow: 0 0 5px var(--neon-blue); }
+        .name-tag { font-size: 2rem; font-weight: 900; line-height: 1; margin: 10px 0; }
         
-        .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .action-link {
-            text-decoration: none; padding: 12px; font-size: 0.8rem;
-            text-align: center; font-weight: bold; border: 1px solid;
+        .badge {
+            font-size: 0.65rem; font-weight: 900; padding: 4px 8px;
+            background: #3B3F45; color: var(--safety-orange);
+            display: inline-block; margin-bottom: 10px;
         }
-        .call-link { color: var(--neon-blue); border-color: var(--neon-blue); }
-        .wa-link { color: #00ff00; border-color: #00ff00; box-shadow: 0 0 5px #00ff00; }
+
+        .action-row { display: flex; gap: 5px; margin-top: 20px; }
+        .action-link {
+            flex: 1; padding: 18px; text-decoration: none; font-weight: 900;
+            font-size: 0.8rem; text-align: center; background: var(--steel-light); color: white;
+            transition: 0.2s;
+        }
+        .action-link:hover { background: var(--safety-orange); color: black; }
+        .wa-btn { border-bottom: 4px solid #25D366; }
 
         .hidden { display: none !important; }
+
+        /* Transition Animations */
+        .plate-exit { transform: scale(0.9) rotateX(20deg); opacity: 0; }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div id="entry-screen" class="terminal-container">
-        <h2 id="entry-title">System_Access</h2>
-        <span class="status-tag" id="status">Waiting for uplink...</span>
+    <div id="entry-screen" class="kinetic-frame">
+        <h2>Auth.Module</h2>
+        <span id="status">Systems Nominal // Ready</span>
         <input type="password" id="pw" inputmode="numeric" placeholder="PIN" maxlength="4">
-        <button id="entry-btn" class="neon-btn" onclick="handleEntry()" disabled>Init_Auth</button>
+        <button id="entry-btn" class="heavy-btn" onclick="handleEntry()" disabled>Engage Link</button>
     </div>
 
-    <div id="lookup-view" class="terminal-container hidden">
-        <span id="service-display" class="status-tag">SERVICE_IDENTIFIED</span>
-        <div class="data-readout">
-            <div id="name-display" class="name-display">...</div>
-            <div id="phone-display" style="margin-top:10px; font-size: 1.2rem;">-</div>
+    <div id="lookup-view" class="kinetic-frame hidden">
+        <div id="service-display" class="badge">SERVICE_ID</div>
+        <div id="name-display" class="name-tag">...</div>
+        
+        <div class="info-plate">
+            <span style="font-size: 0.6rem; font-weight: 900; opacity: 0.5;">COMMS_CHANNEL</span>
+            <div id="phone-display" style="font-size: 1.5rem; font-weight: 800; margin-top: 5px;">-</div>
         </div>
+
         <div class="action-row">
-            <a href="#" id="call-link" class="action-link call-link">VOICE_COM</a>
-            <a href="#" id="wa-link" class="action-link wa-link" style="display:none;">WHATSAPP_TX</a>
+            <a href="#" id="call-link" class="action-link">VOICE</a>
+            <a href="#" id="wa-link" class="action-link wa-btn" style="display:none;">WHATSAPP</a>
         </div>
-        <p id="time-stamp" style="font-size: 0.6rem; opacity: 0.6; margin-top: 20px;"></p>
+        <p id="time-stamp" style="font-size: 0.6rem; opacity: 0.4; margin-top: 25px; font-weight: 900;"></p>
     </div>
 
-    <div id="register-view" class="terminal-container hidden">
-        <h2 style="color: var(--neon-pink); box-shadow: none; text-shadow: 0 0 10px var(--neon-pink);">Registry_Log</h2>
-        <span class="status-tag">Satellite Uplink: Iraq_Active 🇮🇶</span>
+    <div id="register-view" class="kinetic-frame hidden">
+        <div class="badge">REGISTRY_UNIT 🇮🇶</div>
+        <h2>Duty.Log</h2>
+        <span id="status">Update Required</span>
         
         <select id="spec-select" onchange="toggleNameSection()">
-            <option value="">[SELECT_SECTOR]</option>
-            <option value="NS">NEUROSURGERY</option>
-            <option value="CT">THORACIC</option>
-            <option value="GS">GEN_SURGERY</option>
-            <option value="US">UROLOGY</option>
-            <option value="ENT">E.N.T</option>
-            <option value="H">CARDIOLOGY</option>
-            <option value="D">DEATH_RECORDS</option>
-            <option value="OP">ANESTH_OP</option>
-            <option value="ICU">ANESTH_ICU</option>
-            <option value="R">RADIOLOGY</option>
-            <option value="ON">ONCOLOGY</option>
-            <option value="PS">PLASTIC_SURG</option>
+            <option value="">-- SELECT SECTOR --</option>
+            <option value="NS">Neuro</option>
+            <option value="CT">Thoracic</option>
+            <option value="GS">Surgery</option>
+            <option value="US">Uro</option>
+            <option value="ENT">ENT</option>
+            <option value="H">Cardio</option>
+            <option value="D">DeathCert</option>
+            <option value="OP">OP Anes</option>
+            <option value="ICU">ICU Anes</option>
+            <option value="R">Radio</option>
+            <option value="ON">Onco</option>
+            <option value="PS">Plastic</option>
         </select>
 
         <div id="name-section" class="hidden">
             <select id="name-list"></select>
-            <button id="submit-btn" class="neon-btn" onclick="submitRegistration()">Commit_Override</button>
+            <button id="submit-btn" class="heavy-btn" onclick="submitRegistration()">Confirm Entry</button>
         </div>
     </div>
 
 <script>
-    /* 100% ORIGINAL SCRIPT LOGIC REINSTATED */
+    /* 100% ORIGINAL SCRIPT LOGIC */
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
     const service = urlParams.get('service');
@@ -204,27 +212,25 @@
 
     window.onload = async function() {
         if (mode === 'register') {
-            document.getElementById('entry-title').innerText = "MD_Registry";
+            document.getElementById('entry-title').innerText = "MD Login";
             prepareRegister();
         } else if (service) {
-            document.getElementById('entry-title').innerText = "Lookup_Term";
+            document.getElementById('entry-title').innerText = "Access";
             prepareLookup();
         } else {
-            document.getElementById('status').innerText = "⚠️ SYSTEM_LINK_BRICKED";
+            document.getElementById('status').innerText = "⚠️ Link Disconnected";
         }
     };
 
     async function prepareRegister() {
-        document.getElementById('status').innerText = "SYNCHRONIZING_DATABASE...";
+        document.getElementById('status').innerText = "Synchronizing Data...";
         try {
             const response = await fetch(`${scriptUrl}?action=getNames`);
             const data = await response.json(); 
             allResidents = data.sort((a, b) => a[0].localeCompare(b[0], 'ar'));
-            document.getElementById('status').innerText = "DATABASE_READY_✅";
+            document.getElementById('status').innerText = "Uplink Established";
             document.getElementById('entry-btn').disabled = false;
-        } catch (e) { 
-            document.getElementById('status').innerText = "DATA_SYNC_FAILED"; 
-        }
+        } catch (e) { document.getElementById('status').innerText = "Sync Failed"; }
     }
 
     function toggleNameSection() {
@@ -246,7 +252,7 @@
             dropdown.innerHTML = filtered.map(res => `<option value="${res[0]}">${res[0]}</option>`).join('');
             nameSection.classList.remove('hidden');
         } else {
-            dropdown.innerHTML = "<option value=''>ZERO_RECORDS</option>";
+            dropdown.innerHTML = "<option value=''>Zero Matches</option>";
             nameSection.classList.remove('hidden');
         }
     }
@@ -256,25 +262,31 @@
             const response = await fetch(`${scriptUrl}?service=${service}&ward=${ward || service}&json=true&t=${Date.now()}`);
             serverData = await response.json();
             if (serverData && !serverData.error) {
-                document.getElementById('status').innerText = "ENCRYPTION_LINK_ONLINE_✅";
+                document.getElementById('status').innerText = "Target Located";
                 document.getElementById('entry-btn').disabled = false;
             } else {
-                document.getElementById('status').innerText = "TARGET_DATA_NULL";
+                document.getElementById('status').innerText = "No Target Data";
             }
-        } catch (e) { document.getElementById('status').innerText = "UPLINK_OFFLINE"; }
+        } catch (e) { document.getElementById('status').innerText = "Offline"; }
     }
 
     function handleEntry() {
         const pass = document.getElementById('pw').value;
         const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
         if (pass === correct) {
-            document.getElementById('entry-screen').style.display = 'none';
-            if (mode === 'register') {
-                document.getElementById('register-view').classList.remove('hidden');
-            } else {
-                showLookupUI();
-            }
-        } else { alert("ACCESS_REJECTED: WRONG_PIN"); }
+            // MECHANICAL TRANSITION
+            const frame = document.getElementById('entry-screen');
+            frame.classList.add('plate-exit');
+            
+            setTimeout(() => {
+                frame.style.display = 'none';
+                if (mode === 'register') {
+                    document.getElementById('register-view').classList.remove('hidden');
+                } else {
+                    showLookupUI();
+                }
+            }, 400);
+        } else { alert("ACCESS DENIED"); }
     }
 
     function showLookupUI() {
@@ -282,7 +294,7 @@
             document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
             document.getElementById('name-display').innerText = serverData.resident.name;
             document.getElementById('phone-display').innerText = serverData.resident.phone;
-            document.getElementById('time-stamp').innerText = "LOG_TIME: " + serverData.timestamp;
+            document.getElementById('time-stamp').innerText = "STAMP: " + serverData.timestamp;
             document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
             if (serverData.whatsappDigits) {
                 const wa = document.getElementById('wa-link');
@@ -310,13 +322,9 @@
                 headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify(payload)
             });
-            alert("UPLOAD_SUCCESSFUL");
-        } catch (e) {
-            alert("PROTOCOL_ERROR");
-        } finally {
-            btn.innerText = "Commit_Override";
-            btn.disabled = false;
-        }
+            alert("UPLOAD COMPLETE");
+        } catch (e) { alert("ERROR"); }
+        finally { btn.innerText = "Confirm Entry"; btn.disabled = false; }
     }
 </script>
 </body>
