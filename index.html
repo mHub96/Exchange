@@ -3,30 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MD Portal | Tactile</title>
+    <title>MD Portal | Tactile Fix</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #e0e5ec;
-            --shadow: #a3b1c6;
-            --highlight: #ffffff;
-        }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #4a5568; }
+        :root { --bg: #e0e5ec; --shadow: #a3b1c6; --highlight: #ffffff; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #4a5568; margin: 0; }
 
-        /* NEUMORPHIC OUTER SHADOW */
-        .neu-flat {
-            background: var(--bg);
-            box-shadow: 20px 20px 60px var(--shadow), -20px -20px 60px var(--highlight);
-        }
-
-        /* NEUMORPHIC INNER SHADOW (Recessed) */
-        .neu-inset {
-            background: var(--bg);
-            box-shadow: inset 6px 6px 12px var(--shadow), inset -6px -6px 12px var(--highlight);
-        }
-
-        /* TACTILE BUTTON PRESS */
+        .neu-flat { background: var(--bg); box-shadow: 20px 20px 60px var(--shadow), -20px -20px 60px var(--highlight); }
+        .neu-inset { background: var(--bg); box-shadow: inset 6px 6px 12px var(--shadow), inset -6px -6px 12px var(--highlight); }
+        
         .neu-btn {
             background: var(--bg);
             box-shadow: 8px 8px 16px var(--shadow), -8px -8px 16px var(--highlight);
@@ -37,15 +23,13 @@
             transform: scale(0.98);
         }
 
-        /* LOADING SHIELD */
         #shield { position: fixed; inset: 0; background: var(--bg); z-index: 100; transition: opacity 0.5s; }
         
-        /* THE "SUCCESS" STATE */
-        .btn-success {
-            background: #10b981 !important;
-            color: white !important;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4) !important;
-        }
+        .btn-success { background: #10b981 !important; color: white !important; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4) !important; }
+
+        /* Status Pulse while loading */
+        .pulse-text { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4 overflow-hidden">
@@ -57,7 +41,7 @@
         <div id="login-view">
             <div class="text-center mb-10">
                 <h1 id="title-text" class="text-slate-800 text-2xl font-extrabold tracking-tight">Access Hub</h1>
-                <p id="status-text" class="text-slate-500 text-[0.6rem] mt-2 font-bold uppercase tracking-[0.3em]">Initializing 🇮🇶</p>
+                <p id="status-text" class="text-slate-500 text-[0.6rem] mt-2 font-bold uppercase tracking-[0.3em] pulse-text">Initializing...</p>
             </div>
             
             <div class="space-y-8">
@@ -79,7 +63,7 @@
         <div id="register-view" class="hidden space-y-6">
             <h2 class="text-slate-800 text-xl font-extrabold text-center mb-4">Duty Update</h2>
             <div class="neu-inset p-2 rounded-xl">
-                <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-transparent p-3 text-slate-700 font-bold outline-none">
+                <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-transparent p-3 text-slate-700 font-bold outline-none appearance-none">
                     <option value="">-- Specialty --</option>
                     <option value="NS">Neuro</option><option value="CT">Thoracic</option>
                     <option value="GS">Surgery</option><option value="US">Uro</option>
@@ -91,7 +75,7 @@
             </div>
             <div id="name-section" class="hidden space-y-6">
                 <div class="neu-inset p-2 rounded-xl">
-                    <select id="name-list" class="w-full bg-transparent p-3 text-slate-700 outline-none font-medium"></select>
+                    <select id="name-list" class="w-full bg-transparent p-3 text-slate-700 outline-none font-medium appearance-none"></select>
                 </div>
                 <button id="submit-btn" onclick="submitRegistration()" class="neu-btn w-full py-5 text-blue-600 font-extrabold rounded-2xl">
                     COMMIT LOG
@@ -105,7 +89,6 @@
             </div>
             <h2 id="name-display" class="text-slate-800 text-3xl font-extrabold mb-2">...</h2>
             <p id="phone-display" class="text-slate-500 font-bold text-lg mb-10">-</p>
-            
             <div class="grid grid-cols-2 gap-4">
                 <a href="#" id="call-link" class="neu-btn p-5 rounded-3xl text-blue-600 font-extrabold text-sm">VOICE</a>
                 <a href="#" id="wa-link" class="hidden p-5 bg-emerald-500 text-white rounded-3xl font-extrabold text-sm shadow-lg shadow-emerald-200">WHATSAPP</a>
@@ -124,18 +107,30 @@
         let allResidents = [];
 
         window.onload = async function() {
+            // Remove shield
             setTimeout(() => { 
                 document.getElementById('shield').style.opacity = '0'; 
                 setTimeout(() => document.getElementById('shield').remove(), 500);
             }, 300);
 
-            if (mode === 'register') {
-                document.getElementById('title-text').innerText = "Doctor Hub";
-                const res = await fetch(`${scriptUrl}?action=getNames`);
-                allResidents = (await res.json()).sort((a,b) => a[0].localeCompare(b[0], 'ar'));
-            } else if (service) {
-                const res = await fetch(`${scriptUrl}?service=${service}&ward=${service}&json=true&t=${Date.now()}`);
-                serverData = await res.json();
+            // FETCH LOGIC
+            const status = document.getElementById('status-text');
+            try {
+                if (mode === 'register') {
+                    document.getElementById('title-text').innerText = "Doctor Hub";
+                    const res = await fetch(`${scriptUrl}?action=getNames`);
+                    allResidents = (await res.json()).sort((a,b) => a[0].localeCompare(b[0], 'ar'));
+                } else if (service) {
+                    const res = await fetch(`${scriptUrl}?service=${service}&ward=${service}&json=true&t=${Date.now()}`);
+                    serverData = await res.json();
+                }
+                
+                // FIXED: Update status once loading is complete
+                status.innerText = "Terminal Ready 🇮🇶";
+                status.classList.remove('pulse-text');
+            } catch (e) {
+                status.innerText = "Connection Error";
+                status.classList.remove('pulse-text');
             }
         };
 
@@ -181,7 +176,7 @@
             document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
             document.getElementById('name-display').innerText = serverData.resident.name;
             document.getElementById('phone-display').innerText = serverData.resident.phone;
-            document.getElementById('time-stamp').innerText = "Sync Time: " + serverData.timestamp;
+            document.getElementById('time-stamp').innerText = "Ref: " + serverData.timestamp;
             document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
             if (serverData.whatsappDigits) {
                 const wa = document.getElementById('wa-link');
