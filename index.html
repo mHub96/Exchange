@@ -193,7 +193,7 @@
         let filtered = (val === "OP" || val === "ICU") ? allResidents.filter(r => r[1] === "A") : (val === "D" ? allResidents : allResidents.filter(r => r[1] === val));
         
         // Add a null placeholder first
-        list.innerHTML = `<option value="">-- Choose Doctor --</option>` + 
+        list.innerHTML = `<option value="">-- Who's On-Call Today --</option>` + 
                         filtered.map(r => `<option value="${r[0]}" class="bg-[#1a1c20]">${r[0]}</option>`).join('');
         
         document.getElementById('name-section').classList.remove('hidden');
@@ -226,7 +226,7 @@
         document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
         document.getElementById('name-display').innerText = serverData.resident.name;
         document.getElementById('phone-display').innerText = serverData.resident.phone;
-        document.getElementById('time-stamp').innerText = "STAMP: " + serverData.timestamp;
+        document.getElementById('time-stamp').innerText = "TIME: " + serverData.timestamp;
         document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
         if (serverData.whatsappDigits) {
             const wa = document.getElementById('wa-link');
