@@ -103,22 +103,22 @@
                 </div>
                 
                 <button id="entry-btn" onclick="handleEntry()" class="embossed-btn w-full py-6 tracking-widest uppercase">
-                    Authorize
+                    AUTHORIZE
                 </button>
             </div>
         </div>
 
         <div id="register-view" class="hidden space-y-6">
-            <h2 class="text-white text-xl font-extrabold text-center mb-2">Duty Log 🇮🇶</h2>
+            <h2 class="text-white text-xl font-extrabold text-center mb-2">Duty Update 🇮🇶</h2>
             <div class="recessed-input p-2">
                 <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none appearance-none">
                     <option value="" class="bg-[#1a1c20]">Sector</option>
-                    <option value="NS" class="bg-[#1a1c20]">Neuro</option><option value="CT" class="bg-[#1a1c20]">Thoracic</option>
-                    <option value="GS" class="bg-[#1a1c20]">Surgery</option><option value="US" class="bg-[#1a1c20]">Uro</option>
-                    <option value="ENT" class="bg-[#1a1c20]">ENT</option><option value="H" class="bg-[#1a1c20]">Cardio</option>
-                    <option value="D" class="bg-[#1a1c20]">DeathCert</option><option value="OP" class="bg-[#1a1c20]">Anes (OP)</option>
-                    <option value="ICU" class="bg-[#1a1c20]">Anes (ICU)</option><option value="R" class="bg-[#1a1c20]">Radio</option>
-                    <option value="ON" class="bg-[#1a1c20]">Onco</option><option value="PS" class="bg-[#1a1c20]">Plastic</option>
+                    <option value="NS" class="bg-[#1a1c20]">Neurosurgery</option><option value="CT" class="bg-[#1a1c20]">Cardiothoracic</option>
+                    <option value="GS" class="bg-[#1a1c20]">General Surgery</option><option value="US" class="bg-[#1a1c20]">Urosurgery</option>
+                    <option value="ENT" class="bg-[#1a1c20]">ENT</option><option value="H" class="bg-[#1a1c20]">Cardiology</option>
+                    <option value="D" class="bg-[#1a1c20]">Death Certificates</option><option value="OP" class="bg-[#1a1c20]">Anaethesia (OP)</option>
+                    <option value="ICU" class="bg-[#1a1c20]">Anaesthesia (ICU)</option><option value="R" class="bg-[#1a1c20]">Radiology</option>
+                    <option value="ON" class="bg-[#1a1c20]">Oncology</option><option value="PS" class="bg-[#1a1c20]">Plastic Surgery</option>
                 </select>
             </div>
             <div id="name-section" class="hidden space-y-6">
@@ -126,7 +126,7 @@
                     <select id="name-list" class="w-full bg-transparent p-4 text-slate-300 outline-none"></select>
                 </div>
                 <button id="submit-btn" onclick="submitRegistration()" class="embossed-btn w-full py-6">
-                    COMMIT LOG
+                    UPDATE
                 </button>
             </div>
         </div>
@@ -139,7 +139,7 @@
             <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8">-</p>
             
             <div class="grid grid-cols-2 gap-6">
-                <a href="#" id="call-link" class="embossed-btn p-5 text-sm">VOICE</a>
+                <a href="#" id="call-link" class="embossed-btn p-5 text-sm">SIM Call</a>
                 <a href="#" id="wa-link" class="hidden p-5 bg-emerald-500/20 border border-emerald-500 text-emerald-500 rounded-[1.5rem] font-extrabold text-sm shadow-lg">WHATSAPP</a>
             </div>
             <p id="time-stamp" class="text-[0.55rem] text-slate-600 mt-10 font-mono tracking-widest uppercase"></p>
@@ -174,7 +174,7 @@
             }
             
             btn.classList.add('fetched-active');
-            status.innerText = "Link Active 🇮🇶";
+            status.innerText = "READY 🇮🇶";
             status.classList.remove('pulse');
             status.style.color = "#fbbf24";
         } catch (e) {
@@ -219,7 +219,7 @@
         document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
         document.getElementById('name-display').innerText = serverData.resident.name;
         document.getElementById('phone-display').innerText = serverData.resident.phone;
-        document.getElementById('time-stamp').innerText = "STAMP: " + serverData.timestamp;
+        document.getElementById('time-stamp').innerText = "Timestamp: " + serverData.timestamp;
         document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
         if (serverData.whatsappDigits) {
             const wa = document.getElementById('wa-link');
