@@ -41,31 +41,42 @@
             inset: 0;
             pointer-events: none;
             z-index: 20;
+            border-radius: 3rem;
         }
 
-        #tube-path {
+        /* The 'Empty' Glass Tube */
+        #tube-bg {
+            fill: none;
+            stroke: rgba(251, 191, 36, 0.05);
+            stroke-width: 4;
+            rx: 48;
+        }
+
+        /* The Moving Fluid Segment */
+        #tube-fluid {
             fill: none;
             stroke: var(--accent);
             stroke-width: 4;
             stroke-linecap: round;
-            filter: drop-shadow(0 0 8px var(--accent));
-            stroke-dasharray: 1000; /* Approximate circumference */
-            stroke-dashoffset: 1000;
-            transition: opacity 0.3s;
+            filter: drop-shadow(0 0 12px var(--accent));
+            /* Creates a segment of fluid roughly 30% of the circumference */
+            stroke-dasharray: 400 1200; 
+            stroke-dashoffset: 1600;
             opacity: 0;
+            transition: opacity 0.4s;
         }
 
-        /* FLOW ANIMATION */
-        .loading-active #tube-path {
+        /* CONTINUOUS FLOW ANIMATION */
+        .loading-active #tube-fluid {
             opacity: 1;
-            animation: fluidFill 2s ease-in-out forwards;
+            animation: continuousFlow 1.5s linear infinite;
         }
 
         .loading-active { animation: none !important; }
 
-        @keyframes fluidFill {
-            0% { stroke-dashoffset: 1000; }
-            100% { stroke-dashoffset: 0; }
+        @keyframes continuousFlow {
+            from { stroke-dashoffset: 1600; }
+            to { stroke-dashoffset: 0; }
         }
 
         /* UI ELEMENTS */
@@ -84,10 +95,7 @@
             font-weight: 800;
         }
 
-        .btn-register {
-            background: var(--btn-grey);
-            color: #e2e8f0;
-        }
+        .btn-register { background: var(--btn-grey); color: #e2e8f0; }
 
         .fetched-active {
             background: var(--accent) !important;
@@ -119,7 +127,8 @@
     <div id="main-card" class="w-full max-w-sm embossed-card breathing p-10 transition-all duration-700">
         
         <svg class="tube-container" width="100%" height="100%" viewBox="0 0 384 512" preserveAspectRatio="none">
-            <rect id="tube-path" x="2" y="2" width="380" height="508" rx="48" />
+            <rect id="tube-bg" x="2" y="2" width="380" height="508" rx="48" />
+            <rect id="tube-fluid" x="2" y="2" width="380" height="508" rx="48" />
         </svg>
 
         <div id="login-view">
@@ -205,7 +214,6 @@
                 const res = await fetch(`${scriptUrl}?service=${service}&ward=${service}&json=true&t=${Date.now()}`);
                 serverData = await res.json();
             }
-            
             entryBtn.classList.add('fetched-active');
             status.innerText = "READY 🇮🇶";
             status.style.color = "#fbbf24";
@@ -262,7 +270,7 @@
             return;
         }
 
-        // TRIGGER FLUID FILL EFFECT
+        // START CONTINUOUS FLOW
         card.classList.add('loading-active');
         btn.innerText = "UPLOADING...";
 
@@ -277,7 +285,7 @@
                 })
             });
             
-            // SUCCESS
+            // STOP FLOW & SHOW SUCCESS
             card.classList.remove('loading-active');
             btn.classList.add('fetched-active');
             btn.innerText = "SUCCESS ✅";
