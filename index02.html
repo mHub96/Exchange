@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>On-Call Pro | Swiss Edition</title>
+    <style>
+        :root {
+            --med-red: #E63946; /* Medical Primary */
+            --clinical-bg: #F8F9FA;
+            --ink-black: #1D3557;
+            --slate: #457B9D;
+            --soft-grey: #E9ECEF;
+            --white: #FFFFFF;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background: var(--clinical-bg);
+            color: var(--ink-black);
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Architectural Grid Overlay */
+        body::before {
+            content: "";
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(var(--soft-grey) 1px, transparent 1px);
+            background-size: 20px 20px;
+            z-index: -1;
+        }
+
+        .container {
+            width: 90%; max-width: 400px;
+            background: var(--white);
+            padding: 0;
+            border-radius: 0; /* Modernism uses sharp or very slight radii */
+            box-shadow: 20px 20px 0px rgba(29, 53, 87, 0.05);
+            border: 2px solid var(--ink-black);
+            text-align: left;
+            overflow: hidden;
+        }
+
+        /* Red Header Header Block */
+        .brand-header {
+            background: var(--med-red);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-header h1 { 
+            margin: 0; font-size: 1rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; 
+        }
+
+        .content-body { padding: 30px 25px; }
+
+        h2 { 
+            font-weight: 900; font-size: 1.8rem; letter-spacing: -1px; 
+            margin: 0 0 10px 0; color: var(--ink-black); line-height: 1;
+        }
+
+        #status { 
+            font-size: 0.75rem; font-weight: 700; color: var(--slate); 
+            margin-bottom: 30px; text-transform: uppercase; display: block;
+        }
+
+        /* CLEAN FORM ELEMENTS */
+        .form-label {
+            font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+            color: var(--ink-black); margin-bottom: 6px; display: block;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: var(--soft-grey);
+            border: none;
+            border-radius: 0;
+            color: var(--ink-black) !important;
+            font-size: 1rem;
+            font-weight: 500;
+            appearance: none;
+        }
+
+        input[type="password"] {
+            letter-spacing: 12px; font-weight: 900; font-size: 2rem; text-align: center;
+            background: var(--ink-black); color: var(--white) !important;
+        }
+
+        button {
+            width: 100%;
+            padding: 20px;
+            background: var(--ink-black);
+            color: white;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover:not(:disabled) { background: var(--med-red); }
+        button:disabled { background: var(--soft-grey); color: var(--slate); }
+
+        /* LOOKUP SPECIFIC */
+        .info-panel {
+            border-top: 5px solid var(--ink-black);
+            background: var(--soft-grey);
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .name-label { font-size: 2.2rem; font-weight: 900; color: var(--ink-black); line-height: 1; margin: 10px 0; }
+        
+        .service-badge {
+            font-size: 0.7rem; font-weight: 900; color: var(--med-red);
+            border: 2px solid var(--med-red); padding: 4px 10px; display: inline-block;
+        }
+
+        .btn-row { display: flex; gap: 2px; margin-top: 20px; }
+        .action-btn {
+            flex: 1; padding: 18px; text-decoration: none; font-weight: 800;
+            font-size: 0.8rem; text-align: center; background: var(--ink-black); color: white;
+        }
+        .wa { background: #25D366; }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="brand-header">
+            <h1>On-Call Pro</h1>
+            <div style="font-weight: 900;">+</div>
+        </div>
+
+        <div class="content-body">
+            <div id="entry-screen">
+                <h2 id="entry-title">Access Portal</h2>
+                <span id="status">V-2.6 System Authenticated</span>
+                
+                <span class="form-label">Security Key</span>
+                <input type="password" id="pw" inputmode="numeric" placeholder="0000" maxlength="4">
+                <button id="entry-btn" onclick="handleEntry()" disabled>Validate Identity</button>
+            </div>
+
+            <div id="lookup-view" class="hidden">
+                <div id="service-display" class="service-badge">SERVICE</div>
+                <div id="name-display" class="name-label">Loading...</div>
+                
+                <div class="info-panel">
+                    <span class="form-label">Primary Contact</span>
+                    <div id="phone-display" style="font-size: 1.5rem; font-weight: 700;">-</div>
+                </div>
+
+                <div class="btn-row">
+                    <a href="#" id="call-link" class="action-btn">VOICE</a>
+                    <a href="#" id="wa-link" class="action-btn wa" style="display:none;">WHATSAPP</a>
+                </div>
+                <p id="time-stamp" style="font-size: 0.65rem; color: var(--slate); margin-top: 20px; font-weight: 700;"></p>
+            </div>
+
+            <div id="register-view" class="hidden">
+                <div class="service-badge">Duty Registry</div>
+                <h2>Staff Assignment</h2>
+                <span id="status">Central Database 🇮🇶</span>
+                
+                <span class="form-label">Medical Department</span>
+                <select id="spec-select" onchange="toggleNameSection()">
+                    <option value="">Select Department</option>
+                    <option value="NS">Neuro</option>
+                    <option value="CT">Thoracic</option>
+                    <option value="GS">Surgery</option>
+                    <option value="US">Uro</option>
+                    <option value="ENT">ENT</option>
+                    <option value="H">Cardio</option>
+                    <option value="D">DeathCertificates</option>
+                    <option value="OP">OP Anesthesia</option>
+                    <option value="ICU">ICU Anesthesia</option>
+                    <option value="R">Radio</option>
+                    <option value="ON">Onco</option>
+                    <option value="PS">Plastic</option>
+                </select>
+
+                <div id="name-section" class="hidden">
+                    <span class="form-label">Available Resident</span>
+                    <select id="name-list"></select>
+                    <button id="submit-btn" onclick="submitRegistration()">Update Record</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // CORE LOGIC REMAINS IDENTICAL TO YOUR WORKING SCRIPT
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+    const service = urlParams.get('service');
+    const ward = urlParams.get('ward');
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
+
+    let serverData = null;
+    let allResidents = [];
+
+    window.onload = async function() {
+        if (mode === 'register') {
+            document.getElementById('entry-title').innerText = "MD Authenticator";
+            prepareRegister();
+        } else if (service) {
+            document.getElementById('entry-title').innerText = "Service Lookup";
+            prepareLookup();
+        } else {
+            document.getElementById('status').innerText = "⚠️ SYSTEM LINK INCOMPLETE";
+        }
+    };
+
+    async function prepareRegister() {
+        document.getElementById('status').innerText = "Loading Metadata...";
+        try {
+            const response = await fetch(`${scriptUrl}?action=getNames`);
+            const data = await response.json(); 
+            allResidents = data.sort((a, b) => a[0].localeCompare(b[0], 'ar'));
+            document.getElementById('status').innerText = "MD-Sync Ready ✅";
+            document.getElementById('entry-btn').disabled = false;
+        } catch (e) { document.getElementById('status').innerText = "Offline Mode"; }
+    }
+
+    function toggleNameSection() {
+        const selectedSpec = document.getElementById('spec-select').value;
+        const nameSection = document.getElementById('name-section');
+        const dropdown = document.getElementById('name-list');
+        if (!selectedSpec) { nameSection.classList.add('hidden'); return; }
+        let filtered;
+        if (selectedSpec === "OP" || selectedSpec === "ICU") {
+            filtered = allResidents.filter(res => res[1] === "A");
+        } else if (selectedSpec === "D") {
+            filtered = allResidents;
+        } else {
+            filtered = allResidents.filter(res => res[1] === selectedSpec);
+        }
+        if (filtered.length > 0) {
+            dropdown.innerHTML = filtered.map(res => `<option value="${res[0]}">${res[0]}</option>`).join('');
+            nameSection.classList.remove('hidden');
+        } else {
+            dropdown.innerHTML = "<option value=''>No matches</option>";
+            nameSection.classList.remove('hidden');
+        }
+    }
+
+    async function prepareLookup() {
+        try {
+            const response = await fetch(`${scriptUrl}?service=${service}&ward=${ward || service}&json=true&t=${Date.now()}`);
+            serverData = await response.json();
+            if (serverData && !serverData.error) {
+                document.getElementById('status').innerText = "Registry Connection Established ✅";
+                document.getElementById('entry-btn').disabled = false;
+            } else {
+                document.getElementById('status').innerText = "No data for this sector";
+            }
+        } catch (e) { document.getElementById('status').innerText = "Offline Mode"; }
+    }
+
+    function handleEntry() {
+        const pass = document.getElementById('pw').value;
+        const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
+        if (pass === correct) {
+            document.getElementById('entry-screen').style.display = 'none';
+            if (mode === 'register') {
+                document.getElementById('register-view').classList.remove('hidden');
+            } else {
+                showLookupUI();
+            }
+        } else { alert("ACCESS DENIED"); }
+    }
+
+    function showLookupUI() {
+        if (serverData) {
+            document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
+            document.getElementById('name-display').innerText = serverData.resident.name;
+            document.getElementById('phone-display').innerText = serverData.resident.phone;
+            document.getElementById('time-stamp').innerText = "REPORT TIME: " + serverData.timestamp;
+            document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
+            if (serverData.whatsappDigits) {
+                const wa = document.getElementById('wa-link');
+                wa.style.display = 'flex';
+                wa.href = "whatsapp://send?phone=" + serverData.whatsappDigits;
+            }
+        }
+        document.getElementById('lookup-view').classList.remove('hidden');
+    }
+
+    async function submitRegistration() {
+        const btn = document.getElementById('submit-btn');
+        btn.innerText = "UPDATING...";
+        btn.disabled = true;
+        const payload = {
+            action: "submitDuty",
+            specialty: document.getElementById('spec-select').value,
+            name: document.getElementById('name-list').value
+        };
+        try {
+            await fetch(scriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(payload)
+            });
+            alert("RECORD UPDATED ✅");
+        } catch (e) { alert("ERROR UPDATING RECORD"); }
+        finally { btn.innerText = "Update Record"; btn.disabled = false; }
+    }
+</script>
+</body>
+</html>
