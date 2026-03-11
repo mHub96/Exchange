@@ -1,101 +1,329 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registry 🇮🇶</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>On-Call Pro</title>
     <style>
-        :root { --bg: #000; --primary: #007aff; --glass: rgba(255,255,255,0.08); }
-        body { margin: 0; background: var(--bg); color: white; font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .mesh { position: fixed; width: 100%; height: 100%; background: radial-gradient(at 0% 0%, #007aff33 0px, transparent 50%), radial-gradient(at 100% 100%, #25d3661a 0px, transparent 50%); z-index: -1; filter: blur(40px); }
-        .container { width: 90%; max-width: 400px; padding: 40px 30px; background: var(--glass); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); border-radius: 40px; text-align: center; }
-        
-        input, select { 
-            width: 100%; height: 60px; background: #1a1a1a; 
-            border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; 
-            color: white; font-size: 1.1rem; text-align: center; margin-bottom: 20px; outline: none; 
+        :root {
+            --ios-blue: #007AFF;
+            --ios-bg: #000000;
+            --card-bg: rgba(28, 28, 30, 0.7); /* iOS Dark Mode Card */
+            --glass: rgba(255, 255, 255, 0.1);
+            --text-main: #FFFFFF;
+            --text-secondary: #8E8E93;
+            --input-bg: #2C2C2E; /* High contrast for dropdowns */
         }
 
-        /* FIX: Ensure dropdown options are visible on all devices */
-        option { background: #1a1a1a; color: white; }
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
-        button { width: 100%; height: 60px; background: white; color: black; border: none; border-radius: 20px; font-size: 1.2rem; font-weight: 700; cursor: pointer; }
-        #mainUI, #nameArea { display: none; }
+        body {
+            margin: 0; padding: 0;
+            background: var(--ios-bg);
+            color: var(--text-main);
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at top right, #1c1c1e, #000000);
+        }
+
+        /* Abstract iOS Background Blobs */
+        .bg-blob {
+            position: fixed; width: 300px; height: 300px;
+            background: var(--ios-blue);
+            filter: blur(100px); opacity: 0.15; z-index: -1;
+            border-radius: 50%;
+        }
+
+        .container {
+            width: 90%; max-width: 400px;
+            padding: 30px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 35px; /* iOS Squircle */
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        h2 { font-weight: 600; font-size: 1.5rem; letter-spacing: -0.5px; margin-bottom: 5px; }
+        #status { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 30px; }
+
+        /* FIXED DROPDOWNS & INPUTS FOR CONTRAST */
+        select, input {
+            width: 100%;
+            padding: 18px;
+            margin-bottom: 15px;
+            background: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: white !important;
+            font-size: 1rem;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        /* Force PC Dropdown Options to be visible */
+        select option {
+            background-color: #1c1c1e;
+            color: white;
+            padding: 10px;
+        }
+
+        input[type="password"] {
+            text-align: center;
+            font-size: 2rem;
+            letter-spacing: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 18px;
+            background: var(--ios-blue);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.2s ease;
+        }
+
+        button:active { transform: scale(0.97); opacity: 0.8; }
+        button:disabled { background: #3a3a3c; color: #8e8e93; }
+
+        /* Lookup Result UI */
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .name-label { font-size: 2.2rem; font-weight: 700; color: white; margin: 10px 0; }
+        .service-badge {
+            background: rgba(0, 122, 255, 0.2);
+            color: var(--ios-blue);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+        .action-btn {
+            flex: 1;
+            padding: 15px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .call { background: white; color: black; }
+        .wa { background: #25D366; color: white; }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
-    <div class="mesh"></div>
+    <div class="bg-blob" style="top: -100px; right: -100px;"></div>
+    <div class="bg-blob" style="bottom: -100px; left: -100px; background: #5856D6;"></div>
 
-    <div id="loginUI" class="container">
-        <h2>دخول النظام</h2>
-        <input type="password" id="pass" placeholder="أدخل الرمز" onkeyup="if(event.key==='Enter') login()">
-        <button onclick="login()">دخول</button>
+    <div id="entry-screen" class="container">
+        <div style="font-size: 3rem; margin-bottom: 20px;">👤</div>
+        <h2 id="entry-title">Resident Portal</h2>
+        <p id="status">Secure Link Verified</p>
+        <input type="password" id="pw" inputmode="numeric" placeholder="••••" maxlength="4">
+        <button id="entry-btn" onclick="handleEntry()" disabled>Continue</button>
     </div>
 
-    <div id="mainUI" class="container">
-        <h2>تسجيل الخفر 🇮🇶</h2>
-        <select id="spec" onchange="showNames()">
-            <option value="">-- اختر القسم --</option>
-            <option value="NS">Neurosurgery</option>
-            <option value="CT">Cardiothoracic</option>
-            <option value="GS">General Surgery</option>
-            <option value="US">Urosurgery</option>
+    <div id="lookup-view" class="container hidden">
+        <div id="service-display" class="service-badge">SERVICE</div>
+        <div id="name-display" class="name-label">Loading...</div>
+        <div class="info-card">
+            <div style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 5px;">DIRECT CONTACT</div>
+            <div id="phone-display" style="font-size: 1.4rem; font-weight: 600; letter-spacing: 1px;">-</div>
+        </div>
+        <div class="btn-row">
+            <a href="#" id="call-link" class="action-btn call"><span>📞</span> Call</a>
+            <a href="#" id="wa-link" class="action-btn wa" style="display:none;"><span>💬</span> WhatsApp</a>
+        </div>
+        <p id="time-stamp" style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 25px; opacity: 0.5;"></p>
+    </div>
+
+    <div id="register-view" class="container hidden">
+        <div class="service-badge">REGISTRY</div>
+        <h2>Daily Duty</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 20px;">Update today's on-call resident</p>
+        
+        <select id="spec-select" onchange="toggleNameSection()">
+            <option value="">Choose Specialty</option>
+            <option value="NS">Neuro</option>
+            <option value="CT">Thoracic</option>
+            <option value="GS">Surgery</option>
+            <option value="US">Uro</option>
             <option value="ENT">ENT</option>
-            <option value="H">Cardiology</option>
-            <option value="OP">Anesthesia (OP)</option>
-            <option value="ICU">Anesthesia (ICU)</option>
+            <option value="H">Cardio</option>
+            <option value="D">DeathCertificates</option>
+            <option value="OP">OP Anesthesia</option>
+            <option value="ICU">ICU Anesthesia</option>
+            <option value="R">Radio</option>
+            <option value="ON">Onco</option>
+            <option value="PS">Plastic</option>
         </select>
 
-        <div id="nameArea">
-            <label id="status" style="font-size: 0.8rem; opacity: 0.5;">اختر الاسم</label>
-            <select id="nameList"></select>
-            <button id="subBtn" onclick="submit()">تأكيد التسجيل</button>
+        <div id="name-section" class="hidden">
+            <select id="name-list"></select>
+            <button id="submit-btn" onclick="submitRegistration()">Confirm Duty</button>
         </div>
     </div>
 
-    <script>
-        const URL = "https://script.google.com/macros/s/AKfycbwyMCq_hD6onVuH0Pkvs9aKm32ohekevAZYrIO-hqWgAHKcciOZbpjGeLy7MaLVOWsIVA/exec";
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+    const service = urlParams.get('service');
+    const ward = urlParams.get('ward');
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
 
-        function login() {
-            if(document.getElementById('pass').value === "1234") {
-                document.getElementById('loginUI').style.display = 'none';
-                document.getElementById('mainUI').style.display = 'block';
-                loadNames();
-            } else { alert("الرمز خاطئ"); }
+    let serverData = null;
+    let allResidents = []; // <--- Hidden local storage for the name list
+
+    window.onload = async function() {
+        if (mode === 'register') {
+            document.getElementById('entry-title').innerText = "Doctor Login";
+            prepareRegister();
+        } else if (service) {
+            document.getElementById('entry-title').innerText = "System Access";
+            prepareLookup();
+        } else {
+            document.getElementById('status').innerText = "⚠️ Link Incomplete";
+        }
+    };
+
+async function prepareRegister() {
+    document.getElementById('status').innerText = "Fetching Master List...";
+    try {
+        const response = await fetch(`${scriptUrl}?action=getNames`);
+        const data = await response.json(); 
+        
+        // SORTING LOGIC: Sorts alphabetically by Name (index 0)
+        allResidents = data.sort((a, b) => a[0].localeCompare(b[0], 'ar'));
+        
+        document.getElementById('status').innerText = "Ready ✅";
+        document.getElementById('entry-btn').disabled = false;
+    } catch (e) { 
+        document.getElementById('status').innerText = "Offline Mode - Check Internet"; 
+    }
+}
+
+    // THIS IS THE FILTERING MAGIC - NO FETCHING HERE!
+    function toggleNameSection() {
+        const selectedSpec = document.getElementById('spec-select').value;
+        const nameSection = document.getElementById('name-section');
+        const dropdown = document.getElementById('name-list');
+
+        if (!selectedSpec) {
+            nameSection.classList.add('hidden');
+            return;
         }
 
-        async function loadNames() {
-            const dropdown = document.getElementById('nameList');
-            dropdown.innerHTML = "<option>جاري تحميل الأسماء...</option>";
-            try {
-                const res = await fetch(URL + "?action=getNames");
-                const names = await res.json();
-                dropdown.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('');
-            } catch(e) { alert("خطأ في جلب الأسماء"); }
+        let filtered;
+
+        // NEW LOGIC: Check for Anesthesia (OP/ICU), Death Certificates (D), or standard filter
+        if (selectedSpec === "OP" || selectedSpec === "ICU") {
+            // Show all Anesthesia residents (Code 'A')
+            filtered = allResidents.filter(res => res[1] === "A");
+        } else if (selectedSpec === "D") {
+            // Show everyone for Death Certificates
+            filtered = allResidents;
+        } else {
+            // Otherwise, filter by the specific specialty code in Column B
+            filtered = allResidents.filter(res => res[1] === selectedSpec);
         }
 
-        function showNames() {
-            document.getElementById('nameArea').style.display = document.getElementById('spec').value ? 'block' : 'none';
+        if (filtered.length > 0) {
+            dropdown.innerHTML = filtered.map(res => `<option value="${res[0]}">${res[0]}</option>`).join('');
+            nameSection.classList.remove('hidden');
+        } else {
+            dropdown.innerHTML = "<option value=''>No residents found</option>";
+            nameSection.classList.remove('hidden');
         }
+    }
 
-        async function submit() {
-            const btn = document.getElementById('subBtn');
-            btn.disabled = true; btn.innerText = "جاري الحفظ...";
-            
-            try {
-                const res = await fetch(URL, { 
-                    method: 'POST', 
-                    body: JSON.stringify({
-                        action: "submitDuty",
-                        specialty: document.getElementById('spec').value,
-                        name: document.getElementById('nameList').value
-                    }) 
-                });
-                const msg = await res.json();
-                alert(msg);
-            } catch(e) { alert("تم الحفظ ✅"); }
-            btn.disabled = false; btn.innerText = "تأكيد التسجيل";
+    // --- REST OF YOUR WORKING LOGIC ---
+    async function prepareLookup() {
+        try {
+            const response = await fetch(`${scriptUrl}?service=${service}&ward=${ward || service}&json=true&t=${Date.now()}`);
+            serverData = await response.json();
+            if (serverData && !serverData.error) {
+                document.getElementById('status').innerText = "Connection Secured ✅";
+                document.getElementById('entry-btn').disabled = false;
+            } else {
+                document.getElementById('status').innerText = "No data found for today";
+            }
+        } catch (e) { document.getElementById('status').innerText = "Offline Mode"; }
+    }
+
+    function handleEntry() {
+        const pass = document.getElementById('pw').value;
+        const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
+        if (pass === correct) {
+            document.getElementById('entry-screen').style.display = 'none';
+            if (mode === 'register') {
+                document.getElementById('register-view').classList.remove('hidden');
+            } else {
+                showLookupUI();
+            }
+        } else { alert("Incorrect Password"); }
+    }
+
+    function showLookupUI() {
+        if (serverData) {
+            document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
+            document.getElementById('name-display').innerText = serverData.resident.name;
+            document.getElementById('phone-display').innerText = serverData.resident.phone;
+            document.getElementById('time-stamp').innerText = serverData.timestamp;
+            document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
+            if (serverData.whatsappDigits) {
+                const wa = document.getElementById('wa-link');
+                wa.style.display = 'flex';
+                wa.href = "whatsapp://send?phone=" + serverData.whatsappDigits;
+            }
         }
-    </script>
+        document.getElementById('lookup-view').classList.remove('hidden');
+    }
+
+    async function submitRegistration() {
+        const btn = document.getElementById('submit-btn');
+        btn.innerText = "Saving...";
+        btn.disabled = true;
+        const payload = {
+            action: "submitDuty",
+            specialty: document.getElementById('spec-select').value,
+            name: document.getElementById('name-list').value
+        };
+        try {
+            await fetch(scriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(payload)
+            });
+            alert("Duty Updated Successfully ✅");
+        } catch (e) {
+            alert("Error connecting to server");
+        } finally {
+            btn.innerText = "Confirm Duty";
+            btn.disabled = false;
+        }
+    }
+</script>
 </body>
 </html>
