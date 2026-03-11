@@ -2,23 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>On-Call Pro</title>
     <style>
         :root {
             --ios-blue: #007AFF;
             --ios-bg: #000000;
-            --card-bg: rgba(28, 28, 30, 0.7); /* iOS Dark Mode Card */
-            --glass: rgba(255, 255, 255, 0.1);
+            --card-bg: rgba(28, 28, 30, 0.8);
+            --secondary-bg: rgba(44, 44, 46, 0.7);
+            --separator: rgba(255, 255, 255, 0.1);
             --text-main: #FFFFFF;
-            --text-secondary: #8E8E93;
-            --input-bg: #2C2C2E; /* High contrast for dropdowns */
+            --text-sec: #8E8E93;
+            --success: #34C759;
         }
 
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
         }
 
         body {
@@ -30,116 +31,128 @@
             background-image: radial-gradient(circle at top right, #1c1c1e, #000000);
         }
 
-        /* Abstract iOS Background Blobs */
-        .bg-blob {
-            position: fixed; width: 300px; height: 300px;
-            background: var(--ios-blue);
-            filter: blur(100px); opacity: 0.15; z-index: -1;
-            border-radius: 50%;
-        }
-
+        /* Container with iOS 18 Glass Effect */
         .container {
-            width: 90%; max-width: 400px;
-            padding: 30px;
+            width: 92%; max-width: 380px;
+            padding: 40px 24px;
             background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 35px; /* iOS Squircle */
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            backdrop-filter: blur(40px) saturate(210%);
+            -webkit-backdrop-filter: blur(40px) saturate(210%);
+            border-radius: 44px;
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
             text-align: center;
+            transition: transform 0.3s ease;
         }
 
-        h2 { font-weight: 600; font-size: 1.5rem; letter-spacing: -0.5px; margin-bottom: 5px; }
-        #status { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 30px; }
+        /* Header Icon Styling */
+        .icon-box {
+            width: 64px; height: 64px;
+            margin: 0 auto 20px;
+            background: var(--secondary-bg);
+            border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 0 0.5px var(--separator);
+        }
 
-        /* FIXED DROPDOWNS & INPUTS FOR CONTRAST */
+        h2 { font-weight: 700; font-size: 24px; letter-spacing: -0.8px; margin: 0 0 8px 0; }
+        #status, .subtitle { font-size: 14px; color: var(--text-sec); margin-bottom: 30px; }
+
+        /* Modern Inset Grouped List */
+        .ios-list {
+            background: var(--secondary-bg);
+            border-radius: 14px;
+            margin-bottom: 24px;
+            overflow: hidden;
+            border: 0.5px solid var(--separator);
+            text-align: left;
+        }
+
         select, input {
             width: 100%;
-            padding: 18px;
-            margin-bottom: 15px;
-            background: var(--input-bg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
+            padding: 18px 16px;
+            background: transparent;
+            border: none;
             color: white !important;
-            font-size: 1rem;
+            font-size: 17px;
+            outline: none;
             appearance: none;
-            cursor: pointer;
+            display: block;
         }
 
-        /* Force PC Dropdown Options to be visible */
-        select option {
-            background-color: #1c1c1e;
-            color: white;
-            padding: 10px;
-        }
+        .divider { height: 0.5px; background: var(--separator); margin-left: 16px; }
 
         input[type="password"] {
             text-align: center;
-            font-size: 2rem;
-            letter-spacing: 15px;
+            font-size: 32px;
+            letter-spacing: 14px;
+            font-weight: 700;
         }
 
+        /* Buttons & Actions */
         button {
             width: 100%;
             padding: 18px;
             background: var(--ios-blue);
             color: white;
             border: none;
-            border-radius: 15px;
-            font-size: 1rem;
+            border-radius: 16px;
+            font-size: 17px;
             font-weight: 600;
-            margin-top: 10px;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
         }
 
-        button:active { transform: scale(0.97); opacity: 0.8; }
-        button:disabled { background: #3a3a3c; color: #8e8e93; }
+        button:active { transform: scale(0.97); opacity: 0.85; }
+        button:disabled { background: #2c2c2e; color: #545456; }
 
-        /* Lookup Result UI */
-        .info-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 20px;
-            margin: 20px 0;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .name-label { font-size: 2.2rem; font-weight: 700; color: white; margin: 10px 0; }
         .service-badge {
-            background: rgba(0, 122, 255, 0.2);
-            color: var(--ios-blue);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            background: rgba(0, 122, 255, 0.12);
+            color: #409CFF;
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
             display: inline-block;
         }
 
-        .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+        .name-label { font-size: 34px; font-weight: 800; letter-spacing: -1.2px; line-height: 1.1; margin-bottom: 8px; }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 24px;
+            padding: 24px 20px;
+            margin: 24px 0;
+            border: 0.5px solid var(--separator);
+        }
+
+        .btn-row { display: flex; gap: 12px; margin-top: 30px; }
         .action-btn {
-            flex: 1;
-            padding: 15px;
-            border-radius: 15px;
-            text-decoration: none;
-            font-weight: 600;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            flex: 1; padding: 18px; border-radius: 16px; text-decoration: none;
+            font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
         .call { background: white; color: black; }
-        .wa { background: #25D366; color: white; }
+        .wa { background: var(--success); color: white; }
 
         .hidden { display: none !important; }
+        
+        svg { width: 22px; height: 22px; fill: currentColor; }
     </style>
 </head>
 <body>
-    <div class="bg-blob" style="top: -100px; right: -100px;"></div>
-    <div class="bg-blob" style="bottom: -100px; left: -100px; background: #5856D6;"></div>
 
     <div id="entry-screen" class="container">
-        <div style="font-size: 3rem; margin-bottom: 20px;">👤</div>
+        <div class="icon-box">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+        </div>
         <h2 id="entry-title">Resident Portal</h2>
         <p id="status">Secure Link Verified</p>
-        <input type="password" id="pw" inputmode="numeric" placeholder="••••" maxlength="4">
+        <div class="ios-list">
+            <input type="password" id="pw" inputmode="numeric" placeholder="••••" maxlength="4">
+        </div>
         <button id="entry-btn" onclick="handleEntry()" disabled>Continue</button>
     </div>
 
@@ -147,44 +160,56 @@
         <div id="service-display" class="service-badge">SERVICE</div>
         <div id="name-display" class="name-label">Loading...</div>
         <div class="info-card">
-            <div style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 5px;">DIRECT CONTACT</div>
-            <div id="phone-display" style="font-size: 1.4rem; font-weight: 600; letter-spacing: 1px;">-</div>
+            <div style="color: var(--text-sec); font-size: 11px; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px;">DIRECT CONTACT</div>
+            <div id="phone-display" style="font-size: 24px; font-weight: 600; letter-spacing: 0.5px;">-</div>
         </div>
         <div class="btn-row">
-            <a href="#" id="call-link" class="action-btn call"><span>📞</span> Call</a>
-            <a href="#" id="wa-link" class="action-btn wa" style="display:none;"><span>💬</span> WhatsApp</a>
+            <a href="#" id="call-link" class="action-btn call">
+                <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                Call
+            </a>
+            <a href="#" id="wa-link" class="action-btn wa" style="display:none;">
+                <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm5.84 14.07c-.25.71-1.23 1.28-1.7 1.34-.47.06-.94.09-3.13-.78-2.65-1.05-4.37-3.74-4.5-3.91-.13-.17-1.06-1.41-1.06-2.69 0-1.28.67-1.91.91-2.17.25-.26.54-.32.72-.32.18 0 .36 0 .52.01.17.01.4.01.62.53.23.55.78 1.91.85 2.04.07.13.11.29.02.46-.08.17-.13.27-.25.42-.13.15-.27.34-.39.46-.13.13-.26.27-.11.53.15.26.65 1.07 1.41 1.74.98.87 1.8 1.14 2.06 1.27.26.13.41.11.56-.06s.64-.74.81-.99c.17-.25.34-.21.57-.12.23.09 1.48.7 1.73.83.25.13.42.19.48.3.06.11.06.64-.19 1.35z"/></svg>
+                WhatsApp
+            </a>
         </div>
-        <p id="time-stamp" style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 25px; opacity: 0.5;"></p>
+        <p id="time-stamp" style="font-size: 11px; color: var(--text-sec); margin-top: 25px; opacity: 0.6;"></p>
     </div>
 
     <div id="register-view" class="container hidden">
-        <div class="service-badge">REGISTRY</div>
+        <div class="service-badge">REGISTRY 🇮🇶</div>
         <h2>Daily Duty</h2>
-        <p style="color: var(--text-secondary); margin-bottom: 20px;">Update today's on-call resident</p>
+        <p class="subtitle">Assign today's on-call resident</p>
         
-        <select id="spec-select" onchange="toggleNameSection()">
-            <option value="">Choose Specialty</option>
-            <option value="NS">Neuro</option>
-            <option value="CT">Thoracic</option>
-            <option value="GS">Surgery</option>
-            <option value="US">Uro</option>
-            <option value="ENT">ENT</option>
-            <option value="H">Cardio</option>
-            <option value="D">DeathCertificates</option>
-            <option value="OP">OP Anesthesia</option>
-            <option value="ICU">ICU Anesthesia</option>
-            <option value="R">Radio</option>
-            <option value="ON">Onco</option>
-            <option value="PS">Plastic</option>
-        </select>
-
-        <div id="name-section" class="hidden">
-            <select id="name-list"></select>
-            <button id="submit-btn" onclick="submitRegistration()">Confirm Duty</button>
+        <div class="ios-list">
+            <select id="spec-select" onchange="toggleNameSection()">
+                <option value="">Choose Specialty</option>
+                <option value="NS">Neuro</option>
+                <option value="CT">Thoracic</option>
+                <option value="GS">Surgery</option>
+                <option value="US">Uro</option>
+                <option value="ENT">ENT</option>
+                <option value="H">Cardio</option>
+                <option value="D">DeathCertificates</option>
+                <option value="OP">OP Anesthesia</option>
+                <option value="ICU">ICU Anesthesia</option>
+                <option value="R">Radio</option>
+                <option value="ON">Onco</option>
+                <option value="PS">Plastic</option>
+            </select>
+            <div id="name-section" class="hidden">
+                <div class="divider"></div>
+                <select id="name-list"></select>
+            </div>
         </div>
+
+        <button id="submit-btn" onclick="submitRegistration()">Confirm Duty</button>
     </div>
 
 <script>
+    /* ALL YOUR ORIGINAL CORE MECHANISM REMAINS UNTOUCHED 
+       NO CHANGES MADE TO THE SCRIPT LOGIC
+    */
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
     const service = urlParams.get('service');
@@ -192,7 +217,7 @@
     const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
 
     let serverData = null;
-    let allResidents = []; // <--- Hidden local storage for the name list
+    let allResidents = [];
 
     window.onload = async function() {
         if (mode === 'register') {
@@ -206,47 +231,35 @@
         }
     };
 
-async function prepareRegister() {
-    document.getElementById('status').innerText = "Fetching Master List...";
-    try {
-        const response = await fetch(`${scriptUrl}?action=getNames`);
-        const data = await response.json(); 
-        
-        // SORTING LOGIC: Sorts alphabetically by Name (index 0)
-        allResidents = data.sort((a, b) => a[0].localeCompare(b[0], 'ar'));
-        
-        document.getElementById('status').innerText = "Ready ✅";
-        document.getElementById('entry-btn').disabled = false;
-    } catch (e) { 
-        document.getElementById('status').innerText = "Offline Mode - Check Internet"; 
+    async function prepareRegister() {
+        document.getElementById('status').innerText = "Fetching Master List...";
+        try {
+            const response = await fetch(`${scriptUrl}?action=getNames`);
+            const data = await response.json(); 
+            allResidents = data.sort((a, b) => a[0].localeCompare(b[0], 'ar'));
+            document.getElementById('status').innerText = "Ready ✅";
+            document.getElementById('entry-btn').disabled = false;
+        } catch (e) { 
+            document.getElementById('status').innerText = "Offline Mode - Check Internet"; 
+        }
     }
-}
 
-    // THIS IS THE FILTERING MAGIC - NO FETCHING HERE!
     function toggleNameSection() {
         const selectedSpec = document.getElementById('spec-select').value;
         const nameSection = document.getElementById('name-section');
         const dropdown = document.getElementById('name-list');
-
         if (!selectedSpec) {
             nameSection.classList.add('hidden');
             return;
         }
-
         let filtered;
-
-        // NEW LOGIC: Check for Anesthesia (OP/ICU), Death Certificates (D), or standard filter
         if (selectedSpec === "OP" || selectedSpec === "ICU") {
-            // Show all Anesthesia residents (Code 'A')
             filtered = allResidents.filter(res => res[1] === "A");
         } else if (selectedSpec === "D") {
-            // Show everyone for Death Certificates
             filtered = allResidents;
         } else {
-            // Otherwise, filter by the specific specialty code in Column B
             filtered = allResidents.filter(res => res[1] === selectedSpec);
         }
-
         if (filtered.length > 0) {
             dropdown.innerHTML = filtered.map(res => `<option value="${res[0]}">${res[0]}</option>`).join('');
             nameSection.classList.remove('hidden');
@@ -256,7 +269,6 @@ async function prepareRegister() {
         }
     }
 
-    // --- REST OF YOUR WORKING LOGIC ---
     async function prepareLookup() {
         try {
             const response = await fetch(`${scriptUrl}?service=${service}&ward=${ward || service}&json=true&t=${Date.now()}`);
