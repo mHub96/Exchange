@@ -13,7 +13,7 @@
             --shadow: #0d0e11;
             --accent: #fbbf24;
             --success: #10b981;
-            --btn-grey: #33373e; /* New Distinguishable Grey */
+            --btn-grey: #33373e;
         }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; }
 
@@ -44,7 +44,6 @@
             font-weight: 800;
         }
 
-        /* The specific style for the Registration Button */
         .btn-register {
             background: var(--btn-grey);
             color: #e2e8f0;
@@ -93,20 +92,26 @@
             <div class="recessed-input p-2">
                 <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none appearance-none">
                     <option value="" class="bg-[#1a1c20]">Sector</option>
-                    <option value="NS" class="bg-[#1a1c20]">Neurosurgery</option><option value="CT" class="bg-[#1a1c20]">Cardiothoracic Surgery</option>
-                    <option value="GS" class="bg-[#1a1c20]">General Surgery</option><option value="US" class="bg-[#1a1c20]">Urosurgery</option>
-                    <option value="ENT" class="bg-[#1a1c20]">ENT</option><option value="H" class="bg-[#1a1c20]">Cardiology</option>
-                    <option value="D" class="bg-[#1a1c20]">Death Certificates</option><option value="OP" class="bg-[#1a1c20]">Anaesthesia (OP)</option>
-                    <option value="ICU" class="bg-[#1a1c20]">Anaesthesia (ICU)</option><option value="R" class="bg-[#1a1c20]">Radiology</option>
-                    <option value="ON" class="bg-[#1a1c20]">Oncology</option><option value="PS" class="bg-[#1a1c20]">Plastic Surgery</option>
+                    <option value="NS" class="bg-[#1a1c20]">Neurosurgery</option>
+                    <option value="CT" class="bg-[#1a1c20]">Cardiothoracic Surgery</option>
+                    <option value="GS" class="bg-[#1a1c20]">General Surgery</option>
+                    <option value="US" class="bg-[#1a1c20]">Urosurgery</option>
+                    <option value="ENT" class="bg-[#1a1c20]">ENT</option>
+                    <option value="H" class="bg-[#1a1c20]">Cardiology</option>
+                    <option value="D" class="bg-[#1a1c20]">Death Certificates</option>
+                    <option value="OP" class="bg-[#1a1c20]">Anaesthesia (OP)</option>
+                    <option value="ICU" class="bg-[#1a1c20]">Anaesthesia (ICU)</option>
+                    <option value="R" class="bg-[#1a1c20]">Radiology</option>
+                    <option value="ON" class="bg-[#1a1c20]">Oncology</option>
+                    <option value="PS" class="bg-[#1a1c20]">Plastic Surgery</option>
                 </select>
             </div>
             <div id="name-section" class="hidden space-y-6">
                 <div class="recessed-input p-2">
                     <select id="name-list" class="w-full bg-transparent p-4 text-slate-300 outline-none"></select>
                 </div>
-                <button id="submit-btn" onclick="submitRegistration()" class="embossed-btn btn-register w-full py-6">
-                    COMMIT LOG
+                <button id="submit-btn" onclick="submitRegistration()" class="embossed-btn btn-register w-full py-6 uppercase tracking-widest">
+                    Update
                 </button>
             </div>
         </div>
@@ -117,9 +122,14 @@
             </div>
             <h2 id="name-display" class="text-white text-3xl font-extrabold mb-1">...</h2>
             <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8">-</p>
-            <div class="grid grid-cols-2 gap-6">
-                <a href="#" id="call-link" class="embossed-btn p-5 text-sm">📞 SIM Call</a>
-                <a href="#" id="wa-link" class="hidden p-5 bg-emerald-500/20 border border-emerald-500 text-emerald-500 rounded-[1.5rem] font-extrabold text-sm shadow-lg">💬 WHATSAPP</a>
+            
+            <div class="flex flex-col gap-4 sm:flex-row sm:gap-3">
+                <a href="#" id="call-link" class="embossed-btn flex-1 py-5 px-2 text-[0.7rem] uppercase tracking-tighter whitespace-nowrap">
+                    📞 SIM Call
+                </a>
+                <a href="#" id="wa-link" class="hidden flex-1 py-5 px-2 bg-emerald-500/20 border border-emerald-500 text-emerald-500 rounded-[1.5rem] font-extrabold text-[0.7rem] shadow-lg tracking-tighter whitespace-nowrap">
+                    💬 WhatsApp
+                </a>
             </div>
             <p id="time-stamp" class="text-[0.55rem] text-slate-600 mt-10 font-mono tracking-widest uppercase"></p>
         </div>
@@ -217,17 +227,12 @@
         };
         try {
             await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            
-            // Success State
             btn.classList.add('fetched-active');
             btn.innerText = "SUCCESS ✅";
-
-            // 2 Second Wait then Reset
             setTimeout(() => {
                 btn.classList.remove('fetched-active');
                 btn.innerText = originalText;
             }, 2000);
-
         } catch (e) { 
             btn.innerText = "RETRY"; 
         }
