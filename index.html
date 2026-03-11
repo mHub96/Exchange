@@ -3,190 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>On-Call Pro | 3D Console</title>
+    <title>On-Call Pro | Deep 3D</title>
     <style>
         :root {
-            --base-plate: #2c3e50;
-            --side-plate: #1a252f;
-            --btn-top: #3498db;
-            --btn-side: #2980b9;
-            --accent: #2ecc71;
-            --text: #ecf0f1;
+            --panel-color: #252932;
+            --panel-side: #16191f;
+            --accent: #00d2ff;
+            --btn-face: #3a4150;
+            --btn-depth: #20242b;
         }
 
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            font-family: 'Segoe UI', Roboto, sans-serif;
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             margin: 0; padding: 0;
-            background: #121212;
-            color: var(--text);
+            background: #0a0c10;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh;
-            perspective: 1200px;
+            perspective: 2000px;
             overflow: hidden;
         }
 
-        .console-box {
-            width: 90%; max-width: 400px;
-            background: var(--base-plate);
-            padding: 40px 30px;
-            border-radius: 20px;
-            position: relative;
+        /* 3D Grid Background */
+        body::before {
+            content: ""; position: fixed; width: 200%; height: 200%;
+            background-image: linear-gradient(var(--accent) 1px, transparent 1px), 
+                              linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.05; transform: rotateX(60deg) translateY(-200px);
+            z-index: -1;
+        }
+
+        .chassis {
+            width: 90%; max-width: 380px;
+            background: var(--panel-color);
+            transform: rotateX(15deg) rotateY(-5deg);
             transform-style: preserve-3d;
-            box-shadow: 0 20px 0 var(--side-plate), 0 30px 50px rgba(0,0,0,0.7);
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* LED Indicator */
-        .led {
-            position: absolute; top: 20px; right: 25px;
-            width: 10px; height: 10px;
-            border-radius: 50%; background: var(--accent);
-            box-shadow: 0 0 10px var(--accent);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-        h2 { font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 5px 0; }
-        #status { font-size: 0.7rem; color: #95a5a6; font-weight: bold; margin-bottom: 30px; display: block; }
-
-        /* RECESSED INPUTS */
-        select, input {
-            width: 100%;
-            padding: 16px;
-            margin-bottom: 25px;
-            background: #1a1a1a;
-            border: none;
-            border-radius: 10px;
-            color: var(--accent) !important;
-            font-size: 1.1rem;
-            outline: none;
-            box-shadow: inset 4px 4px 8px #000, inset -1px -1px 4px #444;
-        }
-
-        input[type="password"] { text-align: center; font-size: 2rem; letter-spacing: 12px; }
-
-        /* EXTRUDED BUTTON */
-        .extrude-btn {
-            width: 100%;
-            padding: 18px;
-            background: var(--btn-top);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            cursor: pointer;
+            padding: 40px 25px;
+            border-radius: 20px;
+            box-shadow: 
+                -10px 10px 0 var(--panel-side),
+                -20px 20px 50px rgba(0,0,0,0.8);
             position: relative;
-            /* The 3D Depth */
-            box-shadow: 0 8px 0 var(--btn-side), 0 15px 20px rgba(0,0,0,0.4);
-            transition: all 0.1s;
-            transform: translateY(-4px);
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        .extrude-btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 var(--btn-side), 0 5px 10px rgba(0,0,0,0.4);
+        /* Floating Header */
+        h2 { 
+            margin: 0; font-weight: 900; text-transform: uppercase; 
+            transform: translateZ(50px); /* Lifted way off the surface */
+            text-shadow: 0 10px 10px rgba(0,0,0,0.5);
         }
 
-        .extrude-btn:disabled {
-            background: #7f8c8d; box-shadow: 0 8px 0 #34495e; cursor: not-allowed;
+        #status {
+            font-size: 0.7rem; color: var(--accent);
+            display: block; margin: 10px 0 30px;
+            transform: translateZ(40px);
+            font-weight: bold;
         }
 
-        /* DATA DISPLAY PLATE */
-        .data-plate {
-            background: rgba(0,0,0,0.2);
-            border-radius: 15px;
-            padding: 20px;
+        /* Deep Inset Inputs */
+        .input-well {
+            background: #111418;
+            padding: 5px;
+            border-radius: 12px;
+            box-shadow: inset 5px 5px 15px #000;
+            transform: translateZ(20px);
+            margin-bottom: 25px;
+        }
+
+        select, input {
+            width: 100%; padding: 15px; background: transparent;
+            border: none; color: white !important; font-size: 1rem; outline: none;
+        }
+
+        input[type="password"] { text-align: center; font-size: 2rem; letter-spacing: 10px; }
+
+        /* THE EXTRUDED 3D BUTTON */
+        .btn-3d-wrap {
+            position: relative; width: 100%; height: 60px;
+            transform-style: preserve-3d; transform: translateZ(60px);
+            margin-top: 20px; cursor: pointer;
+        }
+
+        .btn-3d-face {
+            position: absolute; width: 100%; height: 100%;
+            background: var(--btn-face);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            transform: translateZ(15px); /* Thickness of button */
+            transition: 0.1s;
+        }
+
+        .btn-3d-side {
+            position: absolute; width: 100%; height: 15px;
+            background: var(--btn-depth);
+            bottom: -15px; left: 0;
+            transform-origin: top; transform: rotateX(-90deg);
+        }
+
+        .btn-3d-wrap:active .btn-3d-face { transform: translateZ(2px); }
+        .btn-3d-wrap:active { transform: translateZ(47px); }
+
+        /* LOOKUP SPECIFIC */
+        .info-block {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px; padding: 20px;
+            transform: translateZ(30px);
+            border-left: 5px solid var(--accent);
             margin: 20px 0;
-            border: 2px solid rgba(255,255,255,0.05);
-            box-shadow: inset 2px 2px 10px rgba(0,0,0,0.5);
         }
 
-        .name-txt { font-size: 2rem; font-weight: 900; margin: 10px 0; color: #fff; }
-
-        .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
-        .action-btn {
-            padding: 15px; border-radius: 10px; text-decoration: none;
-            text-align: center; font-weight: 800; font-size: 0.8rem;
-            background: #ecf0f1; color: #2c3e50;
-            box-shadow: 0 5px 0 #bdc3c7; transition: 0.1s;
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; transform: translateZ(40px); }
+        .action-3d {
+            background: var(--accent); color: black; padding: 15px;
+            text-decoration: none; text-align: center; font-weight: 900;
+            box-shadow: 0 5px 0 #008eb0; border-radius: 8px;
         }
-        .action-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #bdc3c7; }
-        .action-btn.wa { background: var(--accent); color: #fff; box-shadow: 0 5px 0 #27ae60; }
-        .action-btn.wa:active { box-shadow: 0 2px 0 #27ae60; }
 
         .hidden { display: none !important; }
 
-        /* HYDRAULIC ANIMATION */
-        .hydraulic-out { transform: translateZ(-300px) rotateX(20deg); opacity: 0; }
-        .hydraulic-in { animation: hydroIn 0.6s forwards; }
-
-        @keyframes hydroIn {
-            0% { transform: translateZ(-300px) rotateX(-20deg); opacity: 0; }
-            100% { transform: translateZ(0) rotateX(0); opacity: 1; }
+        /* TRANSITION */
+        .flip-out { transform: rotateY(90deg) scale(0.5); opacity: 0; }
+        .flip-in { animation: flipIn 0.7s forwards; }
+        @keyframes flipIn {
+            0% { transform: rotateY(-90deg) scale(0.5); opacity: 0; }
+            100% { transform: rotateX(15deg) rotateY(-5deg) scale(1); opacity: 1; }
         }
     </style>
 </head>
 <body>
 
-    <div id="entry-screen" class="console-box">
-        <div class="led"></div>
-        <h2>System Entry</h2>
-        <span id="status">Hardware Check: OK</span>
-        <input type="password" id="pw" inputmode="numeric" placeholder="••••" maxlength="4">
-        <button id="entry-btn" class="extrude-btn" onclick="handleEntry()" disabled>Engage</button>
+    <div id="entry-screen" class="chassis">
+        <h2>Auth_Terminal</h2>
+        <span id="status">Secure Link: Operational</span>
+        <div class="input-well">
+            <input type="password" id="pw" inputmode="numeric" placeholder="PIN" maxlength="4">
+        </div>
+        <div class="btn-3d-wrap" onclick="handleEntry()">
+            <div class="btn-3d-face" id="entry-btn-txt">Authorize</div>
+            <div class="btn-3d-side"></div>
+        </div>
     </div>
 
-    <div id="lookup-view" class="console-box hidden">
-        <div class="led" style="background: var(--btn-top); box-shadow: 0 0 10px var(--btn-top);"></div>
+    <div id="lookup-view" class="chassis hidden">
         <h2 id="service-display">SERVICE</h2>
-        <div class="data-plate">
-            <div id="name-display" class="name-txt">...</div>
-            <div id="phone-display" style="font-size: 1.3rem; font-weight: 700; color: var(--btn-top);">-</div>
+        <div class="info-block">
+            <div id="name-display" style="font-size: 1.8rem; font-weight: 900;">...</div>
+            <div id="phone-display" style="font-size: 1.2rem; margin-top: 10px; color: var(--accent);">-</div>
         </div>
-        <div class="btn-row">
-            <a href="#" id="call-link" class="action-btn">📞 CALL</a>
-            <a href="#" id="wa-link" class="action-btn wa" style="display:none;">💬 WHATSAPP</a>
+        <div class="action-grid">
+            <a href="#" id="call-link" class="action-3d">Call</a>
+            <a href="#" id="wa-link" class="action-3d" style="display:none; background: #25D366; box-shadow: 0 5px 0 #128c7e;">WA</a>
         </div>
-        <p id="time-stamp" style="font-size: 0.65rem; opacity: 0.5; margin-top: 25px;"></p>
+        <p id="time-stamp" style="font-size: 0.6rem; opacity: 0.4; margin-top: 25px; transform: translateZ(20px);"></p>
     </div>
 
-    <div id="register-view" class="console-box hidden">
-        <div class="led" style="background: var(--btn-top);"></div>
-        <h2>Duty Log 🇮🇶</h2>
-        <span id="status">Update Terminal Active</span>
-        
-        <select id="spec-select" onchange="toggleNameSection()">
-            <option value="">-- Select Specialty --</option>
-            <option value="NS">Neuro</option>
-            <option value="CT">Thoracic</option>
-            <option value="GS">Surgery</option>
-            <option value="US">Uro</option>
-            <option value="ENT">ENT</option>
-            <option value="H">Cardio</option>
-            <option value="D">DeathCert</option>
-            <option value="OP">OP Anesthesia</option>
-            <option value="ICU">ICU Anesthesia</option>
-            <option value="R">Radio</option>
-            <option value="ON">Onco</option>
-            <option value="PS">Plastic</option>
-        </select>
+    <div id="register-view" class="chassis hidden">
+        <h2>Duty_Update 🇮🇶</h2>
+        <div class="input-well">
+            <select id="spec-select" onchange="toggleNameSection()">
+                <option value="">-- Sector --</option>
+                <option value="NS">Neuro</option>
+                <option value="CT">Thoracic</option>
+                <option value="GS">Surgery</option>
+                <option value="US">Uro</option>
+                <option value="ENT">ENT</option>
+                <option value="H">Cardio</option>
+                <option value="D">DeathCert</option>
+                <option value="OP">OP Anes</option>
+                <option value="ICU">ICU Anes</option>
+                <option value="R">Radio</option>
+                <option value="ON">Onco</option>
+                <option value="PS">Plastic</option>
+            </select>
+        </div>
 
         <div id="name-section" class="hidden">
-            <select id="name-list"></select>
-            <button id="submit-btn" class="extrude-btn" onclick="submitRegistration()">Commit Changes</button>
+            <div class="input-well"><select id="name-list"></select></div>
+            <div class="btn-3d-wrap" onclick="submitRegistration()">
+                <div class="btn-3d-face">Commit</div>
+                <div class="btn-3d-side"></div>
+            </div>
         </div>
     </div>
 
 <script>
-    /* ORIGINAL LOGIC UNTOUCHED */
+    /* ORIGINAL LOGIC */
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
     const service = urlParams.get('service');
@@ -198,25 +205,19 @@
 
     window.onload = async function() {
         if (mode === 'register') {
-            document.getElementById('entry-title').innerText = "Doctor Login";
             prepareRegister();
         } else if (service) {
-            document.getElementById('entry-title').innerText = "Clinical Access";
             prepareLookup();
-        } else {
-            document.getElementById('status').innerText = "⚠️ Link Disconnected";
         }
     };
 
     async function prepareRegister() {
-        document.getElementById('status').innerText = "Uplinking Database...";
         try {
             const response = await fetch(`${scriptUrl}?action=getNames`);
             const data = await response.json(); 
             allResidents = data.sort((a, b) => a[0].localeCompare(b[0], 'ar'));
-            document.getElementById('status').innerText = "Uplink Secure";
-            document.getElementById('entry-btn').disabled = false;
-        } catch (e) { document.getElementById('status').innerText = "Sync Failed"; }
+            document.getElementById('status').innerText = "Database Linked";
+        } catch (e) { }
     }
 
     function toggleNameSection() {
@@ -224,7 +225,6 @@
         const nameSection = document.getElementById('name-section');
         const dropdown = document.getElementById('name-list');
         if (!selectedSpec) { nameSection.classList.add('hidden'); return; }
-
         let filtered;
         if (selectedSpec === "OP" || selectedSpec === "ICU") {
             filtered = allResidents.filter(res => res[1] === "A");
@@ -233,12 +233,8 @@
         } else {
             filtered = allResidents.filter(res => res[1] === selectedSpec);
         }
-
         if (filtered.length > 0) {
             dropdown.innerHTML = filtered.map(res => `<option value="${res[0]}">${res[0]}</option>`).join('');
-            nameSection.classList.remove('hidden');
-        } else {
-            dropdown.innerHTML = "<option value=''>Error</option>";
             nameSection.classList.remove('hidden');
         }
     }
@@ -248,35 +244,25 @@
             const response = await fetch(`${scriptUrl}?service=${service}&ward=${ward || service}&json=true&t=${Date.now()}`);
             serverData = await response.json();
             if (serverData && !serverData.error) {
-                document.getElementById('status').innerText = "Uplink Secure";
-                document.getElementById('entry-btn').disabled = false;
-            } else {
-                document.getElementById('status').innerText = "No Data Found";
+                document.getElementById('status').innerText = "Target Locked";
             }
-        } catch (e) { document.getElementById('status').innerText = "Offline"; }
+        } catch (e) { }
     }
 
     function handleEntry() {
         const pass = document.getElementById('pw').value;
         const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
         if (pass === correct) {
-            // HYDRAULIC ANIMATION
-            const current = document.querySelector('.console-box:not(.hidden)');
-            current.classList.add('hydraulic-out');
-            
+            const chassis = document.querySelector('.chassis:not(.hidden)');
+            chassis.classList.add('flip-out');
             setTimeout(() => {
-                current.style.display = 'none';
-                let next;
-                if (mode === 'register') {
-                    next = document.getElementById('register-view');
-                } else {
-                    showLookupUI();
-                    next = document.getElementById('lookup-view');
-                }
+                chassis.style.display = 'none';
+                let next = mode === 'register' ? document.getElementById('register-view') : document.getElementById('lookup-view');
+                if (mode !== 'register') showLookupUI();
                 next.classList.remove('hidden');
-                next.classList.add('hydraulic-in');
-            }, 600);
-        } else { alert("ACCESS DENIED"); }
+                next.classList.add('flip-in');
+            }, 700);
+        } else { alert("DENIED"); }
     }
 
     function showLookupUI() {
@@ -284,7 +270,7 @@
             document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
             document.getElementById('name-display').innerText = serverData.resident.name;
             document.getElementById('phone-display').innerText = serverData.resident.phone;
-            document.getElementById('time-stamp').innerText = "LAST UPDATE: " + serverData.timestamp;
+            document.getElementById('time-stamp').innerText = "UPTIME: " + serverData.timestamp;
             document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
             if (serverData.whatsappDigits) {
                 const wa = document.getElementById('wa-link');
@@ -295,25 +281,15 @@
     }
 
     async function submitRegistration() {
-        const btn = document.getElementById('submit-btn');
-        btn.innerText = "UPLOADING...";
-        btn.disabled = true;
         const payload = {
             action: "submitDuty",
             specialty: document.getElementById('spec-select').value,
             name: document.getElementById('name-list').value
         };
         try {
-            await fetch(scriptUrl, {
-                method: 'POST',
-                mode: 'no-cors',
-                cache: 'no-cache',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(payload)
-            });
-            alert("UPLOAD SUCCESSFUL ✅");
-        } catch (e) { alert("ERROR"); }
-        finally { btn.innerText = "Commit Changes"; btn.disabled = false; }
+            await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            alert("Success ✅");
+        } catch (e) { alert("Error"); }
     }
 </script>
 </body>
