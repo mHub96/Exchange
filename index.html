@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MD Portal | Carbon Gold</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #1a1c20;
+            --light: #2a2d34;
+            --shadow: #0d0e11;
+            --accent: #fbbf24;
+            --crimson: #e11d48;
+            --btn-grey: #33373e;
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; overflow: hidden; }
+
+        /* THE CONTAINER FOR THE SPIN EFFECT */
+        .card-wrapper {
+            position: relative;
+            padding: 4px; /* Space for the ring */
+            border-radius: 3.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* THE CIRCULATING RING (Hidden by default) */
+        #loading-ring {
+            position: absolute;
+            inset: 0;
+            border-radius: 3.2rem;
+            background: conic-gradient(from 0deg, transparent 70%, var(--accent));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .loading-active #loading-ring {
+            opacity: 1;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* MAIN CARD */
+        .embossed-card {
+            position: relative;
+            background: var(--bg);
+            border-radius: 3rem;
+            box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light);
+            z-index: 10;
+        }
+
+        /* BRIGHTER BREATHING ANIMATION */
+        .breathing {
+            animation: frameBreath 3s infinite ease-in-out;
+        }
+
+        @keyframes frameBreath {
+            0%, 100% { box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light), 0 0 0px transparent; }
+            50% { box-shadow: 15px 15px 45px var(--shadow), -8px -8px 30px var(--light), 0 0 40px rgba(251, 191, 36, 0.6); }
+        }
+
+        /* Disable breathing while loading */
+        .loading-active .breathing { animation: none; box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light); }
+
+        .recessed-input {
+            background: var(--bg);
+            border-radius: 1.5rem;
+            box-shadow: inset 8px 8px 16px var(--shadow), inset -4px -4px 12px var(--light);
+        }
+
+        .embossed-btn {
+            background: var(--bg);
+            border-radius: 1.5rem;
+            box-shadow: 10px 10px 20px var(--shadow), -5px -5px 15px var(--light);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: #64748b;
+            font-weight: 800;
+        }
+
+        .btn-register {
+            background: var(--btn-grey);
+            color: #e2e8f0;
+            box-shadow: 8px 8px 16px var(--shadow), -4px -4px 12px var(--light);
+        }
+
+        .embossed-btn:active {
+            box-shadow: inset 4px 4px 8px var(--shadow), inset -2px -2px 6px var(--light);
+            transform: scale(0.97);
+        }
+
+        .fetched-active {
+            background: var(--accent) !important;
+            color: #1a1c20 !important;
+            box-shadow: 0 0 25px rgba(251, 191, 36, 0.5), -5px -5px 15px var(--light) !important;
+        }
+
+        .crimson-warning {
+            background: var(--crimson) !important;
+            color: white !important;
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        #shield { position: fixed; inset: 0; background: var(--bg); z-index: 100; transition: opacity 0.5s; }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div id="shield"></div>
+
+    <div id="wrapper" class="card-wrapper">
+        <div id="loading-ring"></div>
+        
+        <div id="main-card" class="w-full max-w-sm embossed-card breathing p-10 transition-all duration-700">
+            
+            <div id="login-view">
+                <div class="text-center mb-10">
+                    <h1 class="text-white text-2xl font-extrabold tracking-tight">On-Call Portal</h1>
+                    <p id="status-text" class="text-[0.6rem] mt-2 uppercase font-bold tracking-[0.3em] pulse text-amber-500/60">Securing Link...</p>
+                </div>
+                <div class="space-y-8">
+                    <div class="recessed-input p-2">
+                        <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" 
+                            class="w-full bg-transparent py-5 text-center text-4xl tracking-[1rem] text-amber-500 outline-none">
+                    </div>
+                    <button onclick="handleEntry()" class="embossed-btn w-full py-6 tracking-widest uppercase">Authorize</button>
+                </div>
+            </div>
+
+            <div id="register-view" class="hidden space-y-6">
+                <h2 class="text-white text-xl font-extrabold text-center mb-2">Duty Update 🇮🇶</h2>
+                <div class="recessed-input p-2">
+                    <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none appearance-none">
+                        <option value="" class="bg-[#1a1c20]">SPECIALTY</option>
+                        <option value="NS" class="bg-[#1a1c20]">Neurosurgery</option>
+                        <option value="CT" class="bg-[#1a1c20]">Cardiothoracic Surgery</option>
+                        <option value="GS" class="bg-[#1a1c20]">General Surgery</option>
+                        <option value="US" class="bg-[#1a1c20]">Urosurgery</option>
+                        <option value="ENT" class="bg-[#1a1c20]">ENT</option>
+                        <option value="H" class="bg-[#1a1c20]">Cardiology</option>
+                        <option value="D" class="bg-[#1a1c20]">Death Certificates</option>
+                        <option value="OP" class="bg-[#1a1c20]">Anaesthesia (OP)</option>
+                        <option value="ICU" class="bg-[#1a1c20]">Anaesthesia (ICU)</option>
+                        <option value="R" class="bg-[#1a1c20]">Radiology</option>
+                        <option value="ON" class="bg-[#1a1c20]">Oncology</option>
+                        <option value="PS" class="bg-[#1a1c20]">Plastic Surgery</option>
+                    </select>
+                </div>
+                <div id="name-section" class="hidden space-y-6">
+                    <div class="recessed-input p-2">
+                        <select id="name-list" class="w-full bg-transparent p-4 text-slate-300 outline-none"></select>
+                    </div>
+                    <button id="submit-btn" onclick="submitRegistration()" class="embossed-btn btn-register w-full py-6 uppercase tracking-widest">
+                        UPDATE
+                    </button>
+                </div>
+            </div>
+
+            <div id="lookup-view" class="hidden text-center">
+                <div class="recessed-input inline-block px-8 py-2 mb-6">
+                    <span id="service-display" class="text-amber-500 text-[0.6rem] font-black tracking-widest uppercase">SERVICE</span>
+                </div>
+                <h2 id="name-display" class="text-white text-3xl font-extrabold mb-1">...</h2>
+                <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8">-</p>
+                <div class="flex flex-col gap-4 sm:flex-row sm:gap-3">
+                    <a href="#" id="call-link" class="embossed-btn flex-1 py-6 px-2 text-sm uppercase tracking-tighter whitespace-nowrap">📞 SIM Call</a>
+                    <a href="#" id="wa-link" class="hidden flex-1 py-6 px-2 bg-emerald-500/20 border border-emerald-500 text-emerald-500 rounded-[1.5rem] font-extrabold text-sm shadow-lg tracking-tighter whitespace-nowrap">💬 WhatsApp</a>
+                </div>
+                <p id="time-stamp" class="text-[0.55rem] text-slate-600 mt-10 font-mono tracking-widest uppercase"></p>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+    const service = urlParams.get('service');
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
+
+    let serverData = null;
+    let allResidents = [];
+
+    window.onload = async function() {
+        setTimeout(() => { 
+            document.getElementById('shield').style.opacity = '0'; 
+            setTimeout(() => document.getElementById('shield').remove(), 500);
+        }, 300);
+
+        const status = document.getElementById('status-text');
+        try {
+            if (mode === 'register') {
+                const res = await fetch(`${scriptUrl}?action=getNames`);
+                allResidents = (await res.json()).sort((a,b) => a[0].localeCompare(b[0], 'ar'));
+            } else if (service) {
+                const res = await fetch(`${scriptUrl}?service=${service}&ward=${service}&json=true&t=${Date.now()}`);
+                serverData = await res.json();
+            }
+            status.innerText = "READY 🇮🇶";
+            status.classList.remove('pulse');
+            status.style.color = "#fbbf24";
+        } catch (e) { status.innerText = "Connection Failed"; }
+    };
+
+    function toggleNameSection() {
+        const val = document.getElementById('spec-select').value;
+        const list = document.getElementById('name-list');
+        if (!val) { document.getElementById('name-section').classList.add('hidden'); return; }
+        let filtered = (val === "OP" || val === "ICU") ? allResidents.filter(r => r[1] === "A") : (val === "D" ? allResidents : allResidents.filter(r => r[1] === val));
+        list.innerHTML = `<option value="">-- Who's On-Call Today? --</option>` + filtered.map(r => `<option value="${r[0]}" class="bg-[#1a1c20]">${r[0]}</option>`).join('');
+        document.getElementById('name-section').classList.remove('hidden');
+    }
+
+    function handleEntry() {
+        const pin = document.getElementById('pw').value;
+        const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
+        const card = document.getElementById('main-card');
+        if (pin === correct) {
+            card.style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById('login-view').classList.add('hidden');
+                if (mode === 'register') { document.getElementById('register-view').classList.remove('hidden'); }
+                else { showLookupUI(); document.getElementById('lookup-view').classList.remove('hidden'); }
+                card.style.opacity = "1";
+            }, 600);
+        } else { alert("DENIED"); document.getElementById('pw').value = ""; }
+    }
+
+    function showLookupUI() {
+        if (!serverData) return;
+        document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
+        document.getElementById('name-display').innerText = serverData.resident.name;
+        document.getElementById('phone-display').innerText = serverData.resident.phone;
+        document.getElementById('time-stamp').innerText = "TIME: " + serverData.timestamp;
+        document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
+        if (serverData.whatsappDigits) {
+            const wa = document.getElementById('wa-link');
+            wa.classList.remove('hidden');
+            wa.href = "whatsapp://send?phone=" + serverData.whatsappDigits;
+        }
+    }
+
+    async function submitRegistration() {
+        const btn = document.getElementById('submit-btn');
+        const doctorName = document.getElementById('name-list').value;
+        const wrapper = document.getElementById('wrapper');
+        const originalText = "UPDATE";
+        
+        if (!doctorName) {
+            btn.classList.add('crimson-warning');
+            btn.innerText = "CHOOSE A NAME FIRST!";
+            setTimeout(() => { btn.classList.remove('crimson-warning'); btn.innerText = originalText; }, 2000);
+            return;
+        }
+
+        // TRIGGER LOADING RING
+        wrapper.classList.add('loading-active');
+        btn.innerText = "UPLOADING...";
+
+        const payload = {
+            action: "submitDuty",
+            specialty: document.getElementById('spec-select').value,
+            name: doctorName
+        };
+
+        try {
+            await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            
+            // RESET RING & SHOW SUCCESS
+            wrapper.classList.remove('loading-active');
+            btn.classList.add('fetched-active');
+            btn.innerText = "SUCCESS ✅";
+            
+            setTimeout(() => {
+                btn.classList.remove('fetched-active');
+                btn.innerText = originalText;
+            }, 2000);
+        } catch (e) { 
+            wrapper.classList.remove('loading-active');
+            btn.innerText = "RETRY"; 
+        }
+    }
+</script>
+</body>
+</html>
