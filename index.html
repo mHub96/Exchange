@@ -3,18 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MD Portal | Full System</title>
+    <title>MD Portal | Arctic Crystal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; }
-        .animate-ripple { animation: ripple 0.8s ease-out; }
-        @keyframes ripple {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-            100% { box-shadow: 0 0 0 30px rgba(16, 185, 129, 0); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0f4f8; }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
-        /* Loading Shield to prevent "Ruined" looks during Tailwind load */
-        #shield { position: fixed; inset: 0; background: #0f172a; z-index: 100; transition: opacity 0.5s; }
+
+        @keyframes ripple {
+            0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.4); }
+            100% { box-shadow: 0 0 0 25px rgba(52, 211, 153, 0); }
+        }
+        .animate-ripple { animation: ripple 0.8s ease-out; }
+        
+        #shield { position: fixed; inset: 0; background: #f0f4f8; z-index: 100; transition: opacity 0.5s; }
+        
+        /* Smooth scale-up for names */
+        .name-reveal { animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4 overflow-hidden">
@@ -22,33 +34,34 @@
     <div id="shield"></div>
 
     <div class="fixed inset-0 z-[-1]">
-        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 blur-[120px] rounded-full"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-500/10 blur-[120px] rounded-full"></div>
+        <div class="absolute top-[10%] left-[10%] w-[50%] h-[50%] bg-blue-200/40 blur-[100px] rounded-full"></div>
+        <div class="absolute bottom-[10%] right-[10%] w-[50%] h-[50%] bg-emerald-100/40 blur-[100px] rounded-full"></div>
     </div>
 
-    <div id="main-card" class="w-full max-w-sm bg-slate-900/50 backdrop-blur-2xl border border-white/10 p-8 rounded-[2.5rem] shadow-2xl transition-all duration-500">
+    <div id="main-card" class="w-full max-w-sm glass-card p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-500">
         
         <div id="login-view">
             <div class="text-center mb-8">
-                <h1 id="title-text" class="text-white text-2xl font-bold tracking-tight">System Access</h1>
-                <p id="status-text" class="text-slate-400 text-[0.6rem] mt-2 uppercase tracking-[0.2em]">Syncing Neural Link...</p>
+                <h1 id="title-text" class="text-slate-800 text-2xl font-bold tracking-tight">Medical Terminal</h1>
+                <p id="status-text" class="text-slate-500 text-[0.65rem] mt-2 uppercase tracking-[0.2em] font-bold">Secure Connection Active</p>
             </div>
             <div class="space-y-6">
                 <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" 
-                    class="w-full bg-slate-950/50 border border-white/5 rounded-2xl py-5 text-center text-3xl tracking-[1.5rem] text-blue-400 focus:border-blue-500 outline-none shadow-inner">
+                    class="w-full bg-white/50 border border-slate-200 rounded-2xl py-5 text-center text-3xl tracking-[1.5rem] text-blue-600 focus:border-blue-400 outline-none shadow-sm transition-all">
+                
                 <button id="entry-btn" onclick="handleEntry()" 
-                    class="relative w-full py-5 bg-blue-600 text-white font-bold rounded-2xl transition-all shadow-lg active:scale-95 overflow-hidden">
-                    <span id="btn-label">AUTHORIZE</span>
-                    <div id="spinner" class="hidden absolute inset-0 flex items-center justify-center bg-blue-600">
+                    class="relative w-full py-5 bg-slate-800 text-white font-bold rounded-2xl transition-all shadow-lg active:scale-95 overflow-hidden">
+                    <span id="btn-label">UNLOCK</span>
+                    <div id="spinner" class="hidden absolute inset-0 flex items-center justify-center bg-slate-800">
                         <svg class="animate-spin h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                     </div>
                 </button>
             </div>
         </div>
 
-        <div id="register-view" class="hidden space-y-4">
-            <h2 class="text-white text-xl font-bold text-center mb-6">Daily Duty 🇮🇶</h2>
-            <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-slate-950 border border-white/10 rounded-xl p-4 text-white outline-none focus:border-blue-500">
+        <div id="register-view" class="hidden space-y-4 name-reveal">
+            <h2 class="text-slate-800 text-xl font-bold text-center mb-6">Duty Registration 🇮🇶</h2>
+            <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-white border border-slate-200 rounded-xl p-4 text-slate-700 outline-none focus:border-blue-400 shadow-sm">
                 <option value="">-- Sector --</option>
                 <option value="NS">Neuro</option><option value="CT">Thoracic</option>
                 <option value="GS">Surgery</option><option value="US">Uro</option>
@@ -57,23 +70,24 @@
                 <option value="ICU">Anes (ICU)</option><option value="R">Radio</option>
                 <option value="ON">Onco</option><option value="PS">Plastic</option>
             </select>
-            <div id="name-section" class="hidden space-y-4">
-                <select id="name-list" class="w-full bg-slate-950 border border-white/10 rounded-xl p-4 text-white outline-none"></select>
-                <button id="submit-btn" onclick="submitRegistration()" class="w-full py-5 bg-blue-600 text-white font-bold rounded-2xl transition-all shadow-lg active:scale-95">
+            <div id="name-section" class="hidden space-y-4 name-reveal">
+                <select id="name-list" class="w-full bg-white border border-slate-200 rounded-xl p-4 text-slate-700 outline-none shadow-sm"></select>
+                <button id="submit-btn" onclick="submitRegistration()" class="w-full py-5 bg-blue-600 text-white font-bold rounded-2xl transition-all shadow-md active:scale-95">
                     COMMIT CHANGES
                 </button>
             </div>
         </div>
 
-        <div id="lookup-view" class="hidden text-center">
-            <span id="service-display" class="bg-emerald-500/10 text-emerald-400 px-4 py-1 rounded-full text-[0.6rem] font-bold tracking-widest border border-emerald-500/20 uppercase">SERVICE</span>
-            <h2 id="name-display" class="text-white text-3xl font-bold mt-4">...</h2>
-            <p id="phone-display" class="text-slate-400 text-lg mt-1">-</p>
-            <div class="grid grid-cols-2 gap-3 mt-6">
-                <a href="#" id="call-link" class="p-4 bg-slate-800/50 rounded-3xl border border-white/5 text-white font-bold">CALL</a>
-                <a href="#" id="wa-link" class="hidden p-4 bg-emerald-500 text-white rounded-3xl font-bold">WHATSAPP</a>
+        <div id="lookup-view" class="hidden text-center name-reveal">
+            <span id="service-display" class="bg-blue-100 text-blue-600 px-4 py-1 rounded-full text-[0.65rem] font-bold tracking-widest border border-blue-200 uppercase">UNIT_ACCESS</span>
+            <h2 id="name-display" class="text-slate-800 text-3xl font-bold mt-4">...</h2>
+            <p id="phone-display" class="text-slate-500 text-lg mt-1">-</p>
+            
+            <div class="grid grid-cols-2 gap-3 mt-8">
+                <a href="#" id="call-link" class="p-4 bg-white rounded-3xl border border-slate-200 text-slate-700 font-bold shadow-sm hover:bg-slate-50 transition-colors">CALL</a>
+                <a href="#" id="wa-link" class="hidden p-4 bg-emerald-500 text-white rounded-3xl font-bold shadow-lg shadow-emerald-200">WHATSAPP</a>
             </div>
-            <div id="time-stamp" class="text-[0.6rem] text-slate-500 mt-8 font-mono"></div>
+            <div id="time-stamp" class="text-[0.6rem] text-slate-400 mt-8 font-mono"></div>
         </div>
     </div>
 
@@ -87,20 +101,18 @@
         let allResidents = [];
 
         window.onload = async function() {
-            // Remove shield after a tiny delay to allow Tailwind to paint
-            setTimeout(() => { document.getElementById('shield').style.opacity = '0'; 
+            setTimeout(() => { 
+                document.getElementById('shield').style.opacity = '0'; 
                 setTimeout(() => document.getElementById('shield').remove(), 500);
             }, 300);
 
             if (mode === 'register') {
-                document.getElementById('title-text').innerText = "Doctor Portal";
+                document.getElementById('title-text').innerText = "Doctor Login";
                 const res = await fetch(`${scriptUrl}?action=getNames`);
                 allResidents = (await res.json()).sort((a,b) => a[0].localeCompare(b[0], 'ar'));
-                document.getElementById('status-text').innerText = "Database Linked";
             } else if (service) {
                 const res = await fetch(`${scriptUrl}?service=${service}&ward=${service}&json=true&t=${Date.now()}`);
                 serverData = await res.json();
-                document.getElementById('status-text').innerText = "Secure Link Active";
             }
         };
 
@@ -109,7 +121,6 @@
             const list = document.getElementById('name-list');
             if (!val) { document.getElementById('name-section').classList.add('hidden'); return; }
             
-            // Re-implementing the filter logic you needed
             let filtered = (val === "OP" || val === "ICU") ? allResidents.filter(r => r[1] === "A") : (val === "D" ? allResidents : allResidents.filter(r => r[1] === val));
             
             list.innerHTML = filtered.map(r => `<option value="${r[0]}">${r[0]}</option>`).join('');
@@ -123,22 +134,26 @@
             
             if (pin === correct) {
                 document.getElementById('spinner').classList.remove('hidden');
+                document.getElementById('btn-label').classList.add('opacity-0');
+                
                 setTimeout(() => {
-                    btn.classList.replace('bg-blue-600', 'bg-emerald-500');
+                    btn.classList.replace('bg-slate-800', 'bg-emerald-500');
                     btn.classList.add('animate-ripple');
-                    document.getElementById('btn-label').innerText = "GRANTED";
+                    document.getElementById('spinner').classList.add('hidden');
+                    document.getElementById('btn-label').innerText = "AUTHORIZED";
+                    document.getElementById('btn-label').classList.remove('opacity-0');
                     
                     setTimeout(() => {
                         document.getElementById('login-view').classList.add('hidden');
-                        if (mode === 'register') {
-                            document.getElementById('register-view').classList.remove('hidden');
-                        } else {
-                            showLookupUI();
-                            document.getElementById('lookup-view').classList.remove('hidden');
-                        }
+                        const next = mode === 'register' ? document.getElementById('register-view') : document.getElementById('lookup-view');
+                        if (mode !== 'register') showLookupUI();
+                        next.classList.remove('hidden');
                     }, 800);
                 }, 1000);
-            } else { alert("ACCESS DENIED"); }
+            } else { 
+                alert("Incorrect PIN"); 
+                document.getElementById('pw').value = "";
+            }
         }
 
         function showLookupUI() {
@@ -146,7 +161,7 @@
             document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
             document.getElementById('name-display').innerText = serverData.resident.name;
             document.getElementById('phone-display').innerText = serverData.resident.phone;
-            document.getElementById('time-stamp').innerText = serverData.timestamp;
+            document.getElementById('time-stamp').innerText = "UPDATED: " + serverData.timestamp;
             document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
             if (serverData.whatsappDigits) {
                 document.getElementById('wa-link').classList.remove('hidden');
@@ -166,7 +181,7 @@
                 await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
                 btn.classList.replace('bg-blue-600', 'bg-emerald-500');
                 btn.classList.add('animate-ripple');
-                btn.innerText = "SUCCESS ✅";
+                btn.innerText = "COMMIT SUCCESSFUL ✅";
             } catch (e) { alert("ERROR"); btn.innerText = "RETRY"; }
         }
     </script>
