@@ -2,162 +2,186 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MD Portal | True 3D</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MD Portal | Tactile Fix</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #e0e6ed; }
-        
-        /* THE FOUNDATION FOR 3D: PERSPECTIVE */
-        .stage-3d {
-            perspective: 1500px; /* Essential depth */
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #d1d9e6; margin: 0; }
+        .stage-3d { perspective: 1200px; }
 
-        /* TACTILE 3D PANEL (TILTED) */
+        /* THE CONSOLE PLATE */
         .console-3d {
             transform-style: preserve-3d;
-            transform: rotateX(10deg) rotateY(-5deg); /* Base console tilt */
-            background: #e0e6ed; /* Matching the body to blend edge */
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
+            transform: rotateX(12deg);
+            background: #e0e6ed;
+            border-radius: 2rem;
+            box-shadow: 
+                20px 20px 60px #bebebe,
+                -20px -20px 60px #ffffff,
+                inset 2px 2px 5px rgba(255,255,255,0.5);
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        /* Decorative Side of the console panel to show thickness */
-        .console-3d::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: -20px;
-            width: 20px;
-            height: 100%;
-            background: #bdc9d7;
-            transform-origin: left;
-            transform: rotateY(-90deg);
-        }
-
-        /* 3D TACTILE CUBE BUTTON */
+        /* 3D BUTTON CONSTRUCTION */
         .btn-3d-wrap {
-            position: relative; width: 100%; height: 60px;
-            transform-style: preserve-3d; transform: translateZ(20px);
-            margin-top: 20px; cursor: pointer;
+            position: relative;
+            width: 100%;
+            height: 64px;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            margin-top: 20px;
         }
 
         .btn-3d-face {
-            position: absolute; width: 100%; height: 100%;
-            background: #2c3e50;
-            border: 1px solid rgba(255,255,255,0.1);
+            position: absolute; inset: 0;
+            background: #2563eb;
+            color: white; font-weight: 800;
             display: flex; align-items: center; justify-content: center;
-            font-weight: 800; text-transform: uppercase; color: white;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            transform: translateZ(10px); /* Primary Button Thickness */
-            transition: all 0.1s;
+            border-radius: 1rem;
+            transform: translateZ(12px); /* Height of button */
+            transition: transform 0.1s, background 0.3s;
+            pointer-events: none; /* Let the shield handle clicks */
+            z-index: 2;
         }
 
         .btn-3d-side {
-            position: absolute; width: 100%; height: 10px;
-            background: #1a252f;
-            bottom: -10px; left: 0;
-            transform-origin: top; transform: rotateX(-90deg);
+            position: absolute; bottom: 0; left: 5%; width: 90%; height: 15px;
+            background: #1e3a8a;
+            transform-origin: top; transform: rotateX(-90deg) translateZ(-52px);
+            border-radius: 0 0 1rem 1rem;
+            z-index: 1;
         }
 
-        /* Button Press Effect */
-        .btn-3d-wrap:active .btn-3d-face { transform: translateZ(2px); }
-        .btn-3d-wrap:active { transform: translateZ(7px); }
+        /* INVISIBLE CLICK SHIELD: This ensures the button works every time */
+        .click-shield {
+            position: absolute; inset: -5px;
+            z-index: 10;
+            cursor: pointer;
+        }
 
-        /* LOOKUP VIEW Transitions (Slide up) */
-        .view-reveal { animation: viewReveal 0.6s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes viewReveal {
-            0% { transform: translateY(40px) translateZ(-50px); opacity: 0; }
-            100% { transform: translateY(0) translateZ(0); opacity: 1; }
+        /* Press Animation */
+        .btn-3d-wrap:active .btn-3d-face { transform: translateZ(4px); background: #1d4ed8; }
+        .btn-3d-wrap:active .btn-3d-side { height: 7px; }
+
+        .recessed {
+            background: #d1d9e6;
+            box-shadow: inset 6px 6px 12px #b8c1cc, inset -6px -6px 12px #ffffff;
+            border-radius: 1rem;
         }
 
         .hidden { display: none !important; }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4 stage-3d overflow-hidden">
+<body class="flex items-center justify-center min-h-screen p-4 stage-3d">
 
-    <div class="fixed inset-0 z-[-1]">
-        <div class="absolute inset-0 bg-blue-100/10 blur-[150px] rounded-full"></div>
-    </div>
-
-    <div id="main-card" class="console-3d w-full max-w-sm p-8 rounded-[1.5rem] shadow-[-20px_20px_60px_#a3b1c6,20px_-20px_60px_#ffffff]">
+    <div id="main-card" class="console-3d w-full max-w-sm p-8 transition-all">
         
         <div id="login-view">
             <div class="text-center mb-8">
-                <h1 id="title-text" class="text-slate-900 text-2xl font-bold tracking-tight">Access Terminal</h1>
-                <p id="status-text" class="text-slate-600 text-[0.6rem] mt-2 uppercase tracking-[0.2em] font-bold">Checking Hardware...</p>
+                <h1 class="text-slate-800 text-2xl font-bold">Secure Access</h1>
+                <p id="status-text" class="text-slate-500 text-[0.6rem] uppercase tracking-widest mt-1">Ready for Identity</p>
             </div>
-            <div class="space-y-6">
-                <div class="p-2 bg-[#d1d9e6] rounded-[1.2rem] shadow-[inset_6px_6px_12px_#a3b1c6,inset_-6px_-6px_12px_#ffffff]">
-                    <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="PIN" 
-                        class="w-full bg-transparent p-4 text-center text-3xl tracking-[1rem] text-blue-600 focus:border-blue-400 outline-none transition-all">
+            
+            <div class="recessed p-2 mb-6">
+                <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" 
+                    class="w-full bg-transparent p-4 text-center text-3xl tracking-[1rem] text-blue-600 outline-none">
+            </div>
+            
+            <div class="btn-3d-wrap" id="entry-trigger">
+                <div class="click-shield" onclick="handleEntry()"></div>
+                <div class="btn-3d-face" id="btn-label">AUTHORIZE</div>
+                <div class="btn-3d-side"></div>
+            </div>
+        </div>
+
+        <div id="register-view" class="hidden">
+            <h2 class="text-slate-800 text-xl font-bold text-center mb-6">Update Duty 🇮🇶</h2>
+            <div class="recessed p-2 mb-4">
+                <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-transparent p-3 text-slate-700 outline-none">
+                    <option value="">-- Sector --</option>
+                    <option value="NS">Neuro</option><option value="CT">Thoracic</option>
+                    <option value="GS">Surgery</option><option value="US">Uro</option>
+                    <option value="ENT">ENT</option><option value="H">Cardio</option>
+                    <option value="D">DeathCert</option><option value="OP">Anes (OP)</option>
+                    <option value="ICU">Anes (ICU)</option><option value="R">Radio</option>
+                    <option value="ON">Onco</option><option value="PS">Plastic</option>
+                </select>
+            </div>
+            <div id="name-section" class="hidden space-y-4">
+                <div class="recessed p-2">
+                    <select id="name-list" class="w-full bg-transparent p-3 text-slate-700 outline-none"></select>
                 </div>
-                
-                <div class="btn-3d-wrap" onclick="handleEntry()">
-                    <div class="btn-3d-face" id="btn-text">UNLOCK</div>
+                <div class="btn-3d-wrap">
+                    <div class="click-shield" onclick="submitRegistration()"></div>
+                    <div class="btn-3d-face" id="reg-btn-label">COMMIT LOG</div>
                     <div class="btn-3d-side"></div>
                 </div>
             </div>
         </div>
 
-        <div id="lookup-view" class="hidden text-center view-reveal transform-style: preserve-3d">
-            <span id="service-display" class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-[0.6rem] font-bold tracking-widest border border-blue-200 uppercase">ACCESS UNIT</span>
-            <h2 id="name-display" class="text-slate-900 text-3xl font-bold mt-4">...</h2>
-            <p id="phone-display" class="text-slate-600 text-lg mt-1">-</p>
-            
-            <div class="grid grid-cols-2 gap-3 mt-8">
-                <a href="#" id="call-link" class="p-4 bg-white rounded-[1rem] border border-slate-200 text-slate-700 font-bold shadow-[inset_0_0_10px_rgba(0,0,0,0.02)] active:scale-95 transition-all">CALL</a>
-                <a href="#" id="wa-link" class="hidden p-4 bg-emerald-500 text-white rounded-[1rem] font-bold shadow-lg shadow-emerald-200">WHATSAPP</a>
+        <div id="lookup-view" class="hidden text-center">
+            <span id="service-display" class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-[0.6rem] font-bold border border-blue-200">SERVICE</span>
+            <h2 id="name-display" class="text-slate-800 text-3xl font-bold mt-4 leading-tight">...</h2>
+            <p id="phone-display" class="text-slate-500 text-lg mt-1">-</p>
+            <div class="grid grid-cols-2 gap-4 mt-8">
+                <a href="#" id="call-link" class="recessed p-4 text-slate-700 font-bold active:scale-95 transition-transform">CALL</a>
+                <a href="#" id="wa-link" class="hidden p-4 bg-emerald-500 text-white rounded-2xl font-bold shadow-lg shadow-emerald-200">WHATSAPP</a>
             </div>
-            <div id="time-stamp" class="text-[0.6rem] text-slate-500 mt-8 font-mono"></div>
+            <p id="time-stamp" class="text-[0.6rem] text-slate-400 mt-8 font-mono"></p>
         </div>
     </div>
 
 <script>
-    // BACKEND LOGIC (JavaScript intact and functional)
     const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
     const service = urlParams.get('service');
-    const ward = urlParams.get('ward');
     const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
 
     let serverData = null;
+    let allResidents = [];
 
     window.onload = async function() {
-        if (service) {
-            try {
-                const res = await fetch(`${scriptUrl}?service=${service}&ward=${ward || service}&json=true&t=${Date.now()}`);
-                serverData = await res.json();
-                document.getElementById('status-text').innerText = "SYSTEM_LINK_ACTIVE";
-            } catch (e) { document.getElementById('status-text').innerText = "Offline Mode"; }
+        if (mode === 'register') {
+            const res = await fetch(`${scriptUrl}?action=getNames`);
+            allResidents = (await res.json()).sort((a,b) => a[0].localeCompare(b[0], 'ar'));
+            document.getElementById('status-text').innerText = "Database Linked";
+        } else if (service) {
+            const res = await fetch(`${scriptUrl}?service=${service}&ward=${service}&json=true&t=${Date.now()}`);
+            serverData = await res.json();
+            document.getElementById('status-text').innerText = "Secure Link Active";
         }
     };
+
+    function toggleNameSection() {
+        const val = document.getElementById('spec-select').value;
+        const list = document.getElementById('name-list');
+        if (!val) { document.getElementById('name-section').classList.add('hidden'); return; }
+        let filtered = (val === "OP" || val === "ICU") ? allResidents.filter(r => r[1] === "A") : (val === "D" ? allResidents : allResidents.filter(r => r[1] === val));
+        list.innerHTML = filtered.map(r => `<option value="${r[0]}">${r[0]}</option>`).join('');
+        document.getElementById('name-section').classList.remove('hidden');
+    }
 
     function handleEntry() {
         const pin = document.getElementById('pw').value;
         const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
-        const btnTxt = document.getElementById('btn-text');
+        const label = document.getElementById('btn-label');
 
         if (pin === correct) {
-            // SUCCESS SEQUENCE
-            btnTxt.innerText = "ACCESS GRANTED";
+            label.innerText = "ACCESS GRANTED";
+            label.style.background = "#10b981"; // Shift to green
             
-            // HYDRAULIC TRANSITION
-            const console = document.getElementById('main-card');
-            console.style.transform = "rotateX(-90deg) scale(0.6) translateY(20px)"; // Piston exit
-            console.style.opacity = "0";
-
             setTimeout(() => {
                 document.getElementById('login-view').classList.add('hidden');
-                console.style.display = 'none';
-                showLookupUI();
-                document.getElementById('lookup-view').classList.remove('hidden');
-                console.style.display = 'block';
-                console.style.transform = "rotateX(10deg) rotateY(-5deg) scale(1)";
-                console.style.opacity = "1";
-            }, 800);
-        } else { 
-            alert("ACCESS DENIED"); 
+                if (mode === 'register') {
+                    document.getElementById('register-view').classList.remove('hidden');
+                } else {
+                    showLookupUI();
+                    document.getElementById('lookup-view').classList.remove('hidden');
+                }
+            }, 600);
+        } else {
+            alert("ACCESS DENIED");
             document.getElementById('pw').value = "";
         }
     }
@@ -167,12 +191,28 @@
         document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
         document.getElementById('name-display').innerText = serverData.resident.name;
         document.getElementById('phone-display').innerText = serverData.resident.phone;
-        document.getElementById('time-stamp').innerText = "REF: " + serverData.timestamp;
+        document.getElementById('time-stamp').innerText = serverData.timestamp;
         document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
         if (serverData.whatsappDigits) {
-            document.getElementById('wa-link').classList.remove('hidden');
-            document.getElementById('wa-link').href = "whatsapp://send?phone=" + serverData.whatsappDigits;
+            const wa = document.getElementById('wa-link');
+            wa.classList.remove('hidden');
+            wa.href = "whatsapp://send?phone=" + serverData.whatsappDigits;
         }
+    }
+
+    async function submitRegistration() {
+        const label = document.getElementById('reg-btn-label');
+        label.innerText = "UPLOADING...";
+        const payload = {
+            action: "submitDuty",
+            specialty: document.getElementById('spec-select').value,
+            name: document.getElementById('name-list').value
+        };
+        try {
+            await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            label.innerText = "SUCCESS ✅";
+            label.style.background = "#10b981";
+        } catch (e) { label.innerText = "RETRY"; }
     }
 </script>
 </body>
