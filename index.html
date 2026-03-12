@@ -162,6 +162,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
     const service = urlParams.get('service');
+    // Ensure we use encodeURIComponent for any specialty names with spaces
     const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
 
     let serverData = null;
@@ -169,8 +170,11 @@
 
     window.onload = async function() {
         setTimeout(() => { 
-            document.getElementById('shield').style.opacity = '0'; 
-            setTimeout(() => document.getElementById('shield').remove(), 500);
+            const shield = document.getElementById('shield');
+            if(shield) {
+                shield.style.opacity = '0'; 
+                setTimeout(() => shield.remove(), 500);
+            }
         }, 300);
 
         const status = document.getElementById('status-text');
@@ -180,14 +184,28 @@
             if (mode === 'register') {
                 const res = await fetch(`${scriptUrl}?action=getNames`);
                 allResidents = (await res.json()).sort((a,b) => a[0].localeCompare(b[0], 'ar'));
+                entryBtn.classList.add('fetched-active');
+                status.innerText = "READY 🇮🇶";
             } else if (service) {
-                const res = await fetch(`${scriptUrl}?service=${service}&ward=${service}&json=true&t=${Date.now()}`);
+                // Fixed the fetch to ensure it hits your specific spreadsheet logic
+                const res = await fetch(`${scriptUrl}?service=${encodeURIComponent(service)}&ward=${encodeURIComponent(service)}&json=true&t=${Date.now()}`);
                 serverData = await res.json();
+                
+                // Only activate if resident data was actually found
+                if (serverData && serverData.resident) {
+                    entryBtn.classList.add('fetched-active');
+                    status.innerText = "READY 🇮🇶";
+                } else {
+                    status.innerText = "No Duty Found";
+                    status.style.color = "#e11d48";
+                }
+            } else {
+                status.innerText = "Link Incomplete";
             }
-            entryBtn.classList.add('fetched-active');
-            status.innerText = "READY 🇮🇶";
-            status.style.color = "#fbbf24";
-        } catch (e) { status.innerText = "Offline Mode"; }
+        } catch (e) { 
+            status.innerText = "Offline Mode"; 
+            console.error(e);
+        }
     };
 
     function toggleNameSection() {
@@ -203,6 +221,7 @@
         const pinField = document.getElementById('pw');
         const pin = pinField.value;
         const btn = document.getElementById('entry-btn');
+        // Fallback to 1234 if serverData isn't loaded yet
         const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
         const card = document.getElementById('main-card');
         
@@ -210,8 +229,12 @@
             card.style.opacity = "0";
             setTimeout(() => {
                 document.getElementById('login-view').classList.add('hidden');
-                if (mode === 'register') { document.getElementById('register-view').classList.remove('hidden'); }
-                else { showLookupUI(); document.getElementById('lookup-view').classList.remove('hidden'); }
+                if (mode === 'register') { 
+                    document.getElementById('register-view').classList.remove('hidden'); 
+                } else { 
+                    showLookupUI(); 
+                    document.getElementById('lookup-view').classList.remove('hidden'); 
+                }
                 card.style.opacity = "1";
             }, 600);
         } else {
@@ -226,12 +249,18 @@
     }
 
     function showLookupUI() {
-        if (!serverData) return;
-        document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
-        document.getElementById('name-display').innerText = serverData.resident.name;
-        document.getElementById('phone-display').innerText = serverData.resident.phone;
-        document.getElementById('time-stamp').innerText = "TIME: " + serverData.timestamp;
-        document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
+        if (!serverData || !serverData.resident) return;
+        
+        const res = serverData.resident;
+        document.getElementById('service-display').innerText = res.serviceArabic || service;
+        document.getElementById('name-display').innerText = res.name || "Unknown";
+        document.getElementById('phone-display').innerText = res.phone || "No Number";
+        document.getElementById('time-stamp').innerText = "UPDATED: " + (serverData.timestamp || "N/A");
+        
+        // Clean phone number for dialing
+        const cleanPhone = res.phone.toString().replace(/\s/g, '');
+        document.getElementById('call-link').href = "tel:" + cleanPhone;
+        
         if (serverData.whatsappDigits) {
             const wa = document.getElementById('wa-link');
             wa.classList.remove('hidden');
@@ -269,7 +298,6 @@
             btn.classList.add('fetched-active');
             btn.innerText = "SUCCESS ✅";
             
-            // Revert button appearance only after 2 seconds
             setTimeout(() => {
                 btn.classList.remove('fetched-active');
                 btn.innerText = "UPDATE";
@@ -281,5 +309,6 @@
         }
     }
 </script>
+
 </body>
 </html>
