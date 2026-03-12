@@ -162,7 +162,6 @@
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
     const service = urlParams.get('service');
-    // Ensure we use encodeURIComponent for any specialty names with spaces
     const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
 
     let serverData = null;
@@ -180,6 +179,13 @@
         const status = document.getElementById('status-text');
         const entryBtn = document.getElementById('entry-btn');
 
+        // Construct the EXACT date string used by your Scheduler
+        const now = new Date();
+        const d = String(now.getDate()).padStart(2, '0');
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const y = now.getFullYear();
+        const todayStr = `${d}/${m}/${y}`;
+
         try {
             if (mode === 'register') {
                 const res = await fetch(`${scriptUrl}?action=getNames`);
@@ -187,16 +193,15 @@
                 entryBtn.classList.add('fetched-active');
                 status.innerText = "READY 🇮🇶";
             } else if (service) {
-                // Fixed the fetch to ensure it hits your specific spreadsheet logic
-                const res = await fetch(`${scriptUrl}?service=${encodeURIComponent(service)}&ward=${encodeURIComponent(service)}&json=true&t=${Date.now()}`);
+                // We send the date string directly so the server doesn't have to guess
+                const res = await fetch(`${scriptUrl}?service=${encodeURIComponent(service)}&date=${todayStr}&json=true&t=${Date.now()}`);
                 serverData = await res.json();
                 
-                // Only activate if resident data was actually found
                 if (serverData && serverData.resident) {
                     entryBtn.classList.add('fetched-active');
                     status.innerText = "READY 🇮🇶";
                 } else {
-                    status.innerText = "No Duty Found";
+                    status.innerText = "No Duty Found: " + todayStr;
                     status.style.color = "#e11d48";
                 }
             } else {
@@ -208,6 +213,8 @@
         }
     };
 
+    // --- REMAINDER OF YOUR FUNCTIONS (toggleNameSection, handleEntry, etc.) STAY EXACTLY THE SAME ---
+    
     function toggleNameSection() {
         const val = document.getElementById('spec-select').value;
         const list = document.getElementById('name-list');
@@ -221,46 +228,33 @@
         const pinField = document.getElementById('pw');
         const pin = pinField.value;
         const btn = document.getElementById('entry-btn');
-        // Fallback to 1234 if serverData isn't loaded yet
         const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
         const card = document.getElementById('main-card');
-        
         if (pin === correct) {
             card.style.opacity = "0";
             setTimeout(() => {
                 document.getElementById('login-view').classList.add('hidden');
-                if (mode === 'register') { 
-                    document.getElementById('register-view').classList.remove('hidden'); 
-                } else { 
-                    showLookupUI(); 
-                    document.getElementById('lookup-view').classList.remove('hidden'); 
-                }
+                if (mode === 'register') { document.getElementById('register-view').classList.remove('hidden'); }
+                else { showLookupUI(); document.getElementById('lookup-view').classList.remove('hidden'); }
                 card.style.opacity = "1";
             }, 600);
         } else {
             btn.classList.add('crimson-warning');
             btn.innerText = "INCORRECT PIN!";
             pinField.value = "";
-            setTimeout(() => {
-                btn.classList.remove('crimson-warning');
-                btn.innerText = "Authorize";
-            }, 2000);
+            setTimeout(() => { btn.classList.remove('crimson-warning'); btn.innerText = "Authorize"; }, 2000);
         }
     }
 
     function showLookupUI() {
         if (!serverData || !serverData.resident) return;
-        
         const res = serverData.resident;
         document.getElementById('service-display').innerText = res.serviceArabic || service;
         document.getElementById('name-display').innerText = res.name || "Unknown";
         document.getElementById('phone-display').innerText = res.phone || "No Number";
         document.getElementById('time-stamp').innerText = "UPDATED: " + (serverData.timestamp || "N/A");
-        
-        // Clean phone number for dialing
         const cleanPhone = res.phone.toString().replace(/\s/g, '');
         document.getElementById('call-link').href = "tel:" + cleanPhone;
-        
         if (serverData.whatsappDigits) {
             const wa = document.getElementById('wa-link');
             wa.classList.remove('hidden');
@@ -272,17 +266,14 @@
         const btn = document.getElementById('submit-btn');
         const doctorName = document.getElementById('name-list').value;
         const card = document.getElementById('main-card');
-        
         if (!doctorName) {
             btn.classList.add('crimson-warning');
             btn.innerText = "CHOOSE A NAME FIRST!";
             setTimeout(() => { btn.classList.remove('crimson-warning'); btn.innerText = "UPDATE"; }, 2000);
             return;
         }
-
         card.classList.add('loading-active');
         btn.innerText = "UPLOADING...";
-
         try {
             await fetch(scriptUrl, { 
                 method: 'POST', 
@@ -293,15 +284,10 @@
                     name: doctorName
                 })
             });
-            
             card.classList.remove('loading-active');
             btn.classList.add('fetched-active');
             btn.innerText = "SUCCESS ✅";
-            
-            setTimeout(() => {
-                btn.classList.remove('fetched-active');
-                btn.innerText = "UPDATE";
-            }, 2000);
+            setTimeout(() => { btn.classList.remove('fetched-active'); btn.innerText = "UPDATE"; }, 2000);
         } catch (e) { 
             card.classList.remove('loading-active');
             btn.innerText = "RETRY"; 
@@ -309,6 +295,7 @@
         }
     }
 </script>
+
 
 </body>
 </html>
