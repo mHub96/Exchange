@@ -12,7 +12,7 @@ jobs:
       - name: Fetch Latest Data
         run: |
           # Replace with your Google Script URL that returns the full JSON
-          curl -L "YOUR_GOOGLE_SCRIPT_URL?action=getInitialData" -o data.json
+          curl -L "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec" -o data.json
       - name: Commit and Push
         run: |
           git config --global user.name 'Sync Bot'
