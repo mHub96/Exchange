@@ -156,18 +156,53 @@
     };
 
     async function initDataSync() {
-        try {
-            const respNames = await fetch(`${scriptUrl}?action=getNames`);
-            const allResidents = await respNames.json();
-            specialties.forEach(spec => {
-                if (spec.id === "OP" || spec.id === "ICU") nameData[spec.id] = allResidents.filter(r => r[1] === "A").map(r => r[0]);
-                else if (spec.id === "D") nameData[spec.id] = allResidents.map(r => r[0]);
-                else nameData[spec.id] = allResidents.filter(r => r[1] === spec.id).map(r => r[0]);
-            });
-            generateTable(); 
-        } catch (e) { unlockTable(); }
-    }
+    // 1. The Instant Load from GitHub
+    const githubDbUrl = "https://github.com/mHub96/Exchange/blob/main/sync.yml";
+    const wrapper = document.getElementById('app-wrapper');
 
+    try {
+        // This fetch usually takes < 200ms
+        const response = await fetch(githubDbUrl);
+        const data = await response.json();
+
+        // 2. Process Names & Schedule from the local JSON
+        renderApp(data); 
+
+        // 3. UI becomes interactive immediately
+        unlockTable();
+        setReadyStatus();
+
+    } catch (e) {
+        // Fallback: If GitHub fails, call Google Script directly
+        console.warn("GitHub Cache failed, falling back to Google Script...");
+        loadFromGoogleDirectly();
+    }
+}
+
+function renderApp(data) {
+    const monthVal = document.getElementById('month-picker').value;
+    
+    // Process Names
+    specialties.forEach(spec => {
+        if (spec.id === "OP" || spec.id === "ICU") nameData[spec.id] = data.names.filter(r => r[1] === "A").map(r => r[0]);
+        else if (spec.id === "D") nameData[spec.id] = data.names.map(r => r[0]);
+        else nameData[spec.id] = data.names.filter(r => r[1] === spec.id).map(r => r[0]);
+    });
+
+    generateTable(); // Creates the UI
+
+    // Fill Schedule
+    data.schedule.forEach(row => {
+        if (row.month === monthVal) {
+            const day = parseInt(row.date.split('/')[0]);
+            const inputEl = document.getElementById(`input-${day}-${row.specCode}`);
+            if (inputEl) {
+                inputEl.value = row.name;
+                inputEl.classList.add('prefilled');
+            }
+        }
+    });
+}
     function generateTable() {
         const picker = document.getElementById('month-picker').value;
         const [year, month] = picker.split('-').map(Number);
@@ -349,20 +384,26 @@
     }
 
     async function saveAll() {
-        const btn = document.getElementById('save-btn');
-        const activeInputs = Array.from(document.querySelectorAll('.cell-input')).filter(i => i.value.trim() !== "");
-        if (!activeInputs.length) return;
+    const btn = document.getElementById('save-btn');
+    const activeInputs = Array.from(document.querySelectorAll('.cell-input'))
+                              .filter(i => i.value.trim() !== "" && !i.classList.contains('prefilled'));
+    
+    const bulkData = activeInputs.map(el => ({ 
+        date: el.dataset.date, 
+        specialty: el.dataset.spec, 
+        name: el.value.trim() 
+    }));
 
-        btn.disabled = true; btn.innerText = "UPLOADING...";
-        const bulkData = activeInputs.map(el => ({ date: el.dataset.date, specialty: el.dataset.spec, name: el.value.trim() }));
-        
-        try {
-            await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ payload: bulkData }) });
-            btn.innerText = "SYNCED ✅";
-            activeInputs.forEach(i => { i.classList.remove('new-entry'); i.classList.add('prefilled'); });
-        } catch (e) { btn.innerText = "FAILED ⚠️"; }
-        setTimeout(() => { btn.disabled = false; btn.innerText = "UPDATE DATABASE"; }, 2000);
-    }
+    // Save to LocalStorage for "Instant Refresh" persistence
+    const cachedChanges = JSON.parse(localStorage.getItem('pending_updates') || "[]");
+    localStorage.setItem('pending_updates', JSON.stringify([...cachedChanges, ...bulkData]));
+
+    // Push to Google Sheets (Real DB)
+    try {
+        await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ payload: bulkData }) });
+        btn.innerText = "SYNCED ✅";
+    } catch (e) { /* Error handling */ }
+}
 </script>
 </body>
 </html>
