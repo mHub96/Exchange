@@ -8,16 +8,26 @@
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #1a1c20; --light: #2a2d34; --shadow: #0d0e11; --accent: #fbbf24;
-            --emerald: #10b981; --crimson: #e11d48; --glow: 0 0 15px rgba(251, 191, 36, 0.8);
-            --zebra: rgba(255, 255, 255, 0.02); --weekend-bg: rgba(16, 185, 129, 0.12); 
-            --day-width: 85px; --date-width: 105px;
+            --bg: #1a1c20;
+            --light: #2a2d34;
+            --shadow: #0d0e11;
+            --accent: #fbbf24;
+            --emerald: #10b981;
+            --crimson: #e11d48;
+            --glow: 0 0 15px rgba(251, 191, 36, 0.8);
+            --zebra: rgba(255, 255, 255, 0.02);
+            --weekend-bg: rgba(16, 185, 129, 0.12); 
+            --day-width: 85px;
+            --date-width: 105px;
         }
+
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; overflow-x: hidden; }
+        
+        /* Table Structure */
         table { border-collapse: separate; border-spacing: 0; min-width: 1500px; }
         .ac-container { position: relative; width: 100%; min-width: 200px; direction: rtl; overflow: visible; }
         
-        /* Column Colors */
+        /* Dynamic Column Colors */
         tr td:nth-child(1), thead th:nth-child(1) { --col-color: #fbbf24; }
         tr td:nth-child(2), thead th:nth-child(2) { --col-color: #60a5fa; }
         tr td:nth-child(3), thead th:nth-child(3) { --col-color: #a78bfa; }
@@ -33,29 +43,62 @@
         th { position: sticky; top: 0; background: var(--bg); z-index: 20; padding: 1rem; color: var(--col-color); font-weight: 800; font-size: 0.7rem; letter-spacing: 0.1em; border-bottom: 1px solid var(--light); text-shadow: 0 0 10px var(--col-color); }
         tr:nth-child(even) { background-color: var(--zebra); }
 
-        .day-col { position: sticky !important; right: 0 !important; width: var(--day-width) !important; min-width: var(--day-width) !important; background-color: var(--bg) !important; z-index: 30 !important; text-align: center; color: var(--accent); font-weight: 800; font-size: 0.8rem; }
-        .date-col { position: sticky !important; right: var(--day-width) !important; width: var(--date-width) !important; min-width: var(--date-width) !important; background-color: var(--bg) !important; z-index: 30 !important; border-left: 1px solid rgba(255,255,255,0.1); color: #64748b; font-family: 'JetBrains Mono', monospace; text-align: center; }
+        /* Sticky Columns Logic 🇮🇶 */
+        .day-col {
+            position: sticky !important; right: 0 !important;
+            width: var(--day-width) !important; min-width: var(--day-width) !important;
+            background-color: var(--bg) !important; z-index: 30 !important;
+            text-align: center; color: var(--accent); font-weight: 800; font-size: 0.8rem;
+        }
+        .date-col {
+            position: sticky !important; right: var(--day-width) !important;
+            width: var(--date-width) !important; min-width: var(--date-width) !important;
+            background-color: var(--bg) !important; z-index: 30 !important;
+            border-left: 1px solid rgba(255,255,255,0.1);
+            color: #64748b; font-family: 'JetBrains Mono', monospace; text-align: center;
+        }
         
-        thead th.day-col, thead th.date-col { z-index: 40 !important; top: 0; font-size: 0.75rem !important; line-height: 1rem !important; font-weight: 800 !important; text-transform: uppercase; vertical-align: middle; }
+        /* Fixed sticky header sizing 🇮🇶 */
+        thead th.day-col, 
+        thead th.date-col { 
+            z-index: 40 !important; 
+            top: 0; 
+            font-size: 0.75rem !important; /* Forces both to match */
+            line-height: 1rem !important;
+            font-weight: 800 !important;
+            text-transform: uppercase;
+            vertical-align: middle;
+        }
         
+        /* Weekend Rows */
         tr.weekend-row { background-color: var(--weekend-bg) !important; }
         tr.weekend-row td { --col-color: var(--emerald) !important; }
         tr.weekend-row td.day-col, tr.weekend-row td.date-col { background-color: #1a2e28 !important; }
 
-        .cell-input, .ghost-text { width: 100%; padding: 0.8rem; font-size: 0.85rem; line-height: 1.6rem; font-family: 'IBM Plex Sans Arabic', sans-serif; text-align: right; box-sizing: border-box; }
+        /* Input & Ghost Text Alignment */
+        .cell-input, .ghost-text {
+            width: 100%; padding: 0.8rem; font-size: 0.85rem; line-height: 1.6rem;
+            font-family: 'IBM Plex Sans Arabic', sans-serif; text-align: right; box-sizing: border-box;
+        }
         .cell-input { position: relative; background: transparent; color: #fff; border-radius: 0.8rem; outline: none; transition: all 0.2s; z-index: 5; border: 1px solid transparent; }
         .cell-input:focus { background: rgba(255, 255, 255, 0.03); border-color: var(--col-color); box-shadow: 0 0 8px var(--col-color); }
+        
         .ghost-text { position: absolute; top: 0; right: 0; left: 0; bottom: 0; color: rgba(255, 255, 255, 0.4); pointer-events: none; white-space: pre; overflow: hidden; z-index: 1; direction: rtl; }
         .ghost-offset { color: transparent; visibility: visible; }
+
         .dropdown-arrow { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #475569; cursor: pointer; z-index: 10; font-size: 0.65rem; }
         .prefilled { color: var(--col-color) !important; filter: brightness(0.8); text-shadow: 0 0 2px var(--col-color); font-weight: 600; }
         .new-entry { color: var(--crimson) !important; text-shadow: 0 0 10px var(--crimson); }
+
+        /* UI Shell */
         .embossed-card { background: var(--bg); border-radius: 2.5rem; box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light); }
         .recessed-table-container { background: var(--bg); border-radius: 1.5rem; box-shadow: inset 8px 8px 16px var(--shadow), inset -4px -4px 12px var(--light); overflow-x: auto; }
+        
         .led-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-flex; margin-right: 12px; }
         .led-loading { background: var(--crimson); animation: blink 1s infinite; }
         .led-ready { background: var(--emerald); box-shadow: 0 0 15px var(--emerald); }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+
         .custom-menu { position: absolute; top: 100%; right: 0; width: 100%; max-height: 220px; overflow-y: auto; background: #1e2126; border: 1px solid var(--light); border-radius: 0.8rem; z-index: 100; box-shadow: 0 10px 30px var(--shadow); display: none; text-align: right; }
         .custom-menu div { padding: 0.6rem 0.8rem; cursor: pointer; color: #94a3b8; font-size: 0.8rem; }
         .custom-menu div:hover { background: var(--light); color: var(--col-color); }
@@ -69,11 +112,11 @@
                 <h1 class="text-3xl font-extrabold tracking-tight text-white" style="text-shadow: var(--glow)">IRAQI Teaching Hospital Monthly Scheduler 🇮🇶</h1>
                 <div class="mt-4 flex items-center bg-black/40 px-6 py-2 rounded-full inline-flex border border-white/5">
                     <span id="led" class="led-dot led-loading"></span>
-                    <span id="status-text" class="text-[0.65rem] font-black uppercase tracking-[0.25em] text-rose-500">Syncing...</span>
+                    <span id="status-text" class="text-[0.65rem] font-black uppercase tracking-[0.25em] text-rose-500">Initializing...</span>
                 </div>
             </div>
             <div class="recessed-table-container p-2 flex items-center bg-black/20">
-                <input type="month" id="month-picker" class="bg-transparent text-amber-500 font-bold outline-none p-3 cursor-pointer" onchange="initDataSync()">
+                <input type="month" id="month-picker" class="bg-transparent text-amber-500 font-bold outline-none p-3 cursor-pointer" onchange="generateTable()">
             </div>
         </div>
 
@@ -112,39 +155,17 @@
         initDataSync();
     };
 
-    // SPEED OPTIMIZATION: Parallel loading
     async function initDataSync() {
-        const monthVal = document.getElementById('month-picker').value;
-        
-        // Show table structure immediately so user can start typing if they want
-        generateTable();
-        unlockTable();
-
         try {
-            const [respNames, respSchedule] = await Promise.all([
-                fetch(`${scriptUrl}?action=getNames`).then(r => r.json()),
-                fetch(`${scriptUrl}?action=getSchedule&month=${monthVal}`).then(r => r.json())
-            ]);
-
-            // Process Names
+            const respNames = await fetch(`${scriptUrl}?action=getNames`);
+            const allResidents = await respNames.json();
             specialties.forEach(spec => {
-                if (spec.id === "OP" || spec.id === "ICU") nameData[spec.id] = respNames.filter(r => r[1] === "A").map(r => r[0]);
-                else if (spec.id === "D") nameData[spec.id] = respNames.map(r => r[0]);
-                else nameData[spec.id] = respNames.filter(r => r[1] === spec.id).map(r => r[0]);
+                if (spec.id === "OP" || spec.id === "ICU") nameData[spec.id] = allResidents.filter(r => r[1] === "A").map(r => r[0]);
+                else if (spec.id === "D") nameData[spec.id] = allResidents.map(r => r[0]);
+                else nameData[spec.id] = allResidents.filter(r => r[1] === spec.id).map(r => r[0]);
             });
-
-            // Process Schedule
-            respSchedule.forEach(row => {
-                const day = parseInt(row.date.split('/')[0]);
-                const inputEl = document.getElementById(`input-${day}-${row.specCode}`);
-                if (inputEl && row.name) {
-                    inputEl.value = row.name;
-                    inputEl.classList.add('prefilled');
-                }
-            });
-
-            setReadyStatus();
-        } catch (e) { console.error("Sync Error", e); }
+            generateTable(); 
+        } catch (e) { unlockTable(); }
     }
 
     function generateTable() {
@@ -152,18 +173,21 @@
         const [year, month] = picker.split('-').map(Number);
         const daysInMonth = new Date(year, month, 0).getDate();
         
-        document.getElementById('table-headers').innerHTML = specialties.map(s => `<th>${s.name}</th>`).join('') + `<th class="date-col">Date</th><th class="day-col">Day</th>`;
+        let hHtml = specialties.map(s => `<th>${s.name}</th>`).join('') + `<th class="date-col">Date</th><th class="day-col">Day</th>`;
+        document.getElementById('table-headers').innerHTML = hHtml;
 
         const body = document.getElementById('table-body');
-        let html = "";
+        body.innerHTML = "";
         for (let d = 1; d <= daysInMonth; d++) {
             const dateObj = new Date(year, month-1, d);
             const dateStr = `${String(d).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
             const dayName = new Intl.DateTimeFormat('ar-IQ', { weekday: 'long' }).format(dateObj);
             const isWeekend = (dateObj.getDay() === 5 || dateObj.getDay() === 6);
             
-            html += `<tr class="${isWeekend ? 'weekend-row' : ''}">`;
-            html += specialties.map(s => `
+            const tr = document.createElement('tr');
+            if (isWeekend) tr.classList.add('weekend-row');
+            
+            let rHtml = specialties.map(s => `
                 <td><div class="ac-container">
                     <div class="ghost-text" id="ghost-${d}-${s.id}"></div>
                     <input type="text" class="cell-input" id="input-${d}-${s.id}" autocomplete="off" 
@@ -173,35 +197,64 @@
                     <span class="dropdown-arrow" onclick="toggleMenu('${d}-${s.id}', '${s.id}')">▼</span>
                     <div class="custom-menu" id="menu-${d}-${s.id}"></div>
                 </div></td>`).join('');
-            html += `<td class="date-col">${dateStr}</td><td class="day-col">${dayName}</td></tr>`;
+            
+            rHtml += `<td class="date-col">${dateStr}</td><td class="day-col">${dayName}</td>`;
+            tr.innerHTML = rHtml;
+            body.appendChild(tr);
         }
-        body.innerHTML = html;
+        fetchExistingSchedule();
+    }
+
+    async function fetchExistingSchedule() {
+        const monthVal = document.getElementById('month-picker').value;
+        try {
+            const resp = await fetch(`${scriptUrl}?action=getSchedule&month=${monthVal}`);
+            const schedule = await resp.json();
+            schedule.forEach(row => {
+                const day = parseInt(row.date.split('/')[0]);
+                const inputEl = document.getElementById(`input-${day}-${row.specCode}`);
+                if (inputEl && row.name) {
+                    inputEl.value = row.name;
+                    inputEl.classList.add('prefilled');
+                }
+            });
+        } finally { unlockTable(); }
     }
 
     function handleAC(el, specId, uniqueId) {
         const ghost = document.getElementById(`ghost-${uniqueId}`);
         const val = el.value;
+        const valLower = val.toLowerCase().trim();
         const prefix = "د. ";
+        
         ghost.innerText = ""; 
         ghost.removeAttribute('data-full-match');
         el.classList.remove('prefilled');
 
-        if (val.trim() === "") { el.classList.remove('new-entry'); return; }
+        if (val.trim() === "") {
+            el.classList.remove('new-entry');
+            return;
+        }
+
         el.classList.add('new-entry');
 
         if (nameData[specId]) {
             const userHasPrefix = val.startsWith("د.") || val.startsWith(prefix);
-            const cleanInput = val.toLowerCase().trim().replace(/^د\.\s*/, "");
+            const cleanInput = valLower.replace(/^د\.\s*/, "");
+
             const match = nameData[specId].find(name => {
-                const nLower = name.toLowerCase();
-                return nLower.startsWith(val.toLowerCase().trim()) || nLower.replace(/^د\.\s*/, "").startsWith(cleanInput);
+                const nameLower = name.toLowerCase();
+                const cleanName = nameLower.replace(/^د\.\s*/, "");
+                return nameLower.startsWith(valLower) || cleanName.startsWith(cleanInput);
             });
 
             if (match) {
                 ghost.setAttribute('data-full-match', match);
                 let ghostDisplay = userHasPrefix ? match : match.replace(/^د\.\s*/, "");
-                if (ghostDisplay.toLowerCase().startsWith(val.toLowerCase())) {
+
+                if (ghostDisplay.toLowerCase().startsWith(valLower)) {
                     ghost.innerHTML = `<span class="ghost-offset">${val}</span>${ghostDisplay.substring(val.length)}`;
+                    ghost.style.color = "rgba(255, 255, 255, 0.4)";
                 } else {
                     ghost.innerText = ghostDisplay;
                     ghost.style.color = "rgba(255, 255, 255, 0.15)";
@@ -210,33 +263,57 @@
         }
     }
 
-    function handleKeys(e, el, uniqueId) {
-        const ghost = document.getElementById(`ghost-${uniqueId}`);
-        const fullMatch = ghost.getAttribute('data-full-match');
-        if ((e.key === "Tab" || e.key === "ArrowRight") && fullMatch) {
-            if (el.value !== fullMatch) {
-                if (e.key !== "ArrowRight") e.preventDefault();
-                el.value = fullMatch;
-                ghost.innerText = ""; ghost.removeAttribute('data-full-match');
-                return;
-            }
-        }
-        if (e.key === "Enter") {
-            e.preventDefault();
-            if (fullMatch) { el.value = fullMatch; ghost.innerText = ""; ghost.removeAttribute('data-full-match'); }
-            const parts = uniqueId.split('-');
-            const nextEl = document.getElementById(`input-${parseInt(parts[0]) + 1}-${parts[1]}`);
-            if (nextEl) nextEl.focus(); else el.blur();
+   function handleKeys(e, el, uniqueId) {
+    const ghost = document.getElementById(`ghost-${uniqueId}`);
+    const fullMatch = ghost.getAttribute('data-full-match');
+    
+    // Accept suggestion with Tab or ArrowRight
+    if ((e.key === "Tab" || e.key === "ArrowRight") && fullMatch) {
+        if (el.value !== fullMatch) {
+            if (e.key !== "ArrowRight") e.preventDefault();
+            el.value = fullMatch;
+            ghost.innerText = "";
+            ghost.removeAttribute('data-full-match');
+            return;
         }
     }
 
+    // Combined Enter Logic: Apply suggestion AND Move Down 🇮🇶
+    if (e.key === "Enter") {
+        e.preventDefault();
+
+        // 1. If there's a suggestion, apply it first
+        if (fullMatch) {
+            el.value = fullMatch;
+            ghost.innerText = "";
+            ghost.removeAttribute('data-full-match');
+        }
+
+        // 2. Immediately shift focus to the next day
+        const parts = uniqueId.split('-'); // [day, specId]
+        const nextDay = parseInt(parts[0]) + 1;
+        const specId = parts[1];
+        const nextEl = document.getElementById(`input-${nextDay}-${specId}`);
+
+        if (nextEl) {
+            nextEl.focus();
+        } else {
+            el.blur(); // End of the month
+        }
+    }
+}
     function handleBlur(uniqueId) {
         const ghost = document.getElementById(`ghost-${uniqueId}`);
         const input = document.getElementById(`input-${uniqueId}`);
         const fullMatch = ghost.getAttribute('data-full-match');
-        if (fullMatch && input.value.trim() !== "") { input.value = fullMatch; input.classList.add('new-entry'); }
+        
+        if (fullMatch && input.value.trim() !== "") {
+            input.value = fullMatch;
+            input.classList.add('new-entry');
+        }
         setTimeout(() => {
-            ghost.innerText = ""; ghost.removeAttribute('data-full-match');
+            ghost.innerText = "";
+            ghost.removeAttribute('data-full-match');
             const menu = document.getElementById(`menu-${uniqueId}`);
             if (menu) menu.style.display = "none";
         }, 220);
@@ -254,18 +331,17 @@
 
     function selectName(uniqueId, name) {
         const input = document.getElementById(`input-${uniqueId}`);
-        input.value = name; input.classList.add('new-entry');
+        input.value = name;
+        input.classList.add('new-entry');
         const ghost = document.getElementById(`ghost-${uniqueId}`);
-        ghost.innerText = ""; ghost.removeAttribute('data-full-match');
+        ghost.innerText = "";
+        ghost.removeAttribute('data-full-match');
     }
 
     function unlockTable() {
         const wrapper = document.getElementById('app-wrapper');
         wrapper.style.opacity = "1";
         wrapper.style.pointerEvents = "auto";
-    }
-
-    function setReadyStatus() {
         document.getElementById('led').className = "led-dot led-ready";
         const status = document.getElementById('status-text');
         status.innerText = "System Ready 🇮🇶";
@@ -276,8 +352,10 @@
         const btn = document.getElementById('save-btn');
         const activeInputs = Array.from(document.querySelectorAll('.cell-input')).filter(i => i.value.trim() !== "");
         if (!activeInputs.length) return;
+
         btn.disabled = true; btn.innerText = "UPLOADING...";
         const bulkData = activeInputs.map(el => ({ date: el.dataset.date, specialty: el.dataset.spec, name: el.value.trim() }));
+        
         try {
             await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ payload: bulkData }) });
             btn.innerText = "SYNCED ✅";
