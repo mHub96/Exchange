@@ -3,90 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LOCKED FRAME SCHEDULER 🇮🇶</title>
+    <title>FLOATING TRACK SCHEDULER 🇮🇶</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0f1115;
-            --card: #1a1c20;
-            --column-width: 280px;
+            --bg: #0b0e11;
+            --card: #16191d;
+            --column-width: 290px;
             --font-size: 0.9rem;
             --line-height: 1.5;
             --padding-y: 0.6rem;
             --padding-x: 0.75rem;
-            /* Header height offset to prevent overflow 🇮🇶 */
-            --header-h: 80px; 
+            --nav-h: 70px;
         }
 
-        /* Specialty-Specific Hues 🇮🇶 */
-        .track-NS { --spec-color: #fbbf24; } 
-        .track-CT { --spec-color: #f87171; } 
-        .track-GS { --spec-color: #34d399; } 
-        .track-US { --spec-color: #60a5fa; } 
-        .track-ENT { --spec-color: #a78bfa; } 
-        .track-H { --spec-color: #fb7185; } 
-        .track-D { --spec-color: #94a3b8; } 
-        .track-OP { --spec-color: #fb923c; } 
-        .track-ICU { --spec-color: #2dd4bf; } 
-        .track-R { --spec-color: #818cf8; } 
+        /* Specialty Hues 🇮🇶 */
+        .track-NS { --spec-color: #fbbf24; } .track-CT { --spec-color: #f87171; } 
+        .track-GS { --spec-color: #34d399; } .track-US { --spec-color: #60a5fa; } 
+        .track-ENT { --spec-color: #a78bfa; } .track-H { --spec-color: #fb7185; } 
+        .track-D { --spec-color: #94a3b8; } .track-OP { --spec-color: #fb923c; } 
+        .track-ICU { --spec-color: #2dd4bf; } .track-R { --spec-color: #818cf8; } 
         .track-ON { --spec-color: #f472b6; } 
 
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; overflow: hidden; height: 100vh; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
         
-        /* THE FRAME LOCK: Ensures container stays within viewport 🇮🇶 */
+        /* The "Visible Floor" Container 🇮🇶 */
         .board-container {
+            flex-grow: 1;
             display: flex; 
-            gap: 1.25rem; 
-            padding: 1.25rem; 
+            gap: 1.5rem; 
+            padding: 1.5rem 1.5rem 3rem 1.5rem; /* Extra bottom padding for visibility */
             overflow-x: auto;
-            height: calc(100vh - var(--header-h)); 
             align-items: flex-start;
             box-sizing: border-box;
+            height: calc(100vh - var(--nav-h));
         }
 
         .specialty-track {
             flex: 0 0 var(--column-width); 
             background: var(--card); 
-            border-radius: 1.5rem;
+            border-radius: 1.8rem;
             display: flex; 
             flex-direction: column; 
-            /* Track is locked to container height 🇮🇶 */
-            height: 100%; 
-            border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            overflow: hidden; /* Keeps the bottom rounded corners visible */
+            /* THE FIX: Force the track to end before the container bottom 🇮🇶 */
+            max-height: 92%; 
+            border: 1px solid rgba(255,255,255,0.04);
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.8), 
+                        0 0 15px -5px var(--spec-color);
+            overflow: hidden;
         }
 
         .track-header {
-            padding: 1rem; 
+            padding: 1.2rem; 
             text-align: center;
-            flex-shrink: 0; /* Prevents header from squishing */
-            background: linear-gradient(to bottom, rgba(0,0,0,0.2), transparent);
+            flex-shrink: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.03), transparent);
             border-bottom: 3px solid var(--spec-color);
         }
 
-        .track-header h2 { color: var(--spec-color); font-weight: 900; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+        .track-header h2 { color: var(--spec-color); font-weight: 900; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; }
 
-        /* SCROLLABLE INNER LIST 🇮🇶 */
         .days-list { 
             flex: 1; 
             overflow-y: auto; 
             padding: 0.75rem; 
-            scrollbar-width: none; /* Hidden but scrollable */
+            padding-bottom: 2rem; /* Buffer for the last items */
+            scrollbar-width: none; 
         }
         .days-list::-webkit-scrollbar { display: none; }
 
         .day-box {
             position: relative; background: rgba(255,255,255,0.02); margin-bottom: 0.5rem;
-            border-radius: 0.8rem; padding: 0.4rem; border: 1px solid transparent;
+            border-radius: 0.9rem; padding: 0.4rem; border: 1px solid transparent;
         }
-        .day-box:focus-within { border-color: var(--spec-color); background: rgba(255, 255, 255, 0.04); }
-        .day-box.weekend { background: rgba(255,255,255,0.05); }
+        .day-box:focus-within { border-color: var(--spec-color); background: rgba(255,255,255,0.04); }
+        .day-box.weekend { background: rgba(255,255,255,0.05); border-left: 3px solid var(--spec-color); }
 
         .day-label {
             display: flex; justify-content: space-between; font-size: 0.6rem;
-            font-weight: 800; margin-bottom: 0.2rem; color: #64748b; padding: 0 0.4rem;
+            font-weight: 800; margin-bottom: 0.2rem; color: #4b5563; padding: 0 0.5rem;
         }
 
         .input-wrapper { position: relative; width: 100%; direction: rtl; }
@@ -99,31 +95,34 @@
         }
 
         .cell-input { background: transparent; border: none; outline: none; color: #fff; position: relative; z-index: 10; }
-        .ghost-text { position: absolute; top: 0; right: 0; left: 0; bottom: 0; color: rgba(255,255,255,0.15); z-index: 5; pointer-events: none; }
-        .ghost-offset { color: transparent; visibility: visible; }
+        .ghost-text { position: absolute; top: 0; right: 0; color: rgba(255,255,255,0.15); z-index: 5; pointer-events: none; }
+        .ghost-offset { color: transparent; }
 
-        .dropdown-arrow { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-size: 0.55rem; color: #475569; cursor: pointer; z-index: 25; padding: 5px; }
+        .dropdown-arrow { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 0.5rem; color: #334155; cursor: pointer; z-index: 25; padding: 6px; }
 
         .prefilled { color: var(--spec-color) !important; font-weight: 600; }
         .new-entry { color: #fff !important; font-weight: 700; }
 
         .custom-menu {
             position: absolute; top: 100%; right: 0; width: 100%; max-height: 180px;
-            overflow-y: auto; background: #1e2126; border: 1px solid var(--spec-color);
-            border-radius: 0.5rem; z-index: 1000; display: none;
+            overflow-y: auto; background: #1c1f26; border: 1px solid var(--spec-color);
+            border-radius: 0.6rem; z-index: 1000; display: none;
         }
-        .custom-menu div { padding: 0.7rem; font-size: 0.8rem; text-align: right; cursor: pointer; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .custom-menu div { padding: 0.8rem; font-size: 0.8rem; text-align: right; cursor: pointer; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.03); }
         .custom-menu div:hover { background: var(--spec-color); color: #000; }
+
+        /* Navigation Bar 🇮🇶 */
+        .nav-bar { height: var(--nav-h); padding: 0 1.5rem; display: flex; justify-content: space-between; align-items: center; background: #111418; border-bottom: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
 
-    <div id="app-wrapper" class="opacity-30 pointer-events-none transition-opacity duration-500 flex flex-col h-screen">
-        <div class="h-[80px] p-4 flex justify-between items-center bg-card border-b border-white/5 flex-shrink-0">
+    <div id="app-wrapper" class="opacity-30 pointer-events-none transition-opacity duration-500">
+        <div class="nav-bar">
             <h1 class="text-lg font-black text-white uppercase tracking-tighter">Iraqi Med-Scheduler 🇮🇶</h1>
             <div class="flex gap-4 items-center">
-                <input type="month" id="month-picker" class="bg-black text-amber-500 p-2 rounded-lg font-bold border border-white/10 text-sm" onchange="generateBoard()">
-                <button onclick="saveAll()" id="sync-btn" class="bg-white text-black px-5 py-2 rounded-lg font-black text-[10px] uppercase active:scale-95">Update All Tracks</button>
+                <input type="month" id="month-picker" class="bg-black text-amber-500 px-3 py-1.5 rounded-lg font-bold border border-white/10 text-xs" onchange="generateBoard()">
+                <button onclick="saveAll()" id="sync-btn" class="bg-white text-black px-5 py-2 rounded-lg font-black text-[10px] uppercase active:scale-95 transition-transform">Sync Schedule</button>
             </div>
         </div>
         
@@ -300,7 +299,7 @@
             btn.innerText = "Synced ✅";
             inputs.forEach(x => { x.classList.remove('new-entry'); x.classList.add('prefilled'); });
         } catch(e) { btn.innerText = "Error ⚠️"; }
-        setTimeout(() => btn.innerText = "Update All Tracks", 2000);
+        setTimeout(() => btn.innerText = "Sync Schedule", 2000);
     }
 </script>
 </body>
