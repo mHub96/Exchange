@@ -17,14 +17,15 @@
             --glow: 0 0 15px rgba(251, 191, 36, 0.8);
             --zebra: rgba(255, 255, 255, 0.02);
             --weekend-bg: rgba(16, 185, 129, 0.12); 
-            --day-width: 85px;
-            --date-width: 105px;
+            /* Ultra-Compact Sticky Widths 🇮🇶 */
+            --day-width: 55px;
+            --date-width: 65px;
         }
 
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; overflow-x: hidden; }
         
-        table { border-collapse: separate; border-spacing: 0; min-width: 1500px; }
-        .ac-container { position: relative; width: 100%; min-width: 200px; direction: rtl; overflow: visible; }
+        table { border-collapse: separate; border-spacing: 0; min-width: 1600px; }
+        .ac-container { position: relative; width: 100%; min-width: 180px; direction: rtl; overflow: visible; }
         
         /* Column Colors */
         tr td:nth-child(1), thead th:nth-child(1) { --col-color: #fbbf24; }
@@ -36,79 +37,74 @@
         tr td:nth-child(7), thead th:nth-child(7) { --col-color: #c084fc; }
         tr td:nth-child(8), thead th:nth-child(8) { --col-color: #2dd4bf; }
 
-        th { position: sticky; top: 0; background: var(--bg); z-index: 20; padding: 1rem; color: var(--col-color); font-weight: 800; font-size: 0.7rem; letter-spacing: 0.1em; border-bottom: 1px solid var(--light); text-shadow: 0 0 10px var(--col-color); }
+        th { position: sticky; top: 0; background: var(--bg); z-index: 20; padding: 0.75rem 0.25rem; color: var(--col-color); font-weight: 800; font-size: 0.65rem; letter-spacing: 0.05em; border-bottom: 1px solid var(--light); text-shadow: 0 0 10px var(--col-color); text-transform: uppercase; }
         tr:nth-child(even) { background-color: var(--zebra); }
 
-        /* --- STICKY LOGIC 🇮🇶 --- */
+        /* Sticky Columns 🇮🇶 */
         .day-col {
             position: sticky !important; right: 0 !important;
             width: var(--day-width) !important; min-width: var(--day-width) !important;
             background-color: var(--bg) !important; z-index: 30 !important;
-            text-align: center; color: var(--accent); font-weight: 800; font-size: 0.8rem;
+            text-align: center; color: var(--accent); font-weight: 800; font-size: 0.7rem;
+            border-left: 1px solid rgba(255,255,255,0.05);
         }
         .date-col {
             position: sticky !important; right: var(--day-width) !important;
             width: var(--date-width) !important; min-width: var(--date-width) !important;
             background-color: var(--bg) !important; z-index: 30 !important;
-            border-left: 1px solid rgba(255,255,255,0.1);
             color: #64748b; font-family: 'JetBrains Mono', monospace; text-align: center;
+            font-size: 0.75rem;
         }
 
-        /* --- MOBILE REVERSE FORMATTING (MM/DD) --- */
+        /* Mobile RTL Date Fix (MM/DD) */
         @media (max-width: 768px) {
-            .date-display { display: flex; flex-direction: row-reverse; justify-content: center; gap: 2px; }
+            .date-display { display: flex; flex-direction: row-reverse; justify-content: center; gap: 1px; font-size: 0.7rem; }
             .year-text { display: none; }
-            .date-col { width: 60px !important; min-width: 60px !important; font-size: 0.85rem !important; }
-            .day-col { width: 50px !important; min-width: 50px !important; font-size: 0.7rem !important; }
-            /* Adjust the sticky position for the date since day-col shrunk */
-            .date-col { right: 50px !important; }
+            .day-col { font-size: 0.6rem !important; }
         }
 
         thead th.day-col, thead th.date-col { z-index: 40 !important; top: 0; vertical-align: middle; }
         tr.weekend-row { background-color: var(--weekend-bg) !important; }
         tr.weekend-row td.day-col, tr.weekend-row td.date-col { background-color: #1a2e28 !important; }
 
-        /* UI Elements */
-        .cell-input { position: relative; width: 100%; padding: 0.8rem; font-size: 0.85rem; line-height: 1.6rem; font-family: 'IBM Plex Sans Arabic', sans-serif; text-align: right; background: transparent; color: #fff; border-radius: 0.8rem; outline: none; transition: all 0.2s; z-index: 5; border: 1px solid transparent; }
+        .cell-input { position: relative; width: 100%; padding: 0.6rem 0.5rem; font-size: 0.8rem; line-height: 1.4rem; font-family: 'IBM Plex Sans Arabic', sans-serif; text-align: right; background: transparent; color: #fff; border-radius: 0.6rem; outline: none; transition: all 0.2s; z-index: 5; border: 1px solid transparent; }
         .cell-input:focus { background: rgba(255, 255, 255, 0.03); border-color: var(--col-color); box-shadow: 0 0 8px var(--col-color); }
-        .ghost-text { position: absolute; top: 0; right: 0; left: 0; bottom: 0; color: rgba(255, 255, 255, 0.4); pointer-events: none; white-space: pre; overflow: hidden; z-index: 1; direction: rtl; padding: 0.8rem; font-size: 0.85rem; line-height: 1.6rem; }
+        .ghost-text { position: absolute; top: 0; right: 0; left: 0; bottom: 0; color: rgba(255, 255, 255, 0.3); pointer-events: none; white-space: pre; overflow: hidden; z-index: 1; direction: rtl; padding: 0.6rem 0.5rem; font-size: 0.8rem; }
         .ghost-offset { color: transparent; }
-        .dropdown-arrow { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #475569; cursor: pointer; z-index: 10; font-size: 0.65rem; }
-        .prefilled { color: var(--col-color) !important; filter: brightness(0.8); font-weight: 600; }
+        .dropdown-arrow { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); color: #475569; cursor: pointer; z-index: 10; font-size: 0.55rem; opacity: 0.4; }
+        .prefilled { color: var(--col-color) !important; filter: brightness(0.9); font-weight: 600; }
         .new-entry { color: var(--crimson) !important; text-shadow: 0 0 10px var(--crimson); }
-        .embossed-card { background: var(--bg); border-radius: 2.5rem; box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light); }
-        .recessed-table-container { background: var(--bg); border-radius: 1.5rem; box-shadow: inset 8px 8px 16px var(--shadow), inset -4px -4px 12px var(--light); overflow-x: auto; }
-        .led-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-flex; margin-right: 12px; }
-        .led-ready { background: var(--emerald); box-shadow: 0 0 15px var(--emerald); }
-        .custom-menu { position: absolute; top: 100%; right: 0; width: 100%; max-height: 220px; overflow-y: auto; background: #1e2126; border: 1px solid var(--light); border-radius: 0.8rem; z-index: 100; box-shadow: 0 10px 30px var(--shadow); display: none; text-align: right; }
-        .custom-menu div { padding: 0.6rem 0.8rem; cursor: pointer; color: #94a3b8; font-size: 0.8rem; }
+        .embossed-card { background: var(--bg); border-radius: 2rem; box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light); }
+        .recessed-table-container { background: var(--bg); border-radius: 1rem; box-shadow: inset 8px 8px 16px var(--shadow), inset -4px -4px 12px var(--light); overflow-x: auto; }
+        .custom-menu { position: absolute; top: 100%; right: 0; width: 100%; max-height: 200px; overflow-y: auto; background: #1e2126; border: 1px solid var(--light); border-radius: 0.6rem; z-index: 100; display: none; text-align: right; }
+        .custom-menu div { padding: 0.5rem 0.8rem; cursor: pointer; color: #94a3b8; font-size: 0.75rem; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-2 md:p-6">
 
     <div id="app-wrapper" class="max-w-full mx-auto opacity-30 pointer-events-none transition-opacity duration-500">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <div>
-                <h1 class="text-3xl font-extrabold tracking-tight text-white">SCHEDULER 🇮🇶</h1>
-                <div class="mt-4 flex items-center bg-black/40 px-6 py-2 rounded-full inline-flex border border-white/5">
-                    <span id="led" class="led-dot led-ready"></span>
-                    <span id="status-text" class="text-[0.65rem] font-black uppercase tracking-[0.25em] text-emerald-500">System Ready</span>
+                <h1 class="text-xl font-black text-white">SCHEDULER 🇮🇶</h1>
+                <div class="mt-2 flex items-center bg-black/40 px-4 py-1 rounded-full border border-white/5">
+                    <span id="led" class="w-2 h-2 rounded-full bg-emerald-500 mr-2 shadow-[0_0_10px_#10b981]"></span>
+                    <span id="status-text" class="text-[0.6rem] font-bold uppercase tracking-widest text-emerald-500">Connected</span>
                 </div>
             </div>
-            <div class="recessed-table-container p-2 flex items-center bg-black/20">
-                <input type="month" id="month-picker" class="bg-transparent text-amber-500 font-bold outline-none p-3 cursor-pointer" onchange="generateTable()">
+            <div class="recessed-table-container px-2 flex items-center bg-black/20">
+                <input type="month" id="month-picker" class="bg-transparent text-amber-500 font-bold outline-none p-2 cursor-pointer text-sm" onchange="generateTable()">
             </div>
         </div>
 
-        <div id="main-table-area" class="embossed-card p-6">
-            <div class="recessed-table-container max-h-[72vh]">
+        <div id="main-table-area" class="embossed-card p-4">
+            <div class="recessed-table-container max-h-[75vh]">
                 <table id="schedule-table">
                     <thead><tr id="table-headers"></tr></thead>
                     <tbody id="table-body"></tbody>
                 </table>
             </div>
-            <div class="mt-8 flex justify-end">
-                <button id="save-btn" onclick="saveAll()" class="bg-[#2a2d34] shadow-xl px-14 py-6 rounded-3xl text-amber-500 font-black uppercase tracking-[0.2em] transition-all hover:bg-black border border-white/5">
+            <div class="mt-6 flex justify-end">
+                <button id="save-btn" onclick="saveAll()" class="bg-[#2a2d34] shadow-xl px-10 py-4 rounded-2xl text-amber-500 font-black text-xs tracking-widest transition-all hover:bg-black border border-white/5">
                     UPDATE DATABASE
                 </button>
             </div>
@@ -118,10 +114,11 @@
 <script>
     const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
     const specialties = [
-        { id: "NS", name: "Neurosurgery" }, { id: "CT", name: "Cardiothoracic" },
-        { id: "GS", name: "General" }, { id: "US", name: "Urosurgery" },
-        { id: "ENT", name: "ENT" }, { id: "H", name: "Cardiology" },
-        { id: "D", name: "Death Cert" }, { id: "OP", name: "OT Anaesthesia" }
+        { id: "NS", name: "Neuro" }, { id: "CT", name: "CardioT" },
+        { id: "GS", name: "General" }, { id: "US", name: "Uro" },
+        { id: "ENT", name: "ENT" }, { id: "H", name: "Heart" },
+        { id: "D", name: "Death" }, { id: "OP", name: "OT-A" },
+        { id: "ICU", name: "ICU-A" }
     ];
 
     let nameData = {}; 
@@ -160,41 +157,62 @@
             const mm = String(month).padStart(2, '0');
             const dateStr = `${dd}/${mm}/${year}`;
             const dayShort = new Intl.DateTimeFormat('ar-IQ', { weekday: 'short' }).format(dateObj);
-            const dayLong = new Intl.DateTimeFormat('ar-IQ', { weekday: 'long' }).format(dateObj);
             const isWeekend = (dateObj.getDay() === 5 || dateObj.getDay() === 6);
             
             const tr = document.createElement('tr');
             if (isWeekend) tr.classList.add('weekend-row');
             
-            let rHtml = specialties.map(s => `
+            let rHtml = specialties.map((s, index) => `
                 <td><div class="ac-container">
                     <div class="ghost-text" id="ghost-${d}-${s.id}"></div>
-                    <input type="text" class="cell-input" id="input-${d}-${s.id}" autocomplete="off" 
+                    <input type="text" class="cell-input" id="input-${d}-${s.id}" 
+                        inputmode="text" autocomplete="off"
                         oninput="handleAC(this, '${s.id}', '${d}-${s.id}')" 
-                        onkeydown="handleKeys(event, this, '${d}-${s.id}')" 
+                        onkeydown="handleKeys(event, this, ${d}, ${index})" 
                         onblur="handleBlur('${d}-${s.id}')" data-date="${dateStr}" data-spec="${s.id}">
                     <span class="dropdown-arrow" onclick="toggleMenu('${d}-${s.id}', '${s.id}')">▼</span>
                     <div class="custom-menu" id="menu-${d}-${s.id}"></div>
                 </div></td>`).join('');
             
-            // RTL Logic for Mobile: MM\DD via CSS flex-reverse
             rHtml += `
                 <td class="date-col">
                     <div class="date-display">
-                        <span class="day-num">${dd}</span>
-                        <span class="sep">/</span>
-                        <span class="month-num">${mm}</span>
-                        <span class="year-text">/${year}</span>
+                        <span class="day-num">${dd}</span><span class="opacity-20">/</span><span class="month-num text-amber-500/50">${mm}</span><span class="year-text opacity-10">/${year}</span>
                     </div>
                 </td>
-                <td class="day-col">
-                    <span class="hidden md:inline">${dayLong}</span>
-                    <span class="inline md:hidden">${dayShort}</span>
-                </td>`;
+                <td class="day-col">${dayShort}</td>`;
             tr.innerHTML = rHtml;
             body.appendChild(tr);
         }
         fetchExistingSchedule();
+    }
+
+    function handleKeys(e, el, currentDay, specIndex) {
+        const ghost = document.getElementById(`ghost-${currentDay}-${specialties[specIndex].id}`);
+        const fullMatch = ghost.getAttribute('data-full-match');
+
+        if (e.key === "Enter") {
+            e.preventDefault();
+            if (fullMatch) el.value = fullMatch;
+            
+            // NAVIGATION LOGIC (Z-Pattern) 🇮🇶
+            let nextDay = currentDay;
+            let nextSpecIndex = specIndex + 1;
+
+            if (nextSpecIndex >= specialties.length) {
+                nextSpecIndex = 0; // Back to first column
+                nextDay++;        // Next row
+            }
+
+            const nextEl = document.getElementById(`input-${nextDay}-${specialties[nextSpecIndex].id}`);
+            if (nextEl) nextEl.focus();
+            else el.blur();
+        }
+        
+        if (e.key === "Tab" && fullMatch) {
+            e.preventDefault();
+            el.value = fullMatch;
+        }
     }
 
     async function fetchExistingSchedule() {
@@ -224,34 +242,12 @@
         }
     }
 
-    function handleKeys(e, el, uniqueId) {
-        const ghost = document.getElementById(`ghost-${uniqueId}`);
-        const fullMatch = ghost.getAttribute('data-full-match');
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-        if (e.key === "Enter") {
-            e.preventDefault();
-            if (fullMatch) el.value = fullMatch;
-            
-            const parts = uniqueId.split('-'); // [day, spec]
-            const nextDay = parseInt(parts[0]) + 1;
-            const nextEl = document.getElementById(`input-${nextDay}-${parts[1]}`);
-            
-            if (nextEl) nextEl.focus();
-            else el.blur();
-        }
-        
-        if (e.key === "Tab" && fullMatch) {
-            e.preventDefault();
-            el.value = fullMatch;
-        }
-    }
-
     function handleBlur(uniqueId) {
         setTimeout(() => {
             const menu = document.getElementById(`menu-${uniqueId}`);
             if (menu) menu.style.display = "none";
-            document.getElementById(`ghost-${uniqueId}`).innerText = "";
+            const ghost = document.getElementById(`ghost-${uniqueId}`);
+            if (ghost) ghost.innerText = "";
         }, 200);
     }
 
@@ -273,9 +269,13 @@
 
     async function saveAll() {
         const btn = document.getElementById('save-btn');
-        btn.innerText = "UPLOADING...";
-        btn.disabled = true;
-        // ... upload logic here ...
+        btn.innerText = "UPLOADING..."; btn.disabled = true;
+        const activeInputs = Array.from(document.querySelectorAll('.cell-input')).filter(i => i.value.trim() !== "");
+        const bulkData = activeInputs.map(el => ({ date: el.dataset.date, specialty: el.dataset.spec, name: el.value.trim() }));
+        try {
+            await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ payload: bulkData }) });
+            btn.innerText = "SYNCED ✅";
+        } catch (e) { btn.innerText = "ERROR ⚠️"; }
         setTimeout(() => { btn.innerText = "UPDATE DATABASE"; btn.disabled = false; }, 2000);
     }
 </script>
