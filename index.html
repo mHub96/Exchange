@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FLOATING TRACK SCHEDULER 🇮🇶</title>
+    <title>SECURE SCHEDULER 🇮🇶</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
@@ -28,16 +28,17 @@
 
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
         
-        /* The "Visible Floor" Container 🇮🇶 */
+        /* The Board Container 🇮🇶 */
         .board-container {
             flex-grow: 1;
             display: flex; 
             gap: 1.5rem; 
-            padding: 1.5rem 1.5rem 3rem 1.5rem; /* Extra bottom padding for visibility */
+            padding: 1.5rem 1.5rem 3rem 1.5rem;
             overflow-x: auto;
             align-items: flex-start;
             box-sizing: border-box;
             height: calc(100vh - var(--nav-h));
+            transition: filter 0.3s ease;
         }
 
         .specialty-track {
@@ -46,7 +47,6 @@
             border-radius: 1.8rem;
             display: flex; 
             flex-direction: column; 
-            /* THE FIX: Force the track to end before the container bottom 🇮🇶 */
             max-height: 92%; 
             border: 1px solid rgba(255,255,255,0.04);
             box-shadow: 0 20px 40px -15px rgba(0,0,0,0.8), 
@@ -68,7 +68,7 @@
             flex: 1; 
             overflow-y: auto; 
             padding: 0.75rem; 
-            padding-bottom: 2rem; /* Buffer for the last items */
+            padding-bottom: 2rem;
             scrollbar-width: none; 
         }
         .days-list::-webkit-scrollbar { display: none; }
@@ -111,15 +111,21 @@
         .custom-menu div { padding: 0.8rem; font-size: 0.8rem; text-align: right; cursor: pointer; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.03); }
         .custom-menu div:hover { background: var(--spec-color); color: #000; }
 
-        /* Navigation Bar 🇮🇶 */
         .nav-bar { height: var(--nav-h); padding: 0 1.5rem; display: flex; justify-content: space-between; align-items: center; background: #111418; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+        /* LOADING OVERLAY 🇮🇶 */
+        .app-locked {
+            opacity: 0.4;
+            pointer-events: none;
+            filter: grayscale(0.5) blur(1px);
+        }
     </style>
 </head>
 <body>
 
-    <div id="app-wrapper" class="opacity-30 pointer-events-none transition-opacity duration-500">
+    <div id="app-wrapper" class="app-locked transition-all duration-500">
         <div class="nav-bar">
-            <h1 class="text-lg font-black text-white uppercase tracking-tighter">Iraqi Med-Scheduler 🇮🇶</h1>
+            <h1 class="text-lg font-black text-white uppercase tracking-tighter">Iraqi Teaching Hosp. Schedules</h1>
             <div class="flex gap-4 items-center">
                 <input type="month" id="month-picker" class="bg-black text-amber-500 px-3 py-1.5 rounded-lg font-bold border border-white/10 text-xs" onchange="generateBoard()">
                 <button onclick="saveAll()" id="sync-btn" class="bg-white text-black px-5 py-2 rounded-lg font-black text-[10px] uppercase active:scale-95 transition-transform">Sync Schedule</button>
@@ -149,7 +155,16 @@
         initSync();
     };
 
+    function lock() {
+        document.getElementById('app-wrapper').classList.add('app-locked');
+    }
+
+    function unlock() {
+        document.getElementById('app-wrapper').classList.remove('app-locked');
+    }
+
     async function initSync() {
+        lock();
         try {
             const r = await fetch(`${scriptUrl}?action=getNames`);
             const all = await r.json();
@@ -159,10 +174,14 @@
                 else nameData[s.id] = all.filter(x => x[1] === s.id).map(x => x[0]);
             });
             generateBoard();
-        } catch(e) { unlock(); }
+        } catch(e) { 
+            console.error(e);
+            unlock(); 
+        }
     }
 
     function generateBoard() {
+        lock(); // Ensure UI is locked during re-generation
         const picker = document.getElementById('month-picker').value;
         const [year, month] = picker.split('-').map(Number);
         const daysInMonth = new Date(year, month, 0).getDate();
@@ -202,6 +221,44 @@
         fetchSchedule();
     }
 
+    async function fetchSchedule() {
+        const m = document.getElementById('month-picker').value;
+        try {
+            const r = await fetch(`${scriptUrl}?action=getSchedule&month=${m}`);
+            const data = await r.json();
+            data.forEach(row => {
+                const d = parseInt(row.date.split('/')[0]);
+                const el = document.getElementById(`input-${d}-${row.specCode}`);
+                if (el && row.name) { el.value = row.name; el.classList.add('prefilled'); }
+            });
+        } catch(e) {
+            console.error(e);
+        } finally { 
+            unlock(); 
+        }
+    }
+
+    async function saveAll() {
+        lock();
+        const btn = document.getElementById('sync-btn');
+        const inputs = Array.from(document.querySelectorAll('.cell-input')).filter(x => x.value.trim() !== "");
+        const payload = inputs.map(x => ({ date: x.dataset.date, specialty: x.dataset.spec, name: x.value.trim() }));
+        btn.innerText = "Processing...";
+        try {
+            await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ payload }) });
+            btn.innerText = "Synced ✅";
+            inputs.forEach(x => { x.classList.remove('new-entry'); x.classList.add('prefilled'); });
+        } catch(e) { 
+            btn.innerText = "Error ⚠️"; 
+        } finally {
+            setTimeout(() => {
+                btn.innerText = "Sync Schedule";
+                unlock();
+            }, 2000);
+        }
+    }
+
+    // Input interaction helpers (remain unchanged logic-wise)
     function handleAC(el, sid, uid) {
         const ghost = document.getElementById(`ghost-${uid}`);
         const val = el.value;
@@ -209,7 +266,6 @@
         el.classList.remove('prefilled');
         if (!val.trim()) { el.classList.remove('new-entry'); return; }
         el.classList.add('new-entry');
-
         if (nameData[sid]) {
             const cleanInput = val.toLowerCase().replace(/^د\.\s*/, "");
             const match = nameData[sid].find(n => {
@@ -269,37 +325,6 @@
             }
             if (g) g.innerText = "";
         }, 250);
-    }
-
-    async function fetchSchedule() {
-        const m = document.getElementById('month-picker').value;
-        try {
-            const r = await fetch(`${scriptUrl}?action=getSchedule&month=${m}`);
-            const data = await r.json();
-            data.forEach(row => {
-                const d = parseInt(row.date.split('/')[0]);
-                const el = document.getElementById(`input-${d}-${row.specCode}`);
-                if (el && row.name) { el.value = row.name; el.classList.add('prefilled'); }
-            });
-        } finally { unlock(); }
-    }
-
-    function unlock() {
-        document.getElementById('app-wrapper').style.opacity = "1";
-        document.getElementById('app-wrapper').style.pointerEvents = "auto";
-    }
-
-    async function saveAll() {
-        const btn = document.getElementById('sync-btn');
-        const inputs = Array.from(document.querySelectorAll('.cell-input')).filter(x => x.value.trim() !== "");
-        const payload = inputs.map(x => ({ date: x.dataset.date, specialty: x.dataset.spec, name: x.value.trim() }));
-        btn.innerText = "Processing...";
-        try {
-            await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ payload }) });
-            btn.innerText = "Synced ✅";
-            inputs.forEach(x => { x.classList.remove('new-entry'); x.classList.add('prefilled'); });
-        } catch(e) { btn.innerText = "Error ⚠️"; }
-        setTimeout(() => btn.innerText = "Sync Schedule", 2000);
     }
 </script>
 </body>
