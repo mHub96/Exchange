@@ -16,17 +16,15 @@
             --column-width: 280px;
         }
 
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; overflow: hidden; }
         
-        /* THE REVOLUTION: Horizontal scrolling of vertical tracks */
         .board-container {
             display: flex;
             gap: 1.5rem;
-            padding: 2rem;
+            padding: 1.5rem;
             overflow-x: auto;
-            height: 85vh;
+            height: calc(100vh - 100px);
             align-items: flex-start;
-            scroll-behavior: smooth;
         }
 
         .specialty-track {
@@ -37,54 +35,50 @@
             flex-direction: column;
             max-height: 100%;
             border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .track-header {
-            padding: 1.25rem;
+            padding: 1rem;
             background: rgba(251, 191, 36, 0.05);
             border-bottom: 2px solid var(--accent);
             border-radius: 1.5rem 1.5rem 0 0;
             text-align: center;
             position: sticky;
             top: 0;
-            z-index: 50;
+            z-index: 60;
         }
 
-        .track-header h2 { color: var(--accent); font-weight: 900; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; }
+        .track-header h2 { color: var(--accent); font-weight: 900; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
 
         .days-list {
             flex: 1;
             overflow-y: auto;
-            padding: 1rem;
-            scrollbar-width: thin;
-            scrollbar-color: var(--accent) transparent;
+            padding: 0.75rem;
+            scrollbar-width: none;
         }
 
-        /* The Day Card */
         .day-box {
             position: relative;
             background: rgba(255,255,255,0.02);
-            margin-bottom: 0.75rem;
-            border-radius: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.75rem;
             padding: 0.5rem;
             border: 1px solid transparent;
-            transition: all 0.2s;
         }
-        .day-box:focus-within { border-color: var(--accent); background: rgba(251, 191, 36, 0.03); }
+        .day-box:focus-within { border-color: var(--accent); background: rgba(251, 191, 36, 0.05); }
         .day-box.weekend { background: rgba(16, 185, 129, 0.08); }
 
         .day-label {
             display: flex;
             justify-content: space-between;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: 800;
-            margin-bottom: 0.25rem;
-            padding: 0 0.5rem;
+            margin-bottom: 0.2rem;
             color: #64748b;
+            padding: 0 0.25rem;
         }
 
-        /* Input Styling */
+        /* Logic-Driven Input Styles */
         .cell-input {
             width: 100%;
             background: transparent;
@@ -93,53 +87,63 @@
             color: #fff;
             font-family: 'IBM Plex Sans Arabic', sans-serif;
             text-align: right;
-            font-size: 0.9rem;
-            padding: 0.5rem;
-            z-index: 5;
+            font-size: 0.85rem;
+            padding: 0.4rem;
+            z-index: 10;
             position: relative;
         }
 
         .ghost-text {
             position: absolute;
-            bottom: 10px;
+            top: 25px;
             right: 12px;
-            color: rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.25);
             pointer-events: none;
             font-family: 'IBM Plex Sans Arabic', sans-serif;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             direction: rtl;
             white-space: pre;
+            z-index: 5;
         }
+        .ghost-offset { color: transparent; }
 
-        .dropdown-arrow { position: absolute; left: 10px; bottom: 12px; font-size: 0.6rem; color: #475569; cursor: pointer; }
+        .dropdown-arrow { position: absolute; left: 8px; bottom: 12px; font-size: 0.55rem; color: #475569; cursor: pointer; z-index: 20; padding: 4px; }
 
-        /* Status Colors */
-        .prefilled { color: var(--accent) !important; font-weight: 600; opacity: 0.8; }
+        .prefilled { color: var(--accent) !important; opacity: 0.7; font-weight: 600; }
         .new-entry { color: var(--crimson) !important; font-weight: 700; }
 
+        /* Functional Dropdown Menu */
         .custom-menu {
-            position: absolute; top: 100%; right: 0; width: 100%; max-height: 200px;
-            overflow-y: auto; background: #1e2126; z-index: 100; display: none;
-            border-radius: 0.5rem; border: 1px solid var(--accent);
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 100%;
+            max-height: 220px;
+            overflow-y: auto;
+            background: #1e2126;
+            border: 1px solid var(--accent);
+            border-radius: 0.5rem;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
         }
-        .custom-menu div { padding: 0.7rem; font-size: 0.8rem; text-align: right; cursor: pointer; color: #94a3b8; }
+        .custom-menu div { padding: 0.8rem; font-size: 0.8rem; text-align: right; cursor: pointer; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .custom-menu div:hover { background: var(--accent); color: #000; }
 
     </style>
 </head>
 <body>
 
-    <div id="app-wrapper" class="opacity-30 pointer-events-none transition-opacity duration-700">
-        <div class="p-6 flex justify-between items-center border-b border-white/5 bg-card">
-            <h1 class="text-xl font-black text-white uppercase tracking-tighter">Iraqi Med-Scheduler <span class="text-amber-500">v2.0</span> 🇮🇶</h1>
+    <div id="app-wrapper" class="opacity-30 pointer-events-none transition-opacity duration-500">
+        <div class="p-4 flex justify-between items-center border-b border-white/5 bg-card">
+            <h1 class="text-xl font-black text-white uppercase tracking-tighter">Iraqi Med-Scheduler 🇮🇶</h1>
             <div class="flex gap-4 items-center">
                 <input type="month" id="month-picker" class="bg-black text-amber-500 p-2 rounded-lg font-bold border border-white/10" onchange="generateBoard()">
-                <button onclick="saveAll()" class="bg-amber-500 text-black px-6 py-2 rounded-lg font-black text-xs uppercase hover:bg-white transition-colors">Sync Data</button>
+                <button onclick="saveAll()" id="sync-btn" class="bg-amber-500 text-black px-6 py-2 rounded-lg font-black text-xs uppercase active:scale-95">Sync Data</button>
             </div>
         </div>
 
-        <div class="board-container" id="board">
-            </div>
+        <div class="board-container" id="board"></div>
     </div>
 
 <script>
@@ -147,7 +151,7 @@
     const specialties = [
         { id: "NS", name: "Neurosurgery" }, { id: "CT", name: "Cardiothoracic" },
         { id: "GS", name: "General Surg" }, { id: "US", name: "Urosurgery" },
-        { id: "ENT", name: "ENT" }, { id: "H", name: "Cardiology" },
+        { id: "ENT", name: "ENT Dept" }, { id: "H", name: "Cardiology" },
         { id: "D", name: "Death Certs" }, { id: "OP", name: "OT Anaesth" },
         { id: "ICU", name: "ICU Anaesth" }, { id: "R", name: "Radiology" },
         { id: "ON", name: "Oncology" }
@@ -187,25 +191,25 @@
             track.className = 'specialty-track';
             
             let html = `<div class="track-header"><h2>${spec.name}</h2></div><div class="days-list">`;
-            
             for (let d = 1; d <= daysInMonth; d++) {
                 const dateObj = new Date(year, month-1, d);
                 const isWeekend = (dateObj.getDay() === 5 || dateObj.getDay() === 6);
                 const dayName = new Intl.DateTimeFormat('ar-IQ', { weekday: 'short' }).format(dateObj);
-                const dateStr = `${String(d).padStart(2, '0')}/${String(month).padStart(2, '0')}`;
-                
+                const dateFull = `${String(d).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
+                const uid = `${d}-${spec.id}`;
+
                 html += `
                     <div class="day-box ${isWeekend ? 'weekend' : ''}">
-                        <div class="day-label"><span>${dateStr}</span><span>${dayName}</span></div>
+                        <div class="day-label"><span>${dateFull.substring(0,5)}</span><span>${dayName}</span></div>
                         <div class="relative">
-                            <div class="ghost-text" id="ghost-${d}-${spec.id}"></div>
-                            <input type="text" class="cell-input" id="input-${d}-${spec.id}" 
-                                oninput="handleAC(this, '${spec.id}', '${d}-${spec.id}')"
-                                onkeydown="handleKeys(event, this, '${d}-${spec.id}')"
-                                onblur="handleBlur('${d}-${spec.id}')"
-                                data-date="${dateStr}/${year}" data-spec="${spec.id}" autocomplete="off">
-                            <span class="dropdown-arrow" onclick="toggleMenu('${d}-${spec.id}', '${spec.id}')">▼</span>
-                            <div class="custom-menu" id="menu-${d}-${spec.id}"></div>
+                            <div class="ghost-text" id="ghost-${uid}"></div>
+                            <input type="text" class="cell-input" id="input-${uid}" 
+                                oninput="handleAC(this, '${spec.id}', '${uid}')"
+                                onkeydown="handleKeys(event, this, '${uid}')"
+                                onblur="handleBlur('${uid}')"
+                                data-date="${dateFull}" data-spec="${spec.id}" autocomplete="off">
+                            <span class="dropdown-arrow" onclick="toggleMenu(event, '${uid}', '${spec.id}')">▼</span>
+                            <div class="custom-menu" id="menu-${uid}"></div>
                         </div>
                     </div>`;
             }
@@ -216,14 +220,73 @@
         fetchSchedule();
     }
 
-    // THE NATURAL VERTICAL LOCK 🇮🇶
+    // SUGGESTION LOGIC (FIXED) 🇮🇶
+    function handleAC(el, sid, uid) {
+        const ghost = document.getElementById(`ghost-${uid}`);
+        const val = el.value.trim();
+        const valLower = val.toLowerCase();
+        
+        ghost.innerText = ""; 
+        ghost.removeAttribute('data-full');
+        el.classList.remove('prefilled');
+
+        if (!val) { el.classList.remove('new-entry'); return; }
+        el.classList.add('new-entry');
+
+        if (nameData[sid]) {
+            const cleanInput = valLower.replace(/^د\.\s*/, "");
+            const match = nameData[sid].find(n => {
+                const nLower = n.toLowerCase();
+                return nLower.startsWith(valLower) || nLower.replace(/^د\.\s*/, "").startsWith(cleanInput);
+            });
+
+            if (match) {
+                ghost.setAttribute('data-full', match);
+                let display = val.startsWith("د.") ? match : match.replace(/^د\.\s*/, "");
+                if (display.toLowerCase().startsWith(valLower)) {
+                    ghost.innerHTML = `<span class="ghost-offset">${val}</span>${display.substring(val.length)}`;
+                } else {
+                    ghost.innerText = display;
+                }
+            }
+        }
+    }
+
+    // DROPDOWN LOGIC (FIXED) 🇮🇶
+    function toggleMenu(e, uid, sid) {
+        e.stopPropagation();
+        const m = document.getElementById(`menu-${uid}`);
+        const open = m.style.display === "block";
+        document.querySelectorAll('.custom-menu').forEach(x => x.style.display = 'none');
+        
+        if (!open) {
+            const list = nameData[sid] || [];
+            m.innerHTML = list.map(n => `<div onmousedown="selectName('${uid}', '${n}')">${n}</div>`).join('');
+            m.style.display = "block";
+        }
+    }
+
+    function selectName(uid, name) {
+        const i = document.getElementById(`input-${uid}`);
+        const g = document.getElementById(`ghost-${uid}`);
+        i.value = name;
+        i.classList.add('new-entry');
+        g.innerText = "";
+        document.getElementById(`menu-${uid}`).style.display = 'none';
+    }
+
+    // VERTICAL NAVIGATION 🇮🇶
     function handleKeys(e, el, uid) {
         const ghost = document.getElementById(`ghost-${uid}`);
         const full = ghost.getAttribute('data-full');
 
         if (e.key === "Enter") {
             e.preventDefault();
-            if (full) { el.value = full; el.classList.add('new-entry'); }
+            if (full) { 
+                el.value = full; 
+                el.classList.add('new-entry');
+                ghost.innerText = "";
+            }
             
             const [d, sid] = uid.split('-');
             const nextDay = parseInt(d) + 1;
@@ -238,48 +301,18 @@
         }
     }
 
-    function handleAC(el, sid, uid) {
-        const ghost = document.getElementById(`ghost-${uid}`);
-        const val = el.value.trim().toLowerCase();
-        ghost.innerText = ""; ghost.removeAttribute('data-full');
-        if (!val || !nameData[sid]) return;
-
-        const cleanIn = val.replace(/^د\.\s*/, "");
-        const match = nameData[sid].find(n => n.toLowerCase().includes(cleanIn));
-        
-        if (match) {
-            ghost.setAttribute('data-full', match);
-            let disp = el.value.startsWith("د.") ? match : match.replace(/^د\.\s*/, "");
-            if (disp.toLowerCase().startsWith(val)) {
-                ghost.innerHTML = `<span style="color:transparent">${el.value}</span>${disp.substring(el.value.length)}`;
-            } else {
-                ghost.innerText = disp;
-                ghost.style.opacity = "0.3";
-            }
-        }
-    }
-
-    function toggleMenu(uid, sid) {
-        const m = document.getElementById(`menu-${uid}`);
-        const open = m.style.display === "block";
-        document.querySelectorAll('.custom-menu').forEach(x => x.style.display = 'none');
-        if (!open) {
-            m.innerHTML = (nameData[sid] || []).map(n => `<div onmousedown="selectName('${uid}', '${n}')">${n}</div>`).join('');
-            m.style.display = "block";
-        }
-    }
-
-    function selectName(uid, name) {
-        const i = document.getElementById(`input-${uid}`);
-        i.value = name; i.classList.add('new-entry');
-        document.getElementById(`ghost-${uid}`).innerText = "";
-    }
-
     function handleBlur(uid) {
         setTimeout(() => {
             const m = document.getElementById(`menu-${uid}`);
+            const g = document.getElementById(`ghost-${uid}`);
+            const input = document.getElementById(`input-${uid}`);
             if (m) m.style.display = 'none';
-        }, 200);
+            if (g && g.getAttribute('data-full') && input.value !== "") {
+                input.value = g.getAttribute('data-full');
+                input.classList.add('new-entry');
+            }
+            if (g) g.innerText = "";
+        }, 250);
     }
 
     async function fetchSchedule() {
@@ -303,11 +336,11 @@
     async function saveAll() {
         const inputs = Array.from(document.querySelectorAll('.cell-input')).filter(x => x.value.trim() !== "");
         const payload = inputs.map(x => ({ date: x.dataset.date, specialty: x.dataset.spec, name: x.value.trim() }));
-        const btn = document.querySelector('button[onclick="saveAll()"]');
+        const btn = document.getElementById('sync-btn');
         btn.innerText = "Saving...";
         try {
             await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ payload }) });
-            btn.innerText = "Saved ✅";
+            btn.innerText = "Synced ✅";
             inputs.forEach(x => { x.classList.remove('new-entry'); x.classList.add('prefilled'); });
         } catch(e) { btn.innerText = "Error ⚠️"; }
         setTimeout(() => btn.innerText = "Sync Data", 2000);
