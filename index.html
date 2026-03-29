@@ -12,88 +12,85 @@
             --light: #2a2d34;
             --shadow: #0d0e11;
             --accent: #fbbf24;
-            --emerald: #10b981;
-            --crimson: #e11d48;
             --zebra: rgba(255, 255, 255, 0.02);
-            --weekend-bg: rgba(16, 185, 129, 0.1); 
-            --day-w: 50px;
-            --date-w: 70px;
+            --weekend-bg: rgba(16, 185, 129, 0.12); 
+            --day-w: 55px;
+            --date-w: 80px;
         }
 
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; overflow-x: hidden; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; }
         
-        /* Table Structure */
-        table { border-collapse: separate; border-spacing: 0; min-width: 1600px; table-layout: fixed; }
+        /* Table Layout */
+        table { border-collapse: separate; border-spacing: 0; min-width: 1600px; }
         .ac-container { position: relative; width: 100%; direction: rtl; }
         
-        th { position: sticky; top: 0; background: var(--bg); z-index: 20; padding: 1rem 0.5rem; color: var(--accent); font-weight: 800; font-size: 0.7rem; border-bottom: 1px solid var(--light); text-transform: uppercase; letter-spacing: 0.1em; }
+        th { position: sticky; top: 0; background: var(--bg); z-index: 20; padding: 1rem 0.5rem; color: var(--accent); font-weight: 800; font-size: 0.7rem; border-bottom: 2px solid var(--light); text-transform: uppercase; }
         tr:nth-child(even) { background-color: var(--zebra); }
 
-        /* --- STICKY COLUMNS (FIXED GAP) 🇮🇶 --- */
-        .day-col {
-            position: sticky !important; right: 0 !important;
-            width: var(--day-w) !important; 
-            background-color: var(--bg) !important; z-index: 30 !important;
-            text-align: center; color: var(--accent); font-weight: 800; font-size: 0.75rem;
-            border-left: 1px solid rgba(255,255,255,0.1); /* Line between table and sticky area */
-        }
-        .date-col {
-            position: sticky !important; 
-            right: var(--day-w) !important; /* Locks exactly to the edge of the day-col */
-            width: var(--date-w) !important;
-            background-color: var(--bg) !important; z-index: 30 !important;
-            color: #64748b; font-family: 'JetBrains Mono', monospace; text-align: center;
-            font-size: 0.8rem;
+        /* --- THE STICKY UNIT (NO GAPS) 🇮🇶 --- */
+        .day-col, .date-col {
+            position: sticky !important;
+            background-color: #1a1c20 !important; /* Solid color prevents transparency */
+            z-index: 30 !important;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* Mobile Adjustments */
+        .day-col { 
+            right: 0 !important; 
+            width: var(--day-w) !important; 
+            color: var(--accent); 
+            font-size: 0.75rem; 
+            font-weight: 800;
+        }
+
+        .date-col { 
+            right: var(--day-w) !important; 
+            width: var(--date-w) !important; 
+            color: #64748b; 
+            font-family: 'JetBrains Mono', monospace; 
+            font-size: 0.8rem;
+            border-left: 1px solid rgba(255,255,255,0.1); /* Visible divider from main data */
+        }
+
         @media (max-width: 768px) {
             .date-display { display: flex; flex-direction: row-reverse; justify-content: center; gap: 2px; }
             .year-text { display: none; }
-            .day-col { font-size: 0.65rem !important; }
-            .date-col { font-size: 0.75rem !important; }
         }
 
-        thead th.day-col, thead th.date-col { z-index: 40 !important; top: 0; }
+        thead th.day-col, thead th.date-col { z-index: 40 !important; top: 0; border-bottom: 2px solid var(--light); }
         tr.weekend-row { background-color: var(--weekend-bg) !important; }
-        tr.weekend-row td.day-col, tr.weekend-row td.date-col { background-color: #1a2e28 !important; }
+        tr.weekend-row .day-col, tr.weekend-row .date-col { background-color: #1a2e28 !important; }
 
-        /* Inputs & Design */
-        .cell-input { width: 100%; padding: 0.8rem; font-size: 0.85rem; font-family: 'IBM Plex Sans Arabic', sans-serif; text-align: right; background: transparent; color: #fff; border-radius: 0.8rem; outline: none; border: 1px solid transparent; transition: 0.2s; }
-        .cell-input:focus { background: rgba(255, 255, 255, 0.05); border-color: var(--accent); box-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
-        
-        .ghost-text { position: absolute; top: 0; right: 0; left: 0; bottom: 0; color: rgba(255, 255, 255, 0.2); pointer-events: none; white-space: pre; overflow: hidden; direction: rtl; padding: 0.8rem; font-size: 0.85rem; }
+        /* Inputs */
+        .cell-input { width: 100%; padding: 0.8rem; font-size: 0.85rem; font-family: 'IBM Plex Sans Arabic', sans-serif; text-align: right; background: transparent; color: #fff; outline: none; border: 1px solid transparent; }
+        .cell-input:focus { background: rgba(255, 255, 255, 0.05); border-color: var(--accent); }
+        .ghost-text { position: absolute; top: 0; right: 0; left: 0; bottom: 0; color: rgba(255, 255, 255, 0.2); pointer-events: none; direction: rtl; padding: 0.8rem; font-size: 0.85rem; }
         .ghost-offset { color: transparent; }
-        
-        .prefilled { color: #94a3b8 !important; opacity: 0.6; }
-        .new-entry { color: var(--crimson) !important; font-weight: 700; text-shadow: 0 0 8px var(--crimson); }
+        .prefilled { color: #94a3b8 !important; opacity: 0.5; }
 
-        .embossed-card { background: var(--bg); border-radius: 2rem; box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light); border: 1px solid rgba(255,255,255,0.02); }
-        .recessed-container { background: var(--bg); border-radius: 1.5rem; box-shadow: inset 8px 8px 16px var(--shadow), inset -4px -4px 12px var(--light); overflow-x: auto; }
+        /* Design Cards */
+        .embossed-card { background: var(--bg); border-radius: 1.5rem; box-shadow: 20px 20px 60px var(--shadow); border: 1px solid rgba(255,255,255,0.02); margin-top: 1rem; }
+        .recessed-container { background: var(--bg); border-radius: 1rem; box-shadow: inset 8px 8px 16px var(--shadow); overflow-x: auto; }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
     <div id="app-wrapper" class="max-w-7xl mx-auto">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
-            <div>
-                <h1 class="text-3xl font-black text-white tracking-tight">SCHEDULER 🇮🇶</h1>
-                <p class="text-[0.6rem] uppercase tracking-[0.3em] text-emerald-500 font-bold mt-1">Live Database Connection</p>
-            </div>
-            <div class="recessed-container px-4 py-1 flex items-center bg-black/20">
-                <input type="month" id="month-picker" class="bg-transparent text-amber-500 font-bold outline-none p-2 cursor-pointer" onchange="generateTable()">
-            </div>
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-black text-white">SCHEDULER 🇮🇶</h1>
+            <input type="month" id="month-picker" class="bg-black/40 text-amber-500 font-bold p-2 rounded-lg border border-white/10" onchange="generateTable()">
         </div>
 
-        <div class="embossed-card p-6">
+        <div class="embossed-card p-4">
             <div class="recessed-container max-h-[70vh]">
                 <table id="schedule-table">
                     <thead><tr id="table-headers"></tr></thead>
                     <tbody id="table-body"></tbody>
                 </table>
             </div>
-            <div class="mt-8 flex justify-end">
-                <button id="save-btn" onclick="saveAll()" class="bg-[#2a2d34] shadow-2xl px-12 py-5 rounded-2xl text-amber-500 font-black text-xs tracking-widest hover:scale-105 active:scale-95 transition-all border border-white/5">
+            <div class="mt-6 flex justify-end">
+                <button id="save-btn" onclick="saveAll()" class="bg-[#2a2d34] px-10 py-4 rounded-xl text-amber-500 font-black text-xs tracking-widest border border-white/5">
                     UPDATE DATABASE
                 </button>
             </div>
@@ -101,7 +98,9 @@
     </div>
 
 <script>
-    const scriptUrl = "YOUR_SCRIPT_URL_HERE"; // Keep your URL here
+    // 1. YOUR GOOGLE SCRIPT URL HERE
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
+    
     const specialties = [
         { id: "NS", name: "Neuro" }, { id: "CT", name: "Cardio" },
         { id: "GS", name: "General" }, { id: "US", name: "Uro" },
@@ -116,9 +115,19 @@
         const now = new Date();
         const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
         document.getElementById('month-picker').value = `${nextMonth.getFullYear()}-${String(nextMonth.getMonth() + 1).padStart(2, '0')}`;
-        // Placeholder for initial load - you'd call your actual data sync here
-        generateTable();
+        initDataSync();
     };
+
+    async function initDataSync() {
+        try {
+            const respNames = await fetch(`${scriptUrl}?action=getNames`);
+            const allResidents = await respNames.json();
+            specialties.forEach(spec => {
+                nameData[spec.id] = allResidents.filter(r => r[1] === spec.id || spec.id === "D").map(r => r[0]);
+            });
+            generateTable(); 
+        } catch (e) { generateTable(); }
+    }
 
     function generateTable() {
         const picker = document.getElementById('month-picker').value;
@@ -158,30 +167,39 @@
             tr.innerHTML = rHtml;
             body.appendChild(tr);
         }
+        fetchExistingSchedule();
     }
 
-    // THE KEYBOARD FIX 🇮🇶
+    // THE FIXED VERTICAL ENTER KEY 🇮🇶
     function handleKeys(e, el, currentDay, specId) {
         const ghost = document.getElementById(`ghost-${currentDay}-${specId}`);
         const fullMatch = ghost.getAttribute('data-full-match');
 
         if (e.key === "Enter") {
-            e.preventDefault(); // Stop default "Next field" behavior
+            e.preventDefault(); 
             if (fullMatch) el.value = fullMatch;
             
-            // STRICTLY MOVE VERTICALLY DOWN
+            // Move DOWN to the next day in the same column
             const nextDay = currentDay + 1;
             const nextEl = document.getElementById(`input-${nextDay}-${specId}`);
-            
-            if (nextEl) {
-                nextEl.focus();
-            } else {
-                el.blur(); // Bottom of table reached
-            }
+            if (nextEl) nextEl.focus();
+            else el.blur();
         }
     }
 
-    // Auto-complete logic
+    async function fetchExistingSchedule() {
+        const monthVal = document.getElementById('month-picker').value;
+        try {
+            const resp = await fetch(`${scriptUrl}?action=getSchedule&month=${monthVal}`);
+            const schedule = await resp.json();
+            schedule.forEach(row => {
+                const day = parseInt(row.date.split('/')[0]);
+                const inputEl = document.getElementById(`input-${day}-${row.specCode}`);
+                if (inputEl && row.name) { inputEl.value = row.name; inputEl.classList.add('prefilled'); }
+            });
+        } catch(e){}
+    }
+
     function handleAC(el, specId, uniqueId) {
         const ghost = document.getElementById(`ghost-${uniqueId}`);
         const val = el.value.trim().toLowerCase();
@@ -199,6 +217,18 @@
             const g = document.getElementById(`ghost-${uniqueId}`);
             if (g) g.innerText = ""; 
         }, 150);
+    }
+
+    async function saveAll() {
+        const btn = document.getElementById('save-btn');
+        btn.innerText = "UPLOADING..."; btn.disabled = true;
+        const activeInputs = Array.from(document.querySelectorAll('.cell-input')).filter(i => i.value.trim() !== "");
+        const bulkData = activeInputs.map(el => ({ date: el.dataset.date, specialty: el.dataset.spec, name: el.value.trim() }));
+        try {
+            await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ payload: bulkData }) });
+            btn.innerText = "SYNCED ✅";
+        } catch (e) { btn.innerText = "ERROR ⚠️"; }
+        setTimeout(() => { btn.innerText = "UPDATE DATABASE"; btn.disabled = false; }, 2000);
     }
 </script>
 </body>
