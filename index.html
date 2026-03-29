@@ -3,100 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SCHEDULER 🇮🇶</title>
+    <title>REVOLUTIONARY SCHEDULER 🇮🇶</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #1a1c20;
-            --light: #2a2d34;
-            --shadow: #0d0e11;
+            --bg: #0f1115;
+            --card: #1a1c20;
             --accent: #fbbf24;
             --emerald: #10b981;
             --crimson: #e11d48;
-            --glow: 0 0 15px rgba(251, 191, 36, 0.8);
-            --zebra: rgba(255, 255, 255, 0.02);
-            --weekend-bg: rgba(16, 185, 129, 0.12); 
-            /* WIDER CELLS FOR FULL NAMES 🇮🇶 */
-            --cell-width: 240px; 
-            --day-width: 70px;
-            --date-width: 90px;
+            --column-width: 280px;
         }
 
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; overflow-x: hidden; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; }
         
-        table { border-collapse: separate; border-spacing: 0; min-width: 2800px; table-layout: fixed; }
-        .ac-container { position: relative; width: 100%; direction: rtl; overflow: visible; }
-        
-        /* Dynamic Column Colors */
-        tr td:nth-child(1), thead th:nth-child(1) { --col-color: #fbbf24; }
-        tr td:nth-child(2), thead th:nth-child(2) { --col-color: #60a5fa; }
-        tr td:nth-child(3), thead th:nth-child(3) { --col-color: #a78bfa; }
-        tr td:nth-child(4), thead th:nth-child(4) { --col-color: #f472b6; }
-        tr td:nth-child(5), thead th:nth-child(5) { --col-color: #fb7185; }
-        tr td:nth-child(6), thead th:nth-child(6) { --col-color: #38bdf8; }
-        tr td:nth-child(7), thead th:nth-child(7) { --col-color: #c084fc; }
-        tr td:nth-child(8), thead th:nth-child(8) { --col-color: #2dd4bf; }
-        tr td:nth-child(9), thead th:nth-child(9) { --col-color: #94a3b8; }
-        tr td:nth-child(10), thead th:nth-child(10) { --col-color: #fb923c; }
-        tr td:nth-child(11), thead th:nth-child(11) { --col-color: #818cf8; }
-
-        th { position: sticky; top: 0; background: var(--bg); z-index: 20; padding: 1.2rem 0.5rem; color: var(--col-color); font-weight: 800; font-size: 0.75rem; letter-spacing: 0.1em; border-bottom: 2px solid var(--light); text-shadow: 0 0 10px var(--col-color); width: var(--cell-width); }
-        tr:nth-child(even) { background-color: var(--zebra); }
-
-        /* Solid Sticky Unit 🇮🇶 */
-        .day-col, .date-col {
-            position: sticky !important; background-color: #1a1c20 !important;
-            z-index: 30 !important; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05);
+        /* THE REVOLUTION: Horizontal scrolling of vertical tracks */
+        .board-container {
+            display: flex;
+            gap: 1.5rem;
+            padding: 2rem;
+            overflow-x: auto;
+            height: 85vh;
+            align-items: flex-start;
+            scroll-behavior: smooth;
         }
-        .day-col { right: 0 !important; width: var(--day-width) !important; color: var(--accent); font-weight: 800; font-size: 0.75rem; }
-        .date-col { 
-            right: var(--day-width) !important; width: var(--date-width) !important; 
-            border-left: 1px solid rgba(255,255,255,0.1); color: #64748b; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+
+        .specialty-track {
+            flex: 0 0 var(--column-width);
+            background: var(--card);
+            border-radius: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            max-height: 100%;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        
-        thead th.day-col, thead th.date-col { z-index: 40 !important; top: 0; border-bottom: 2px solid var(--light); }
-        tr.weekend-row { background-color: var(--weekend-bg) !important; }
-        tr.weekend-row .day-col, tr.weekend-row .date-col { background-color: #1a2e28 !important; }
 
-        /* Inputs & Suggestions */
-        .cell-input, .ghost-text { width: 100%; padding: 1rem; font-size: 0.9rem; font-family: 'IBM Plex Sans Arabic', sans-serif; text-align: right; box-sizing: border-box; }
-        .cell-input { position: relative; background: transparent; color: #fff; border-radius: 0.5rem; outline: none; z-index: 5; border: 1px solid transparent; }
-        .cell-input:focus { background: rgba(255, 255, 255, 0.04); border-color: var(--col-color); box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
-        
-        .ghost-text { position: absolute; top: 0; right: 0; left: 0; bottom: 0; color: rgba(255, 255, 255, 0.35); pointer-events: none; white-space: pre; overflow: hidden; z-index: 1; direction: rtl; }
-        .ghost-offset { color: transparent; }
+        .track-header {
+            padding: 1.25rem;
+            background: rgba(251, 191, 36, 0.05);
+            border-bottom: 2px solid var(--accent);
+            border-radius: 1.5rem 1.5rem 0 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
 
-        .dropdown-arrow { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #475569; cursor: pointer; z-index: 10; font-size: 0.65rem; padding: 5px; }
-        .prefilled { color: var(--col-color) !important; opacity: 0.7; font-weight: 600; }
-        .new-entry { color: var(--crimson) !important; text-shadow: 0 0 10px var(--crimson); font-weight: 700; }
+        .track-header h2 { color: var(--accent); font-weight: 900; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; }
 
-        .custom-menu { position: absolute; top: 100%; right: 0; width: 100%; max-height: 250px; overflow-y: auto; background: #1e2126; border: 1px solid var(--light); border-radius: 0.8rem; z-index: 100; box-shadow: 0 10px 30px var(--shadow); display: none; text-align: right; }
-        .custom-menu div { padding: 0.8rem 1rem; cursor: pointer; color: #94a3b8; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.02); }
-        .custom-menu div:hover { background: var(--light); color: var(--col-color); }
+        .days-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) transparent;
+        }
+
+        /* The Day Card */
+        .day-box {
+            position: relative;
+            background: rgba(255,255,255,0.02);
+            margin-bottom: 0.75rem;
+            border-radius: 1rem;
+            padding: 0.5rem;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .day-box:focus-within { border-color: var(--accent); background: rgba(251, 191, 36, 0.03); }
+        .day-box.weekend { background: rgba(16, 185, 129, 0.08); }
+
+        .day-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+            padding: 0 0.5rem;
+            color: #64748b;
+        }
+
+        /* Input Styling */
+        .cell-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            text-align: right;
+            font-size: 0.9rem;
+            padding: 0.5rem;
+            z-index: 5;
+            position: relative;
+        }
+
+        .ghost-text {
+            position: absolute;
+            bottom: 10px;
+            right: 12px;
+            color: rgba(255,255,255,0.2);
+            pointer-events: none;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            font-size: 0.9rem;
+            direction: rtl;
+            white-space: pre;
+        }
+
+        .dropdown-arrow { position: absolute; left: 10px; bottom: 12px; font-size: 0.6rem; color: #475569; cursor: pointer; }
+
+        /* Status Colors */
+        .prefilled { color: var(--accent) !important; font-weight: 600; opacity: 0.8; }
+        .new-entry { color: var(--crimson) !important; font-weight: 700; }
+
+        .custom-menu {
+            position: absolute; top: 100%; right: 0; width: 100%; max-height: 200px;
+            overflow-y: auto; background: #1e2126; z-index: 100; display: none;
+            border-radius: 0.5rem; border: 1px solid var(--accent);
+        }
+        .custom-menu div { padding: 0.7rem; font-size: 0.8rem; text-align: right; cursor: pointer; color: #94a3b8; }
+        .custom-menu div:hover { background: var(--accent); color: #000; }
+
     </style>
 </head>
-<body class="p-4">
+<body>
 
-    <div id="app-wrapper" class="max-w-full mx-auto opacity-30 pointer-events-none transition-opacity duration-500">
-        <div class="flex justify-between items-center mb-8 px-4">
-            <h1 class="text-2xl font-black text-white" style="text-shadow: var(--glow)">HOSPITAL SCHEDULER 🇮🇶</h1>
-            <input type="month" id="month-picker" class="bg-black/40 text-amber-500 font-bold p-3 rounded-xl border border-white/10 outline-none" onchange="generateTable()">
-        </div>
-
-        <div class="bg-black/20 rounded-[2.5rem] p-4 shadow-2xl border border-white/5">
-            <div class="recessed-table-container max-h-[75vh] overflow-x-auto rounded-2xl">
-                <table id="schedule-table">
-                    <thead><tr id="table-headers"></tr></thead>
-                    <tbody id="table-body"></tbody>
-                </table>
-            </div>
-            <div class="mt-6 flex justify-end">
-                <button id="save-btn" onclick="saveAll()" class="bg-[#2a2d34] px-12 py-5 rounded-2xl text-amber-500 font-black tracking-widest active:scale-95 transition-all">
-                    UPDATE DATABASE
-                </button>
+    <div id="app-wrapper" class="opacity-30 pointer-events-none transition-opacity duration-700">
+        <div class="p-6 flex justify-between items-center border-b border-white/5 bg-card">
+            <h1 class="text-xl font-black text-white uppercase tracking-tighter">Iraqi Med-Scheduler <span class="text-amber-500">v2.0</span> 🇮🇶</h1>
+            <div class="flex gap-4 items-center">
+                <input type="month" id="month-picker" class="bg-black text-amber-500 p-2 rounded-lg font-bold border border-white/10" onchange="generateBoard()">
+                <button onclick="saveAll()" class="bg-amber-500 text-black px-6 py-2 rounded-lg font-black text-xs uppercase hover:bg-white transition-colors">Sync Data</button>
             </div>
         </div>
+
+        <div class="board-container" id="board">
+            </div>
     </div>
 
 <script>
@@ -104,197 +147,170 @@
     const specialties = [
         { id: "NS", name: "Neurosurgery" }, { id: "CT", name: "Cardiothoracic" },
         { id: "GS", name: "General Surg" }, { id: "US", name: "Urosurgery" },
-        { id: "ENT", name: "ENT Dept" }, { id: "H", name: "Cardiology" },
+        { id: "ENT", name: "ENT" }, { id: "H", name: "Cardiology" },
         { id: "D", name: "Death Certs" }, { id: "OP", name: "OT Anaesth" },
         { id: "ICU", name: "ICU Anaesth" }, { id: "R", name: "Radiology" },
         { id: "ON", name: "Oncology" }
     ];
 
-    let nameData = {}; 
+    let nameData = {};
 
     window.onload = () => {
         const now = new Date();
         const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
         document.getElementById('month-picker').value = `${nextMonth.getFullYear()}-${String(nextMonth.getMonth() + 1).padStart(2, '0')}`;
-        initDataSync();
+        initSync();
     };
 
-    async function initDataSync() {
+    async function initSync() {
         try {
-            const respNames = await fetch(`${scriptUrl}?action=getNames`);
-            const allResidents = await respNames.json();
-            specialties.forEach(spec => {
-                if (spec.id === "OP" || spec.id === "ICU") nameData[spec.id] = allResidents.filter(r => r[1] === "A").map(r => r[0]);
-                else if (spec.id === "D") nameData[spec.id] = allResidents.map(r => r[0]);
-                else nameData[spec.id] = allResidents.filter(r => r[1] === spec.id).map(r => r[0]);
+            const r = await fetch(`${scriptUrl}?action=getNames`);
+            const all = await r.json();
+            specialties.forEach(s => {
+                if (s.id === "OP" || s.id === "ICU") nameData[s.id] = all.filter(x => x[1] === "A").map(x => x[0]);
+                else if (s.id === "D") nameData[s.id] = all.map(x => x[0]);
+                else nameData[s.id] = all.filter(x => x[1] === s.id).map(x => x[0]);
             });
-            generateTable(); 
-        } catch (e) { unlockTable(); }
+            generateBoard();
+        } catch(e) { unlock(); }
     }
 
-    function generateTable() {
+    function generateBoard() {
         const picker = document.getElementById('month-picker').value;
         const [year, month] = picker.split('-').map(Number);
         const daysInMonth = new Date(year, month, 0).getDate();
-        
-        document.getElementById('table-headers').innerHTML = specialties.map(s => `<th>${s.name}</th>`).join('') + `<th class="date-col">Date</th><th class="day-col">Day</th>`;
+        const board = document.getElementById('board');
+        board.innerHTML = "";
 
-        const body = document.getElementById('table-body');
-        body.innerHTML = "";
-        for (let d = 1; d <= daysInMonth; d++) {
-            const dateObj = new Date(year, month-1, d);
-            const dd = String(d).padStart(2, '0');
-            const mm = String(month).padStart(2, '0');
-            const dayShort = new Intl.DateTimeFormat('ar-IQ', { weekday: 'short' }).format(dateObj);
+        specialties.forEach(spec => {
+            const track = document.createElement('div');
+            track.className = 'specialty-track';
             
-            const tr = document.createElement('tr');
-            if (dateObj.getDay() === 5 || dateObj.getDay() === 6) tr.classList.add('weekend-row');
+            let html = `<div class="track-header"><h2>${spec.name}</h2></div><div class="days-list">`;
             
-            let rHtml = specialties.map(s => `
-                <td><div class="ac-container">
-                    <div class="ghost-text" id="ghost-${d}-${s.id}"></div>
-                    <input type="text" class="cell-input" id="input-${d}-${s.id}" autocomplete="off" 
-                        oninput="handleAC(this, '${s.id}', '${d}-${s.id}')" 
-                        onkeydown="handleKeys(event, this, '${d}-${s.id}')" 
-                        onblur="handleBlur('${d}-${s.id}')" data-date="${dd}/${mm}/${year}" data-spec="${s.id}">
-                    <span class="dropdown-arrow" onclick="toggleMenu('${d}-${s.id}', '${s.id}')">▼</span>
-                    <div class="custom-menu" id="menu-${d}-${s.id}"></div>
-                </div></td>`).join('');
-            
-            rHtml += `<td class="date-col"><div class="flex flex-row-reverse justify-center gap-1"><span>${mm}</span><span>/</span><span>${dd}</span></div></td>
-                      <td class="day-col">${dayShort}</td>`;
-            tr.innerHTML = rHtml;
-            body.appendChild(tr);
-        }
-        fetchExistingSchedule();
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateObj = new Date(year, month-1, d);
+                const isWeekend = (dateObj.getDay() === 5 || dateObj.getDay() === 6);
+                const dayName = new Intl.DateTimeFormat('ar-IQ', { weekday: 'short' }).format(dateObj);
+                const dateStr = `${String(d).padStart(2, '0')}/${String(month).padStart(2, '0')}`;
+                
+                html += `
+                    <div class="day-box ${isWeekend ? 'weekend' : ''}">
+                        <div class="day-label"><span>${dateStr}</span><span>${dayName}</span></div>
+                        <div class="relative">
+                            <div class="ghost-text" id="ghost-${d}-${spec.id}"></div>
+                            <input type="text" class="cell-input" id="input-${d}-${spec.id}" 
+                                oninput="handleAC(this, '${spec.id}', '${d}-${spec.id}')"
+                                onkeydown="handleKeys(event, this, '${d}-${spec.id}')"
+                                onblur="handleBlur('${d}-${spec.id}')"
+                                data-date="${dateStr}/${year}" data-spec="${spec.id}" autocomplete="off">
+                            <span class="dropdown-arrow" onclick="toggleMenu('${d}-${spec.id}', '${spec.id}')">▼</span>
+                            <div class="custom-menu" id="menu-${d}-${spec.id}"></div>
+                        </div>
+                    </div>`;
+            }
+            html += `</div>`;
+            track.innerHTML = html;
+            board.appendChild(track);
+        });
+        fetchSchedule();
     }
 
-    // THE FOCUS LOCK 🇮🇶
-    function handleKeys(e, el, uniqueId) {
-        const ghost = document.getElementById(`ghost-${uniqueId}`);
-        const fullMatch = ghost.getAttribute('data-full-match');
-        
+    // THE NATURAL VERTICAL LOCK 🇮🇶
+    function handleKeys(e, el, uid) {
+        const ghost = document.getElementById(`ghost-${uid}`);
+        const full = ghost.getAttribute('data-full');
+
         if (e.key === "Enter") {
-            e.preventDefault(); 
-            e.stopPropagation(); // Stops bubbling to parent table elements
-
-            if (fullMatch) {
-                el.value = fullMatch;
-                el.classList.add('new-entry');
-            }
-
-            const parts = uniqueId.split('-'); 
-            const nextDay = parseInt(parts[0]) + 1;
-            const specId = parts[1];
-            const nextEl = document.getElementById(`input-${nextDay}-${specId}`);
-
-            // Wait for one animation frame to ensure browser is idle before forcing focus
-            requestAnimationFrame(() => {
-                if (nextEl) {
-                    nextEl.focus();
-                } else {
-                    el.blur();
-                }
-            });
-        }
-    }
-
-    function handleAC(el, specId, uniqueId) {
-        const ghost = document.getElementById(`ghost-${uniqueId}`);
-        const val = el.value;
-        const valLower = val.toLowerCase().trim();
-        ghost.innerText = ""; ghost.removeAttribute('data-full-match');
-        el.classList.remove('prefilled');
-        if (val.trim() === "") { el.classList.remove('new-entry'); return; }
-        el.classList.add('new-entry');
-
-        if (nameData[specId]) {
-            const cleanInput = valLower.replace(/^د\.\s*/, "");
-            const match = nameData[specId].find(name => {
-                const nameLower = name.toLowerCase();
-                const cleanName = nameLower.replace(/^د\.\s*/, "");
-                return nameLower.startsWith(valLower) || cleanName.startsWith(cleanInput);
-            });
-
-            if (match) {
-                ghost.setAttribute('data-full-match', match);
-                let display = val.startsWith("د.") ? match : match.replace(/^د\.\s*/, "");
-                if (display.toLowerCase().startsWith(valLower)) {
-                    ghost.innerHTML = `<span class="ghost-offset">${val}</span>${display.substring(val.length)}`;
-                } else {
-                    ghost.innerText = display;
-                    ghost.style.color = "rgba(255, 255, 255, 0.1)";
-                }
+            e.preventDefault();
+            if (full) { el.value = full; el.classList.add('new-entry'); }
+            
+            const [d, sid] = uid.split('-');
+            const nextDay = parseInt(d) + 1;
+            const nextEl = document.getElementById(`input-${nextDay}-${sid}`);
+            
+            if (nextEl) {
+                nextEl.focus();
+                nextEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                el.blur();
             }
         }
     }
 
-    function toggleMenu(uniqueId, specId) {
-        const menu = document.getElementById(`menu-${uniqueId}`);
-        const isVisible = menu.style.display === "block";
-        document.querySelectorAll('.custom-menu').forEach(m => m.style.display = "none");
-        if (!isVisible) {
-            menu.innerHTML = (nameData[specId] || []).map(n => `<div onmousedown="selectName('${uniqueId}', '${n}')">${n}</div>`).join('');
-            menu.style.display = "block";
+    function handleAC(el, sid, uid) {
+        const ghost = document.getElementById(`ghost-${uid}`);
+        const val = el.value.trim().toLowerCase();
+        ghost.innerText = ""; ghost.removeAttribute('data-full');
+        if (!val || !nameData[sid]) return;
+
+        const cleanIn = val.replace(/^د\.\s*/, "");
+        const match = nameData[sid].find(n => n.toLowerCase().includes(cleanIn));
+        
+        if (match) {
+            ghost.setAttribute('data-full', match);
+            let disp = el.value.startsWith("د.") ? match : match.replace(/^د\.\s*/, "");
+            if (disp.toLowerCase().startsWith(val)) {
+                ghost.innerHTML = `<span style="color:transparent">${el.value}</span>${disp.substring(el.value.length)}`;
+            } else {
+                ghost.innerText = disp;
+                ghost.style.opacity = "0.3";
+            }
         }
     }
 
-    function selectName(uniqueId, name) {
-        const input = document.getElementById(`input-${uniqueId}`);
-        input.value = name;
-        input.classList.add('new-entry');
-        const ghost = document.getElementById(`ghost-${uniqueId}`);
-        ghost.innerText = ""; ghost.removeAttribute('data-full-match');
+    function toggleMenu(uid, sid) {
+        const m = document.getElementById(`menu-${uid}`);
+        const open = m.style.display === "block";
+        document.querySelectorAll('.custom-menu').forEach(x => x.style.display = 'none');
+        if (!open) {
+            m.innerHTML = (nameData[sid] || []).map(n => `<div onmousedown="selectName('${uid}', '${n}')">${n}</div>`).join('');
+            m.style.display = "block";
+        }
     }
 
-    function handleBlur(uniqueId) {
-        const ghost = document.getElementById(`ghost-${uniqueId}`);
-        const input = document.getElementById(`input-${uniqueId}`);
-        const fullMatch = ghost.getAttribute('data-full-match');
-        if (fullMatch && input.value.trim() !== "") {
-            input.value = fullMatch;
-            input.classList.add('new-entry');
-        }
+    function selectName(uid, name) {
+        const i = document.getElementById(`input-${uid}`);
+        i.value = name; i.classList.add('new-entry');
+        document.getElementById(`ghost-${uid}`).innerText = "";
+    }
+
+    function handleBlur(uid) {
         setTimeout(() => {
-            ghost.innerText = "";
-            const menu = document.getElementById(`menu-${uniqueId}`);
-            if (menu) menu.style.display = "none";
-        }, 220);
+            const m = document.getElementById(`menu-${uid}`);
+            if (m) m.style.display = 'none';
+        }, 200);
     }
 
-    async function fetchExistingSchedule() {
-        const monthVal = document.getElementById('month-picker').value;
+    async function fetchSchedule() {
+        const m = document.getElementById('month-picker').value;
         try {
-            const resp = await fetch(`${scriptUrl}?action=getSchedule&month=${monthVal}`);
-            const schedule = await resp.json();
-            schedule.forEach(row => {
-                const day = parseInt(row.date.split('/')[0]);
-                const inputEl = document.getElementById(`input-${day}-${row.specCode}`);
-                if (inputEl && row.name) {
-                    inputEl.value = row.name;
-                    inputEl.classList.add('prefilled');
-                }
+            const r = await fetch(`${scriptUrl}?action=getSchedule&month=${m}`);
+            const data = await r.json();
+            data.forEach(row => {
+                const d = parseInt(row.date.split('/')[0]);
+                const el = document.getElementById(`input-${d}-${row.specCode}`);
+                if (el && row.name) { el.value = row.name; el.classList.add('prefilled'); }
             });
-        } finally { unlockTable(); }
+        } finally { unlock(); }
     }
 
-    function unlockTable() {
+    function unlock() {
         document.getElementById('app-wrapper').style.opacity = "1";
         document.getElementById('app-wrapper').style.pointerEvents = "auto";
     }
 
     async function saveAll() {
-        const btn = document.getElementById('save-btn');
-        const activeInputs = Array.from(document.querySelectorAll('.cell-input')).filter(i => i.value.trim() !== "");
-        if (!activeInputs.length) return;
-        btn.disabled = true; btn.innerText = "UPLOADING...";
-        const bulkData = activeInputs.map(el => ({ date: el.dataset.date, specialty: el.dataset.spec, name: el.value.trim() }));
+        const inputs = Array.from(document.querySelectorAll('.cell-input')).filter(x => x.value.trim() !== "");
+        const payload = inputs.map(x => ({ date: x.dataset.date, specialty: x.dataset.spec, name: x.value.trim() }));
+        const btn = document.querySelector('button[onclick="saveAll()"]');
+        btn.innerText = "Saving...";
         try {
-            await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ payload: bulkData }) });
-            btn.innerText = "SYNCED ✅";
-            activeInputs.forEach(i => { i.classList.remove('new-entry'); i.classList.add('prefilled'); });
-        } catch (e) { btn.innerText = "FAILED ⚠️"; }
-        setTimeout(() => { btn.disabled = false; btn.innerText = "UPDATE DATABASE"; }, 2000);
+            await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ payload }) });
+            btn.innerText = "Saved ✅";
+            inputs.forEach(x => { x.classList.remove('new-entry'); x.classList.add('prefilled'); });
+        } catch(e) { btn.innerText = "Error ⚠️"; }
+        setTimeout(() => btn.innerText = "Sync Data", 2000);
     }
 </script>
 </body>
