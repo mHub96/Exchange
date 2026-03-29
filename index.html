@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SCHEDULER 🇮🇶</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=JetBrains+Mono:wght@700&family=Plus+Jakarta+Sans:wght@800&display=swap" rel="stylesheet">
@@ -10,29 +10,32 @@
         :root {
             --bg: #1a1c20;
             --light: #2a2d34;
-            --shadow: #0d0e11;
             --accent: #fbbf24;
+            --emerald: #10b981;
+            --crimson: #e11d48;
             --zebra: rgba(255, 255, 255, 0.02);
-            --weekend-bg: rgba(16, 185, 129, 0.12); 
-            --day-w: 55px;
-            --date-w: 80px;
+            --weekend-bg: rgba(16, 185, 129, 0.1); 
+            /* Fixed Compact Widths 🇮🇶 */
+            --day-w: 50px;
+            --date-w: 65px;
         }
 
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; overflow-x: hidden; touch-action: manipulation; }
         
-        /* Table Layout */
-        table { border-collapse: separate; border-spacing: 0; min-width: 1600px; }
+        table { border-collapse: separate; border-spacing: 0; min-width: 1600px; table-layout: fixed; }
         .ac-container { position: relative; width: 100%; direction: rtl; }
         
-        th { position: sticky; top: 0; background: var(--bg); z-index: 20; padding: 1rem 0.5rem; color: var(--accent); font-weight: 800; font-size: 0.7rem; border-bottom: 2px solid var(--light); text-transform: uppercase; }
+        /* Headers */
+        th { position: sticky; top: 0; background: var(--bg); z-index: 20; padding: 0.75rem 0.25rem; color: var(--accent); font-weight: 800; font-size: 0.65rem; border-bottom: 1px solid var(--light); text-transform: uppercase; letter-spacing: 0.05em; }
         tr:nth-child(even) { background-color: var(--zebra); }
 
-        /* --- THE STICKY UNIT (NO GAPS) 🇮🇶 --- */
+        /* --- STICKY UNIT (SOLID & FLUSH) 🇮🇶 --- */
         .day-col, .date-col {
             position: sticky !important;
-            background-color: #1a1c20 !important; /* Solid color prevents transparency */
+            background-color: #1a1c20 !important; /* Solid background prevents "underneath" visibility */
             z-index: 30 !important;
             text-align: center;
+            vertical-align: middle;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
@@ -40,7 +43,7 @@
             right: 0 !important; 
             width: var(--day-w) !important; 
             color: var(--accent); 
-            font-size: 0.75rem; 
+            font-size: 0.7rem; 
             font-weight: 800;
         }
 
@@ -49,48 +52,57 @@
             width: var(--date-w) !important; 
             color: #64748b; 
             font-family: 'JetBrains Mono', monospace; 
-            font-size: 0.8rem;
-            border-left: 1px solid rgba(255,255,255,0.1); /* Visible divider from main data */
+            font-size: 0.75rem;
+            border-left: 1px solid rgba(255,255,255,0.1); /* Divider from data */
         }
 
-        @media (max-width: 768px) {
-            .date-display { display: flex; flex-direction: row-reverse; justify-content: center; gap: 2px; }
-            .year-text { display: none; }
-        }
+        /* RTL Date Format MM/DD */
+        .date-wrapper { display: flex; flex-direction: row-reverse; justify-content: center; gap: 1px; }
 
-        thead th.day-col, thead th.date-col { z-index: 40 !important; top: 0; border-bottom: 2px solid var(--light); }
+        thead th.day-col, thead th.date-col { z-index: 40 !important; top: 0; }
         tr.weekend-row { background-color: var(--weekend-bg) !important; }
         tr.weekend-row .day-col, tr.weekend-row .date-col { background-color: #1a2e28 !important; }
 
         /* Inputs */
-        .cell-input { width: 100%; padding: 0.8rem; font-size: 0.85rem; font-family: 'IBM Plex Sans Arabic', sans-serif; text-align: right; background: transparent; color: #fff; outline: none; border: 1px solid transparent; }
+        .cell-input { width: 100%; padding: 0.7rem; font-size: 0.85rem; font-family: 'IBM Plex Sans Arabic', sans-serif; text-align: right; background: transparent; color: #fff; border-radius: 0.5rem; outline: none; border: 1px solid transparent; }
         .cell-input:focus { background: rgba(255, 255, 255, 0.05); border-color: var(--accent); }
-        .ghost-text { position: absolute; top: 0; right: 0; left: 0; bottom: 0; color: rgba(255, 255, 255, 0.2); pointer-events: none; direction: rtl; padding: 0.8rem; font-size: 0.85rem; }
+        
+        .ghost-text { position: absolute; top: 0; right: 0; left: 0; bottom: 0; color: rgba(255, 255, 255, 0.2); pointer-events: none; white-space: pre; overflow: hidden; direction: rtl; padding: 0.7rem; font-size: 0.85rem; }
         .ghost-offset { color: transparent; }
-        .prefilled { color: #94a3b8 !important; opacity: 0.5; }
+        
+        .prefilled { color: #94a3b8 !important; opacity: 0.6; font-weight: 400; }
+        .new-entry { color: var(--crimson) !important; font-weight: 700; text-shadow: 0 0 8px var(--crimson); }
 
-        /* Design Cards */
-        .embossed-card { background: var(--bg); border-radius: 1.5rem; box-shadow: 20px 20px 60px var(--shadow); border: 1px solid rgba(255,255,255,0.02); margin-top: 1rem; }
+        /* UI Shell */
+        .embossed-card { background: var(--bg); border-radius: 1.5rem; box-shadow: 20px 20px 60px var(--shadow); border: 1px solid rgba(255,255,255,0.02); }
         .recessed-container { background: var(--bg); border-radius: 1rem; box-shadow: inset 8px 8px 16px var(--shadow); overflow-x: auto; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-2 md:p-6">
 
-    <div id="app-wrapper" class="max-w-7xl mx-auto">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-black text-white">SCHEDULER 🇮🇶</h1>
-            <input type="month" id="month-picker" class="bg-black/40 text-amber-500 font-bold p-2 rounded-lg border border-white/10" onchange="generateTable()">
+    <div id="app-wrapper" class="max-w-full mx-auto opacity-30 pointer-events-none transition-opacity duration-500">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <div>
+                <h1 class="text-xl font-black text-white tracking-tighter">SCHEDULER 🇮🇶</h1>
+                <div class="mt-2 flex items-center bg-black/30 px-4 py-1 rounded-full border border-white/5">
+                    <span id="led" class="w-2 h-2 rounded-full bg-rose-500 mr-2"></span>
+                    <span id="status-text" class="text-[0.6rem] font-bold uppercase tracking-widest text-rose-500">Connecting...</span>
+                </div>
+            </div>
+            <div class="recessed-container px-2 flex items-center bg-black/20">
+                <input type="month" id="month-picker" class="bg-transparent text-amber-500 font-bold outline-none p-2 cursor-pointer text-sm" onchange="generateTable()">
+            </div>
         </div>
 
         <div class="embossed-card p-4">
-            <div class="recessed-container max-h-[70vh]">
+            <div class="recessed-container max-h-[75vh]">
                 <table id="schedule-table">
                     <thead><tr id="table-headers"></tr></thead>
                     <tbody id="table-body"></tbody>
                 </table>
             </div>
             <div class="mt-6 flex justify-end">
-                <button id="save-btn" onclick="saveAll()" class="bg-[#2a2d34] px-10 py-4 rounded-xl text-amber-500 font-black text-xs tracking-widest border border-white/5">
+                <button id="save-btn" onclick="saveAll()" class="bg-[#2a2d34] px-10 py-4 rounded-xl text-amber-500 font-black text-xs tracking-widest border border-white/5 transition-transform active:scale-95">
                     UPDATE DATABASE
                 </button>
             </div>
@@ -98,15 +110,14 @@
     </div>
 
 <script>
-    // 1. YOUR GOOGLE SCRIPT URL HERE
     const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
-    
     const specialties = [
         { id: "NS", name: "Neuro" }, { id: "CT", name: "Cardio" },
         { id: "GS", name: "General" }, { id: "US", name: "Uro" },
         { id: "ENT", name: "ENT" }, { id: "H", name: "Heart" },
         { id: "D", name: "Death" }, { id: "OP", name: "OT-A" },
-        { id: "ICU", name: "ICU-A" }
+        { id: "ICU", name: "ICU-A" }, { id: "R", name: "Radio" },
+        { id: "ON", name: "Onco" }
     ];
 
     let nameData = {}; 
@@ -123,10 +134,12 @@
             const respNames = await fetch(`${scriptUrl}?action=getNames`);
             const allResidents = await respNames.json();
             specialties.forEach(spec => {
-                nameData[spec.id] = allResidents.filter(r => r[1] === spec.id || spec.id === "D").map(r => r[0]);
+                if (spec.id === "OP" || spec.id === "ICU") nameData[spec.id] = allResidents.filter(r => r[1] === "A").map(r => r[0]);
+                else if (spec.id === "D") nameData[spec.id] = allResidents.map(r => r[0]);
+                else nameData[spec.id] = allResidents.filter(r => r[1] === spec.id).map(r => r[0]);
             });
             generateTable(); 
-        } catch (e) { generateTable(); }
+        } catch (e) { unlockTable(); }
     }
 
     function generateTable() {
@@ -148,20 +161,18 @@
             const tr = document.createElement('tr');
             if (dateObj.getDay() === 5 || dateObj.getDay() === 6) tr.classList.add('weekend-row');
             
-            let rHtml = specialties.map(s => `
+            let rHtml = specialties.map((s, idx) => `
                 <td><div class="ac-container">
-                    <div class="ghost-text" id="ghost-${d}-${s.id}"></div>
-                    <input type="text" class="cell-input" id="input-${d}-${s.id}" 
-                        oninput="handleAC(this, '${s.id}', '${d}-${s.id}')" 
-                        onkeydown="handleKeys(event, this, ${d}, '${s.id}')" 
-                        onblur="handleBlur('${d}-${s.id}')" data-date="${dd}/${mm}/${year}" data-spec="${s.id}">
+                    <div class="ghost-text" id="ghost-${d}-${idx}"></div>
+                    <input type="text" class="cell-input" id="cell-${d}-${idx}" 
+                        oninput="handleAC(this, '${s.id}', ${d}, ${idx})" 
+                        onkeydown="handleKeys(event, ${d}, ${idx})" 
+                        onblur="handleBlur(${d}, ${idx})" data-date="${dd}/${mm}/${year}" data-spec="${s.id}">
                 </div></td>`).join('');
             
             rHtml += `
                 <td class="date-col">
-                    <div class="date-display">
-                        <span>${dd}</span><span>/</span><span class="text-amber-500/40">${mm}</span><span class="year-text">/${year}</span>
-                    </div>
+                    <div class="date-wrapper"><span>${mm}</span><span>\</span><span>${dd}</span></div>
                 </td>
                 <td class="day-col">${dayShort}</td>`;
             tr.innerHTML = rHtml;
@@ -170,20 +181,25 @@
         fetchExistingSchedule();
     }
 
-    // THE FIXED VERTICAL ENTER KEY 🇮🇶
-    function handleKeys(e, el, currentDay, specId) {
-        const ghost = document.getElementById(`ghost-${currentDay}-${specId}`);
+    // THE ABSOLUTE VERTICAL NAVIGATION 🇮🇶
+    function handleKeys(e, day, colIdx) {
+        const ghost = document.getElementById(`ghost-${day}-${colIdx}`);
         const fullMatch = ghost.getAttribute('data-full-match');
+        const input = document.getElementById(`cell-${day}-${colIdx}`);
 
         if (e.key === "Enter") {
-            e.preventDefault(); 
-            if (fullMatch) el.value = fullMatch;
+            e.preventDefault();
+            if (fullMatch) input.value = fullMatch;
             
-            // Move DOWN to the next day in the same column
-            const nextDay = currentDay + 1;
-            const nextEl = document.getElementById(`input-${nextDay}-${specId}`);
-            if (nextEl) nextEl.focus();
-            else el.blur();
+            // Move STRICTLY DOWN to the same column index on the next day
+            const nextDay = day + 1;
+            const nextEl = document.getElementById(`cell-${nextDay}-${colIdx}`);
+            
+            if (nextEl) {
+                nextEl.focus();
+            } else {
+                input.blur(); // Reached the end of the month
+            }
         }
     }
 
@@ -194,14 +210,15 @@
             const schedule = await resp.json();
             schedule.forEach(row => {
                 const day = parseInt(row.date.split('/')[0]);
-                const inputEl = document.getElementById(`input-${day}-${row.specCode}`);
+                const colIdx = specialties.findIndex(s => s.id === row.specCode);
+                const inputEl = document.getElementById(`cell-${day}-${colIdx}`);
                 if (inputEl && row.name) { inputEl.value = row.name; inputEl.classList.add('prefilled'); }
             });
-        } catch(e){}
+        } finally { unlockTable(); }
     }
 
-    function handleAC(el, specId, uniqueId) {
-        const ghost = document.getElementById(`ghost-${uniqueId}`);
+    function handleAC(el, specId, day, colIdx) {
+        const ghost = document.getElementById(`ghost-${day}-${colIdx}`);
         const val = el.value.trim().toLowerCase();
         ghost.innerText = ""; ghost.removeAttribute('data-full-match');
         if (!val || !nameData[specId]) return;
@@ -212,11 +229,19 @@
         }
     }
 
-    function handleBlur(uniqueId) {
+    function handleBlur(day, colIdx) {
         setTimeout(() => { 
-            const g = document.getElementById(`ghost-${uniqueId}`);
+            const g = document.getElementById(`ghost-${day}-${colIdx}`);
             if (g) g.innerText = ""; 
         }, 150);
+    }
+
+    function unlockTable() {
+        document.getElementById('app-wrapper').style.opacity = "1";
+        document.getElementById('app-wrapper').style.pointerEvents = "auto";
+        document.getElementById('led').className = "w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]";
+        document.getElementById('status-text').innerText = "System Ready 🇮🇶";
+        document.getElementById('status-text').className = "text-[0.6rem] font-bold uppercase tracking-widest text-emerald-500";
     }
 
     async function saveAll() {
