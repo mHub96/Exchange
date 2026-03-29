@@ -11,9 +11,12 @@
             --bg: #0f1115;
             --card: #1a1c20;
             --accent: #fbbf24;
-            --emerald: #10b981;
-            --crimson: #e11d48;
             --column-width: 280px;
+            /* Shared Typography for Alignment 🇮🇶 */
+            --font-size: 0.9rem;
+            --line-height: 1.5;
+            --padding-y: 0.6rem;
+            --padding-x: 0.75rem;
         }
 
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; overflow: hidden; }
@@ -38,31 +41,24 @@
         }
 
         .track-header {
-            padding: 1rem;
+            padding: 1.2rem;
             background: rgba(251, 191, 36, 0.05);
             border-bottom: 2px solid var(--accent);
             border-radius: 1.5rem 1.5rem 0 0;
             text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 60;
+            position: sticky; top: 0; z-index: 60;
         }
 
         .track-header h2 { color: var(--accent); font-weight: 900; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
 
-        .days-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0.75rem;
-            scrollbar-width: none;
-        }
+        .days-list { flex: 1; overflow-y: auto; padding: 0.75rem; scrollbar-width: none; }
 
         .day-box {
             position: relative;
             background: rgba(255,255,255,0.02);
-            margin-bottom: 0.5rem;
-            border-radius: 0.75rem;
-            padding: 0.5rem;
+            margin-bottom: 0.6rem;
+            border-radius: 0.8rem;
+            padding: 0.4rem;
             border: 1px solid transparent;
         }
         .day-box:focus-within { border-color: var(--accent); background: rgba(251, 191, 36, 0.05); }
@@ -71,75 +67,72 @@
         .day-label {
             display: flex;
             justify-content: space-between;
-            font-size: 0.6rem;
+            font-size: 0.65rem;
             font-weight: 800;
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.3rem;
             color: #64748b;
-            padding: 0 0.25rem;
+            padding: 0 0.5rem;
         }
 
-        /* Logic-Driven Input Styles */
-        .cell-input {
+        /* ALIGNMENT CORE 🇮🇶 */
+        .input-wrapper { position: relative; width: 100%; direction: rtl; }
+
+        .cell-input, .ghost-text {
             width: 100%;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            font-size: var(--font-size);
+            line-height: var(--line-height);
+            padding: var(--padding-y) var(--padding-x);
+            text-align: right;
+            box-sizing: border-box;
+            white-space: pre;
+            overflow: hidden;
+        }
+
+        .cell-input {
             background: transparent;
             border: none;
             outline: none;
             color: #fff;
-            font-family: 'IBM Plex Sans Arabic', sans-serif;
-            text-align: right;
-            font-size: 0.85rem;
-            padding: 0.4rem;
-            z-index: 10;
             position: relative;
+            z-index: 10;
         }
 
         .ghost-text {
             position: absolute;
-            top: 25px;
-            right: 12px;
-            color: rgba(255,255,255,0.25);
-            pointer-events: none;
-            font-family: 'IBM Plex Sans Arabic', sans-serif;
-            font-size: 0.85rem;
-            direction: rtl;
-            white-space: pre;
-            z-index: 5;
-        }
-        .ghost-offset { color: transparent; }
-
-        .dropdown-arrow { position: absolute; left: 8px; bottom: 12px; font-size: 0.55rem; color: #475569; cursor: pointer; z-index: 20; padding: 4px; }
-
-        .prefilled { color: var(--accent) !important; opacity: 0.7; font-weight: 600; }
-        .new-entry { color: var(--crimson) !important; font-weight: 700; }
-
-        /* Functional Dropdown Menu */
-        .custom-menu {
-            position: absolute;
-            top: 100%;
+            top: 0;
             right: 0;
-            width: 100%;
-            max-height: 220px;
-            overflow-y: auto;
-            background: #1e2126;
-            border: 1px solid var(--accent);
-            border-radius: 0.5rem;
-            z-index: 1000;
-            display: none;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            left: 0;
+            bottom: 0;
+            color: rgba(255,255,255,0.2);
+            z-index: 5;
+            pointer-events: none;
         }
-        .custom-menu div { padding: 0.8rem; font-size: 0.8rem; text-align: right; cursor: pointer; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .custom-menu div:hover { background: var(--accent); color: #000; }
 
+        .ghost-offset { color: transparent; visibility: visible; }
+
+        .dropdown-arrow { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-size: 0.55rem; color: #475569; cursor: pointer; z-index: 25; padding: 5px; }
+
+        .prefilled { color: var(--accent) !important; font-weight: 600; opacity: 0.8; }
+        .new-entry { color: #e11d48 !important; font-weight: 700; }
+
+        .custom-menu {
+            position: absolute; top: 100%; right: 0; width: 100%; max-height: 220px;
+            overflow-y: auto; background: #1e2126; border: 1px solid var(--accent);
+            border-radius: 0.5rem; z-index: 1000; display: none;
+        }
+        .custom-menu div { padding: 0.8rem; font-size: 0.85rem; text-align: right; cursor: pointer; color: #94a3b8; }
+        .custom-menu div:hover { background: var(--accent); color: #000; }
     </style>
 </head>
 <body>
 
     <div id="app-wrapper" class="opacity-30 pointer-events-none transition-opacity duration-500">
-        <div class="p-4 flex justify-between items-center border-b border-white/5 bg-card">
+        <div class="p-4 flex justify-between items-center bg-card border-b border-white/5">
             <h1 class="text-xl font-black text-white uppercase tracking-tighter">Iraqi Med-Scheduler 🇮🇶</h1>
             <div class="flex gap-4 items-center">
                 <input type="month" id="month-picker" class="bg-black text-amber-500 p-2 rounded-lg font-bold border border-white/10" onchange="generateBoard()">
-                <button onclick="saveAll()" id="sync-btn" class="bg-amber-500 text-black px-6 py-2 rounded-lg font-black text-xs uppercase active:scale-95">Sync Data</button>
+                <button onclick="saveAll()" id="sync-btn" class="bg-amber-500 text-black px-6 py-2 rounded-lg font-black text-xs uppercase">Sync Data</button>
             </div>
         </div>
 
@@ -189,19 +182,18 @@
         specialties.forEach(spec => {
             const track = document.createElement('div');
             track.className = 'specialty-track';
-            
             let html = `<div class="track-header"><h2>${spec.name}</h2></div><div class="days-list">`;
+            
             for (let d = 1; d <= daysInMonth; d++) {
                 const dateObj = new Date(year, month-1, d);
-                const isWeekend = (dateObj.getDay() === 5 || dateObj.getDay() === 6);
                 const dayName = new Intl.DateTimeFormat('ar-IQ', { weekday: 'short' }).format(dateObj);
                 const dateFull = `${String(d).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
                 const uid = `${d}-${spec.id}`;
 
                 html += `
-                    <div class="day-box ${isWeekend ? 'weekend' : ''}">
+                    <div class="day-box ${dateObj.getDay() === 5 || dateObj.getDay() === 6 ? 'weekend' : ''}">
                         <div class="day-label"><span>${dateFull.substring(0,5)}</span><span>${dayName}</span></div>
-                        <div class="relative">
+                        <div class="input-wrapper">
                             <div class="ghost-text" id="ghost-${uid}"></div>
                             <input type="text" class="cell-input" id="input-${uid}" 
                                 oninput="handleAC(this, '${spec.id}', '${uid}')"
@@ -220,30 +212,26 @@
         fetchSchedule();
     }
 
-    // SUGGESTION LOGIC (FIXED) 🇮🇶
     function handleAC(el, sid, uid) {
         const ghost = document.getElementById(`ghost-${uid}`);
-        const val = el.value.trim();
-        const valLower = val.toLowerCase();
-        
-        ghost.innerText = ""; 
-        ghost.removeAttribute('data-full');
+        const val = el.value;
+        ghost.innerText = ""; ghost.removeAttribute('data-full');
         el.classList.remove('prefilled');
 
-        if (!val) { el.classList.remove('new-entry'); return; }
+        if (!val.trim()) { el.classList.remove('new-entry'); return; }
         el.classList.add('new-entry');
 
         if (nameData[sid]) {
-            const cleanInput = valLower.replace(/^د\.\s*/, "");
+            const cleanInput = val.toLowerCase().replace(/^د\.\s*/, "");
             const match = nameData[sid].find(n => {
                 const nLower = n.toLowerCase();
-                return nLower.startsWith(valLower) || nLower.replace(/^د\.\s*/, "").startsWith(cleanInput);
+                return nLower.startsWith(val.toLowerCase()) || nLower.replace(/^د\.\s*/, "").startsWith(cleanInput);
             });
 
             if (match) {
                 ghost.setAttribute('data-full', match);
                 let display = val.startsWith("د.") ? match : match.replace(/^د\.\s*/, "");
-                if (display.toLowerCase().startsWith(valLower)) {
+                if (display.toLowerCase().startsWith(val.toLowerCase())) {
                     ghost.innerHTML = `<span class="ghost-offset">${val}</span>${display.substring(val.length)}`;
                 } else {
                     ghost.innerText = display;
@@ -252,52 +240,35 @@
         }
     }
 
-    // DROPDOWN LOGIC (FIXED) 🇮🇶
     function toggleMenu(e, uid, sid) {
         e.stopPropagation();
         const m = document.getElementById(`menu-${uid}`);
         const open = m.style.display === "block";
         document.querySelectorAll('.custom-menu').forEach(x => x.style.display = 'none');
-        
         if (!open) {
-            const list = nameData[sid] || [];
-            m.innerHTML = list.map(n => `<div onmousedown="selectName('${uid}', '${n}')">${n}</div>`).join('');
+            m.innerHTML = (nameData[sid] || []).map(n => `<div onmousedown="selectName('${uid}', '${n}')">${n}</div>`).join('');
             m.style.display = "block";
         }
     }
 
     function selectName(uid, name) {
         const i = document.getElementById(`input-${uid}`);
-        const g = document.getElementById(`ghost-${uid}`);
-        i.value = name;
-        i.classList.add('new-entry');
-        g.innerText = "";
+        i.value = name; i.classList.add('new-entry');
+        document.getElementById(`ghost-${uid}`).innerText = "";
         document.getElementById(`menu-${uid}`).style.display = 'none';
     }
 
-    // VERTICAL NAVIGATION 🇮🇶
     function handleKeys(e, el, uid) {
         const ghost = document.getElementById(`ghost-${uid}`);
         const full = ghost.getAttribute('data-full');
 
         if (e.key === "Enter") {
             e.preventDefault();
-            if (full) { 
-                el.value = full; 
-                el.classList.add('new-entry');
-                ghost.innerText = "";
-            }
-            
+            if (full) { el.value = full; el.classList.add('new-entry'); ghost.innerText = ""; }
             const [d, sid] = uid.split('-');
-            const nextDay = parseInt(d) + 1;
-            const nextEl = document.getElementById(`input-${nextDay}-${sid}`);
-            
-            if (nextEl) {
-                nextEl.focus();
-                nextEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            } else {
-                el.blur();
-            }
+            const nextEl = document.getElementById(`input-${parseInt(d) + 1}-${sid}`);
+            if (nextEl) { nextEl.focus(); nextEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+            else el.blur();
         }
     }
 
