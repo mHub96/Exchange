@@ -5,104 +5,108 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SCHEDULER 🇮🇶</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=JetBrains+Mono:wght@700&family=Plus+Jakarta+Sans:wght@800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #1a1c20;
             --light: #2a2d34;
+            --shadow: #0d0e11;
             --accent: #fbbf24;
             --emerald: #10b981;
             --crimson: #e11d48;
+            --glow: 0 0 15px rgba(251, 191, 36, 0.8);
             --zebra: rgba(255, 255, 255, 0.02);
-            --weekend-bg: rgba(16, 185, 129, 0.1); 
-            /* Fixed Compact Widths 🇮🇶 */
-            --day-w: 50px;
-            --date-w: 65px;
+            --weekend-bg: rgba(16, 185, 129, 0.12); 
+            /* Optimized Sticky Widths 🇮🇶 */
+            --day-width: 60px;
+            --date-width: 80px;
         }
 
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; overflow-x: hidden; touch-action: manipulation; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; overflow-x: hidden; }
         
-        table { border-collapse: separate; border-spacing: 0; min-width: 1600px; table-layout: fixed; }
-        .ac-container { position: relative; width: 100%; direction: rtl; }
+        table { border-collapse: separate; border-spacing: 0; min-width: 1500px; table-layout: fixed; }
+        .ac-container { position: relative; width: 100%; direction: rtl; overflow: visible; }
         
-        /* Headers */
-        th { position: sticky; top: 0; background: var(--bg); z-index: 20; padding: 0.75rem 0.25rem; color: var(--accent); font-weight: 800; font-size: 0.65rem; border-bottom: 1px solid var(--light); text-transform: uppercase; letter-spacing: 0.05em; }
+        /* Column Colors */
+        tr td:nth-child(1), thead th:nth-child(1) { --col-color: #fbbf24; }
+        tr td:nth-child(2), thead th:nth-child(2) { --col-color: #60a5fa; }
+        tr td:nth-child(3), thead th:nth-child(3) { --col-color: #a78bfa; }
+        tr td:nth-child(4), thead th:nth-child(4) { --col-color: #f472b6; }
+        tr td:nth-child(5), thead th:nth-child(5) { --col-color: #fb7185; }
+        tr td:nth-child(6), thead th:nth-child(6) { --col-color: #38bdf8; }
+        tr td:nth-child(7), thead th:nth-child(7) { --col-color: #c084fc; }
+        tr td:nth-child(8), thead th:nth-child(8) { --col-color: #2dd4bf; }
+        tr td:nth-child(9), thead th:nth-child(9) { --col-color: #94a3b8; }
+        tr td:nth-child(10), thead th:nth-child(10) { --col-color: #fb923c; }
+        tr td:nth-child(11), thead th:nth-child(11) { --col-color: #818cf8; }
+
+        th { position: sticky; top: 0; background: var(--bg); z-index: 20; padding: 1rem 0.5rem; color: var(--col-color); font-weight: 800; font-size: 0.7rem; letter-spacing: 0.1em; border-bottom: 1px solid var(--light); text-shadow: 0 0 10px var(--col-color); }
         tr:nth-child(even) { background-color: var(--zebra); }
 
-        /* --- STICKY UNIT (SOLID & FLUSH) 🇮🇶 --- */
+        /* Solid Sticky Columns Logic 🇮🇶 */
         .day-col, .date-col {
             position: sticky !important;
-            background-color: #1a1c20 !important; /* Solid background prevents "underneath" visibility */
+            background-color: #1a1c20 !important; /* Solid background to stop bleed-through */
             z-index: 30 !important;
             text-align: center;
-            vertical-align: middle;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-
-        .day-col { 
-            right: 0 !important; 
-            width: var(--day-w) !important; 
-            color: var(--accent); 
-            font-size: 0.7rem; 
-            font-weight: 800;
-        }
-
+        .day-col { right: 0 !important; width: var(--day-width) !important; color: var(--accent); font-weight: 800; font-size: 0.75rem; }
         .date-col { 
-            right: var(--day-w) !important; 
-            width: var(--date-w) !important; 
-            color: #64748b; 
-            font-family: 'JetBrains Mono', monospace; 
-            font-size: 0.75rem;
-            border-left: 1px solid rgba(255,255,255,0.1); /* Divider from data */
+            right: var(--day-width) !important; 
+            width: var(--date-width) !important; 
+            border-left: 1px solid rgba(255,255,255,0.1);
+            color: #64748b; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
         }
-
-        /* RTL Date Format MM/DD */
-        .date-wrapper { display: flex; flex-direction: row-reverse; justify-content: center; gap: 1px; }
-
+        
         thead th.day-col, thead th.date-col { z-index: 40 !important; top: 0; }
+        
         tr.weekend-row { background-color: var(--weekend-bg) !important; }
+        tr.weekend-row td { --col-color: var(--emerald) !important; }
         tr.weekend-row .day-col, tr.weekend-row .date-col { background-color: #1a2e28 !important; }
 
-        /* Inputs */
-        .cell-input { width: 100%; padding: 0.7rem; font-size: 0.85rem; font-family: 'IBM Plex Sans Arabic', sans-serif; text-align: right; background: transparent; color: #fff; border-radius: 0.5rem; outline: none; border: 1px solid transparent; }
-        .cell-input:focus { background: rgba(255, 255, 255, 0.05); border-color: var(--accent); }
-        
-        .ghost-text { position: absolute; top: 0; right: 0; left: 0; bottom: 0; color: rgba(255, 255, 255, 0.2); pointer-events: none; white-space: pre; overflow: hidden; direction: rtl; padding: 0.7rem; font-size: 0.85rem; }
-        .ghost-offset { color: transparent; }
-        
-        .prefilled { color: #94a3b8 !important; opacity: 0.6; font-weight: 400; }
-        .new-entry { color: var(--crimson) !important; font-weight: 700; text-shadow: 0 0 8px var(--crimson); }
+        /* RTL Date Display */
+        .rtl-date { display: flex; flex-direction: row-reverse; justify-content: center; gap: 2px; }
 
-        /* UI Shell */
-        .embossed-card { background: var(--bg); border-radius: 1.5rem; box-shadow: 20px 20px 60px var(--shadow); border: 1px solid rgba(255,255,255,0.02); }
-        .recessed-container { background: var(--bg); border-radius: 1rem; box-shadow: inset 8px 8px 16px var(--shadow); overflow-x: auto; }
+        /* Inputs */
+        .cell-input, .ghost-text { width: 100%; padding: 0.8rem; font-size: 0.85rem; line-height: 1.6rem; font-family: 'IBM Plex Sans Arabic', sans-serif; text-align: right; box-sizing: border-box; }
+        .cell-input { position: relative; background: transparent; color: #fff; border-radius: 0.8rem; outline: none; z-index: 5; border: 1px solid transparent; }
+        .cell-input:focus { background: rgba(255, 255, 255, 0.03); border-color: var(--col-color); box-shadow: 0 0 8px var(--col-color); }
+        
+        .ghost-text { position: absolute; top: 0; right: 0; left: 0; bottom: 0; color: rgba(255, 255, 255, 0.3); pointer-events: none; white-space: pre; overflow: hidden; z-index: 1; direction: rtl; }
+        .ghost-offset { color: transparent; }
+
+        .dropdown-arrow { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #475569; cursor: pointer; z-index: 10; font-size: 0.65rem; }
+        .prefilled { color: var(--col-color) !important; opacity: 0.7; font-weight: 600; }
+        .new-entry { color: var(--crimson) !important; text-shadow: 0 0 10px var(--crimson); font-weight: 700; }
+
+        .embossed-card { background: var(--bg); border-radius: 2rem; box-shadow: 20px 20px 60px var(--shadow); }
+        .recessed-table-container { background: var(--bg); border-radius: 1.5rem; box-shadow: inset 8px 8px 16px var(--shadow); overflow-x: auto; }
+        
+        .custom-menu { position: absolute; top: 100%; right: 0; width: 100%; max-height: 220px; overflow-y: auto; background: #1e2126; border: 1px solid var(--light); border-radius: 0.8rem; z-index: 100; box-shadow: 0 10px 30px var(--shadow); display: none; text-align: right; }
+        .custom-menu div { padding: 0.6rem 0.8rem; cursor: pointer; color: #94a3b8; font-size: 0.8rem; }
+        .custom-menu div:hover { background: var(--light); color: var(--col-color); }
     </style>
 </head>
-<body class="p-2 md:p-6">
+<body class="p-4 md:p-8">
 
     <div id="app-wrapper" class="max-w-full mx-auto opacity-30 pointer-events-none transition-opacity duration-500">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <div>
-                <h1 class="text-xl font-black text-white tracking-tighter">SCHEDULER 🇮🇶</h1>
-                <div class="mt-2 flex items-center bg-black/30 px-4 py-1 rounded-full border border-white/5">
-                    <span id="led" class="w-2 h-2 rounded-full bg-rose-500 mr-2"></span>
-                    <span id="status-text" class="text-[0.6rem] font-bold uppercase tracking-widest text-rose-500">Connecting...</span>
-                </div>
-            </div>
-            <div class="recessed-container px-2 flex items-center bg-black/20">
-                <input type="month" id="month-picker" class="bg-transparent text-amber-500 font-bold outline-none p-2 cursor-pointer text-sm" onchange="generateTable()">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+            <h1 class="text-3xl font-extrabold tracking-tight text-white" style="text-shadow: var(--glow)">IRAQI Hospital Scheduler 🇮🇶</h1>
+            <div class="recessed-table-container p-2 flex items-center bg-black/20">
+                <input type="month" id="month-picker" class="bg-transparent text-amber-500 font-bold outline-none p-3 cursor-pointer" onchange="generateTable()">
             </div>
         </div>
 
-        <div class="embossed-card p-4">
-            <div class="recessed-container max-h-[75vh]">
+        <div id="main-table-area" class="embossed-card p-6">
+            <div class="recessed-table-container max-h-[72vh]">
                 <table id="schedule-table">
                     <thead><tr id="table-headers"></tr></thead>
                     <tbody id="table-body"></tbody>
                 </table>
             </div>
-            <div class="mt-6 flex justify-end">
-                <button id="save-btn" onclick="saveAll()" class="bg-[#2a2d34] px-10 py-4 rounded-xl text-amber-500 font-black text-xs tracking-widest border border-white/5 transition-transform active:scale-95">
+            <div class="mt-8 flex justify-end">
+                <button id="save-btn" onclick="saveAll()" class="bg-[#2a2d34] shadow-xl px-14 py-6 rounded-3xl text-amber-500 font-black uppercase tracking-[0.2em] transition-all hover:bg-black active:scale-95 border border-white/5">
                     UPDATE DATABASE
                 </button>
             </div>
@@ -112,12 +116,12 @@
 <script>
     const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
     const specialties = [
-        { id: "NS", name: "Neuro" }, { id: "CT", name: "Cardio" },
-        { id: "GS", name: "General" }, { id: "US", name: "Uro" },
-        { id: "ENT", name: "ENT" }, { id: "H", name: "Heart" },
-        { id: "D", name: "Death" }, { id: "OP", name: "OT-A" },
-        { id: "ICU", name: "ICU-A" }, { id: "R", name: "Radio" },
-        { id: "ON", name: "Onco" }
+        { id: "NS", name: "Neurosurgery" }, { id: "CT", name: "Cardiothoracic" },
+        { id: "GS", name: "General" }, { id: "US", name: "Urosurgery" },
+        { id: "ENT", name: "ENT" }, { id: "H", name: "Cardiology" },
+        { id: "D", name: "Death Certs" }, { id: "OP", name: "OT Anaesth" },
+        { id: "ICU", name: "ICU Anaesth" }, { id: "R", name: "Radiology" },
+        { id: "ON", name: "Oncology" }
     ];
 
     let nameData = {}; 
@@ -156,51 +160,126 @@
             const dateObj = new Date(year, month-1, d);
             const dd = String(d).padStart(2, '0');
             const mm = String(month).padStart(2, '0');
-            const dayShort = new Intl.DateTimeFormat('ar-IQ', { weekday: 'short' }).format(dateObj);
+            const dayName = new Intl.DateTimeFormat('ar-IQ', { weekday: 'short' }).format(dateObj);
             
             const tr = document.createElement('tr');
             if (dateObj.getDay() === 5 || dateObj.getDay() === 6) tr.classList.add('weekend-row');
             
-            let rHtml = specialties.map((s, idx) => `
+            let rHtml = specialties.map(s => `
                 <td><div class="ac-container">
-                    <div class="ghost-text" id="ghost-${d}-${idx}"></div>
-                    <input type="text" class="cell-input" id="cell-${d}-${idx}" 
-                        oninput="handleAC(this, '${s.id}', ${d}, ${idx})" 
-                        onkeydown="handleKeys(event, ${d}, ${idx})" 
-                        onblur="handleBlur(${d}, ${idx})" data-date="${dd}/${mm}/${year}" data-spec="${s.id}">
+                    <div class="ghost-text" id="ghost-${d}-${s.id}"></div>
+                    <input type="text" class="cell-input" id="input-${d}-${s.id}" autocomplete="off" 
+                        oninput="handleAC(this, '${s.id}', '${d}-${s.id}')" 
+                        onkeydown="handleKeys(event, this, '${d}-${s.id}')" 
+                        onblur="handleBlur('${d}-${s.id}')" data-date="${dd}/${mm}/${year}" data-spec="${s.id}">
+                    <span class="dropdown-arrow" onclick="toggleMenu('${d}-${s.id}', '${s.id}')">▼</span>
+                    <div class="custom-menu" id="menu-${d}-${s.id}"></div>
                 </div></td>`).join('');
             
             rHtml += `
-                <td class="date-col">
-                    <div class="date-wrapper"><span>${mm}</span><span>\</span><span>${dd}</span></div>
-                </td>
-                <td class="day-col">${dayShort}</td>`;
+                <td class="date-col"><div class="rtl-date"><span>${mm}</span><span>/</span><span>${dd}</span></div></td>
+                <td class="day-col">${dayName}</td>`;
             tr.innerHTML = rHtml;
             body.appendChild(tr);
         }
         fetchExistingSchedule();
     }
 
-    // THE ABSOLUTE VERTICAL NAVIGATION 🇮🇶
-    function handleKeys(e, day, colIdx) {
-        const ghost = document.getElementById(`ghost-${day}-${colIdx}`);
+    function handleKeys(e, el, uniqueId) {
+        const ghost = document.getElementById(`ghost-${uniqueId}`);
         const fullMatch = ghost.getAttribute('data-full-match');
-        const input = document.getElementById(`cell-${day}-${colIdx}`);
-
-        if (e.key === "Enter") {
-            e.preventDefault();
-            if (fullMatch) input.value = fullMatch;
-            
-            // Move STRICTLY DOWN to the same column index on the next day
-            const nextDay = day + 1;
-            const nextEl = document.getElementById(`cell-${nextDay}-${colIdx}`);
-            
-            if (nextEl) {
-                nextEl.focus();
-            } else {
-                input.blur(); // Reached the end of the month
+        
+        if ((e.key === "Tab" || e.key === "ArrowRight") && fullMatch) {
+            if (el.value !== fullMatch) {
+                if (e.key !== "ArrowRight") e.preventDefault();
+                el.value = fullMatch;
+                ghost.innerText = ""; ghost.removeAttribute('data-full-match');
+                return;
             }
         }
+
+        // ABSOLUTE VERTICAL FOCUS LOCK 🇮🇶
+        if (e.key === "Enter") {
+            e.preventDefault();
+            if (fullMatch) {
+                el.value = fullMatch;
+                ghost.innerText = "";
+                ghost.removeAttribute('data-full-match');
+            }
+            
+            const parts = uniqueId.split('-'); // [day, specId]
+            const nextDay = parseInt(parts[0]) + 1;
+            const specId = parts[1];
+            const nextEl = document.getElementById(`input-${nextDay}-${specId}`);
+
+            if (nextEl) nextEl.focus();
+            else el.blur(); // Dismiss keyboard at end of month
+        }
+    }
+
+    function handleAC(el, specId, uniqueId) {
+        const ghost = document.getElementById(`ghost-${uniqueId}`);
+        const val = el.value;
+        const valLower = val.toLowerCase().trim();
+        ghost.innerText = ""; ghost.removeAttribute('data-full-match');
+        el.classList.remove('prefilled');
+        if (val.trim() === "") { el.classList.remove('new-entry'); return; }
+        el.classList.add('new-entry');
+
+        if (nameData[specId]) {
+            const userHasPrefix = val.startsWith("د.");
+            const cleanInput = valLower.replace(/^د\.\s*/, "");
+
+            const match = nameData[specId].find(name => {
+                const nameLower = name.toLowerCase();
+                const cleanName = nameLower.replace(/^د\.\s*/, "");
+                return nameLower.startsWith(valLower) || cleanName.startsWith(cleanInput);
+            });
+
+            if (match) {
+                ghost.setAttribute('data-full-match', match);
+                let ghostDisplay = userHasPrefix ? match : match.replace(/^د\.\s*/, "");
+                if (ghostDisplay.toLowerCase().startsWith(valLower)) {
+                    ghost.innerHTML = `<span class="ghost-offset">${val}</span>${ghostDisplay.substring(val.length)}`;
+                } else {
+                    ghost.innerText = ghostDisplay;
+                    ghost.style.color = "rgba(255, 255, 255, 0.15)";
+                }
+            }
+        }
+    }
+
+    function toggleMenu(uniqueId, specId) {
+        const menu = document.getElementById(`menu-${uniqueId}`);
+        const open = menu.style.display === "block";
+        document.querySelectorAll('.custom-menu').forEach(m => m.style.display = "none");
+        if (!open) {
+            menu.innerHTML = (nameData[specId] || []).map(n => `<div onmousedown="selectName('${uniqueId}', '${n}')">${n}</div>`).join('');
+            menu.style.display = "block";
+        }
+    }
+
+    function selectName(uniqueId, name) {
+        const input = document.getElementById(`input-${uniqueId}`);
+        input.value = name;
+        input.classList.add('new-entry');
+        const ghost = document.getElementById(`ghost-${uniqueId}`);
+        ghost.innerText = ""; ghost.removeAttribute('data-full-match');
+    }
+
+    function handleBlur(uniqueId) {
+        const ghost = document.getElementById(`ghost-${uniqueId}`);
+        const input = document.getElementById(`input-${uniqueId}`);
+        const fullMatch = ghost.getAttribute('data-full-match');
+        if (fullMatch && input.value.trim() !== "") {
+            input.value = fullMatch;
+            input.classList.add('new-entry');
+        }
+        setTimeout(() => {
+            ghost.innerText = "";
+            const menu = document.getElementById(`menu-${uniqueId}`);
+            if (menu) menu.style.display = "none";
+        }, 220);
     }
 
     async function fetchExistingSchedule() {
@@ -210,50 +289,32 @@
             const schedule = await resp.json();
             schedule.forEach(row => {
                 const day = parseInt(row.date.split('/')[0]);
-                const colIdx = specialties.findIndex(s => s.id === row.specCode);
-                const inputEl = document.getElementById(`cell-${day}-${colIdx}`);
-                if (inputEl && row.name) { inputEl.value = row.name; inputEl.classList.add('prefilled'); }
+                const inputEl = document.getElementById(`input-${day}-${row.specCode}`);
+                if (inputEl && row.name) {
+                    inputEl.value = row.name;
+                    inputEl.classList.add('prefilled');
+                }
             });
         } finally { unlockTable(); }
-    }
-
-    function handleAC(el, specId, day, colIdx) {
-        const ghost = document.getElementById(`ghost-${day}-${colIdx}`);
-        const val = el.value.trim().toLowerCase();
-        ghost.innerText = ""; ghost.removeAttribute('data-full-match');
-        if (!val || !nameData[specId]) return;
-        const match = nameData[specId].find(n => n.toLowerCase().includes(val));
-        if (match) {
-            ghost.setAttribute('data-full-match', match);
-            ghost.innerHTML = `<span class="ghost-offset">${el.value}</span>${match.substring(el.value.length)}`;
-        }
-    }
-
-    function handleBlur(day, colIdx) {
-        setTimeout(() => { 
-            const g = document.getElementById(`ghost-${day}-${colIdx}`);
-            if (g) g.innerText = ""; 
-        }, 150);
     }
 
     function unlockTable() {
         document.getElementById('app-wrapper').style.opacity = "1";
         document.getElementById('app-wrapper').style.pointerEvents = "auto";
-        document.getElementById('led').className = "w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]";
-        document.getElementById('status-text').innerText = "System Ready 🇮🇶";
-        document.getElementById('status-text').className = "text-[0.6rem] font-bold uppercase tracking-widest text-emerald-500";
     }
 
     async function saveAll() {
         const btn = document.getElementById('save-btn');
-        btn.innerText = "UPLOADING..."; btn.disabled = true;
         const activeInputs = Array.from(document.querySelectorAll('.cell-input')).filter(i => i.value.trim() !== "");
+        if (!activeInputs.length) return;
+        btn.disabled = true; btn.innerText = "UPLOADING...";
         const bulkData = activeInputs.map(el => ({ date: el.dataset.date, specialty: el.dataset.spec, name: el.value.trim() }));
         try {
             await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ payload: bulkData }) });
             btn.innerText = "SYNCED ✅";
-        } catch (e) { btn.innerText = "ERROR ⚠️"; }
-        setTimeout(() => { btn.innerText = "UPDATE DATABASE"; btn.disabled = false; }, 2000);
+            activeInputs.forEach(i => { i.classList.remove('new-entry'); i.classList.add('prefilled'); });
+        } catch (e) { btn.innerText = "FAILED ⚠️"; }
+        setTimeout(() => { btn.disabled = false; btn.innerText = "UPDATE DATABASE"; }, 2000);
     }
 </script>
 </body>
