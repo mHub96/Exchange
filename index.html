@@ -115,7 +115,7 @@
                 <button onclick="saveAll()" id="sync-btn" class="bg-white text-black px-5 py-2 rounded-lg font-black text-[10px] uppercase active:scale-95 transition-transform">Sync Schedule</button>
             </div>
         </div>
-        <div class="board-container" id="board" onclick="closeAllMenus()"></div>
+        <div class="board-container" id="board" onscroll="closeAllMenus()"></div>
     </div>
 
 <script>
@@ -211,6 +211,7 @@
                         <div class="input-wrapper" onclick="event.stopPropagation()">
                             <div class="ghost-text" id="ghost-${uid}"></div>
                             <input type="text" class="cell-input" id="input-${uid}" 
+                                onfocus="closeAllMenus()"
                                 oninput="handleAC(this, '${spec.id}', '${uid}')"
                                 onkeydown="handleKeys(event, this, '${uid}')"
                                 onblur="handleBlur('${uid}')"
@@ -265,9 +266,9 @@
     function toggleMenu(e, uid, sid) {
         e.stopPropagation();
         const m = document.getElementById(`menu-${uid}`);
-        const open = m.style.display === "block";
+        const alreadyOpen = m.style.display === "block";
         closeAllMenus();
-        if (!open) {
+        if (!alreadyOpen) {
             m.innerHTML = (nameData[sid] || []).map(n => `<div onmousedown="selectName('${uid}', '${n}')">${n}</div>`).join('');
             m.style.display = "block";
         }
