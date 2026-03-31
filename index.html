@@ -54,7 +54,6 @@
 
         .day-label { display: flex; justify-content: space-between; font-size: 0.6rem; font-weight: 800; margin-bottom: 0.2rem; color: #4b5563; padding: 0 0.5rem; }
         
-        /* RTL INPUT & GHOST LOGIC 🇮🇶 */
         .input-wrapper { position: relative; width: 100%; direction: rtl; text-align: right; }
 
         .cell-input, .ghost-text { 
@@ -65,7 +64,6 @@
             text-align: right; 
             box-sizing: border-box; 
             white-space: pre;
-            letter-spacing: normal;
         }
 
         .cell-input { background: transparent; border: none; outline: none; color: #fff; position: relative; z-index: 10; direction: rtl; }
@@ -80,11 +78,10 @@
             height: 100%; 
             display: flex; 
             align-items: center; 
-            justify-content: flex-start; /* Correct for RTL container */
+            justify-content: flex-start;
             direction: rtl;
         }
 
-        /* The invisible part that pushes the suggestion to the left of the typed text */
         .ghost-offset { color: transparent; visibility: hidden; white-space: pre; }
 
         .dropdown-arrow { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 0.5rem; color: #334155; cursor: pointer; z-index: 25; padding: 6px; }
@@ -129,8 +126,13 @@
     let nameData = {};
 
     window.onload = () => {
+        // DETOUR: Automatically target the NEXT month on load
         const now = new Date();
-        document.getElementById('month-picker').value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        const nextMonthDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        const monthVal = `${nextMonthDate.getFullYear()}-${String(nextMonthDate.getMonth() + 1).padStart(2, '0')}`;
+        
+        document.getElementById('month-picker').value = monthVal;
+        
         generateBoard();
         initSync();
     };
@@ -231,7 +233,6 @@
                 let display = val.startsWith("د.") ? match : match.replace(/^د\.\s*/, "");
                 
                 if (display.toLowerCase().startsWith(val.toLowerCase())) {
-                    // RTL Logic: Push the suggestion text left using an invisible spacer
                     const typed = val;
                     const suggestion = display.substring(val.length);
                     ghost.innerHTML = `<span class="ghost-offset">${typed}</span><span>${suggestion}</span>`;
