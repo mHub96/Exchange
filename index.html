@@ -53,12 +53,39 @@
         .day-box.weekend { background: rgba(255,255,255,0.05); border-left: 3px solid var(--spec-color); }
 
         .day-label { display: flex; justify-content: space-between; font-size: 0.6rem; font-weight: 800; margin-bottom: 0.2rem; color: #4b5563; padding: 0 0.5rem; }
-        .input-wrapper { position: relative; width: 100%; direction: rtl; }
+        
+        /* RTL INPUT & GHOST LOGIC 🇮🇶 */
+        .input-wrapper { position: relative; width: 100%; direction: rtl; text-align: right; }
 
-        .cell-input, .ghost-text { width: 100%; font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: var(--font-size); padding: 0.6rem 0.75rem; text-align: right; box-sizing: border-box; }
-        .cell-input { background: transparent; border: none; outline: none; color: #fff; position: relative; z-index: 10; }
-        .ghost-text { position: absolute; top: 0; right: 0; color: rgba(255,255,255,0.1); z-index: 5; pointer-events: none; height: 100%; width: 100%; display: flex; flex-direction: row-reverse; align-items: center; justify-content: flex-start; padding-right: 0.75rem; box-sizing: border-box; white-space: pre; /* Essential to keep spaces consistent */}
-        .ghost-offset { opacity: 0; white-space: pre;}
+        .cell-input, .ghost-text { 
+            width: 100%; 
+            font-family: 'IBM Plex Sans Arabic', sans-serif; 
+            font-size: var(--font-size); 
+            padding: 0.6rem 0.75rem; 
+            text-align: right; 
+            box-sizing: border-box; 
+            white-space: pre;
+            letter-spacing: normal;
+        }
+
+        .cell-input { background: transparent; border: none; outline: none; color: #fff; position: relative; z-index: 10; direction: rtl; }
+        
+        .ghost-text { 
+            position: absolute; 
+            top: 0; 
+            right: 0; 
+            color: rgba(255,255,255,0.15); 
+            z-index: 5; 
+            pointer-events: none; 
+            height: 100%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: flex-start; /* Correct for RTL container */
+            direction: rtl;
+        }
+
+        /* The invisible part that pushes the suggestion to the left of the typed text */
+        .ghost-offset { color: transparent; visibility: hidden; white-space: pre; }
 
         .dropdown-arrow { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 0.5rem; color: #334155; cursor: pointer; z-index: 25; padding: 6px; }
 
@@ -71,7 +98,6 @@
 
         .nav-bar { height: var(--nav-h); padding: 0 1.5rem; display: flex; justify-content: space-between; align-items: center; background: #111418; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
-        /* LOADING OVERLAY 🇮🇶 */
         #app-wrapper { transition: opacity 0.4s ease; }
         .loading-active { opacity: 0.3 !important; pointer-events: none !important; cursor: wait; }
     </style>
@@ -80,7 +106,7 @@
 
     <div id="app-wrapper" class="loading-active">
         <div class="nav-bar">
-            <h1 class="text-lg font-black text-white uppercase tracking-tighter">Iraqi Teaching Hosp. Schedules</h1>
+            <h1 class="text-lg font-black text-white uppercase tracking-tighter">Teaching Hosp. Schedules 🇮🇶</h1>
             <div class="flex gap-4 items-center">
                 <input type="month" id="month-picker" class="bg-black text-amber-500 px-3 py-1.5 rounded-lg font-bold border border-white/10 text-xs" onchange="handleMonthChange()">
                 <button onclick="saveAll()" id="sync-btn" class="bg-white text-black px-5 py-2 rounded-lg font-black text-[10px] uppercase active:scale-95 transition-transform">Sync Schedule</button>
@@ -104,9 +130,7 @@
 
     window.onload = () => {
         const now = new Date();
-        const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-        document.getElementById('month-picker').value = `${nextMonth.getFullYear()}-${String(nextMonth.getMonth() + 1).padStart(2, '0')}`;
-        
+        document.getElementById('month-picker').value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
         generateBoard();
         initSync();
     };
@@ -114,12 +138,11 @@
     function lockUI() { document.getElementById('app-wrapper').classList.add('loading-active'); }
     function unlockUI() { document.getElementById('app-wrapper').classList.remove('loading-active'); }
 
-    // Logic for month selector 🇮🇶
     async function handleMonthChange() {
-        lockUI(); // 1. Make tables inactive (30% opacity)
-        generateBoard(); // 2. Redraw the empty board for the new dates
-        await fetchSchedule(); // 3. Fetch data for this specific month
-        unlockUI(); // 4. Reactivate UI
+        lockUI();
+        generateBoard();
+        await fetchSchedule();
+        unlockUI();
     }
 
     async function initSync() {
@@ -136,10 +159,7 @@
 
             await fetchSchedule();
             unlockUI();
-        } catch(e) { 
-            console.error("Critical Load Error");
-            setTimeout(unlockUI, 3000); 
-        }
+        } catch(e) { setTimeout(unlockUI, 2000); }
     }
 
     async function fetchSchedule() {
@@ -150,12 +170,9 @@
             data.forEach(row => {
                 const d = parseInt(row.date.split('/')[0]);
                 const el = document.getElementById(`input-${d}-${row.specCode}`);
-                if (el && row.name) { 
-                    el.value = row.name; 
-                    el.classList.add('prefilled'); 
-                }
+                if (el && row.name) { el.value = row.name; el.classList.add('prefilled'); }
             });
-        } catch(e) { console.error("Schedule Fetch Error"); }
+        } catch(e) {}
     }
 
     function generateBoard() {
@@ -189,70 +206,54 @@
                         </div>
                     </div>`;
             }
-            html += `</div>`;
-            track.innerHTML = html;
+            track.innerHTML = html + `</div>`;
             board.appendChild(track);
         });
     }
 
-    // --- AC, Save, and Utility Logic ---
-    async function saveAll() {
-        lockUI();
-        const btn = document.getElementById('sync-btn');
-        const inputs = Array.from(document.querySelectorAll('.cell-input')).filter(x => x.value.trim() !== "");
-        const payload = inputs.map(x => ({ date: x.dataset.date, specialty: x.dataset.spec, name: x.value.trim() }));
-        btn.innerText = "Syncing...";
-        try {
-            await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ payload }) });
-            btn.innerText = "Synced ✅";
-            inputs.forEach(x => { x.classList.remove('new-entry'); x.classList.add('prefilled'); });
-        } catch(e) { btn.innerText = "Error ⚠️"; }
-        finally {
-            setTimeout(() => { btn.innerText = "Sync Schedule"; unlockUI(); }, 1500);
-        }
-    }
+    function handleAC(el, sid, uid) {
+        const ghost = document.getElementById(`ghost-${uid}`);
+        const val = el.value;
+        ghost.innerHTML = ""; ghost.removeAttribute('data-full');
+        el.classList.remove('prefilled');
+        if (!val.trim()) { el.classList.remove('new-entry'); return; }
+        el.classList.add('new-entry');
 
-function handleAC(el, sid, uid) {
-    const ghost = document.getElementById(`ghost-${uid}`);
-    const val = el.value;
-    ghost.innerText = ""; 
-    ghost.removeAttribute('data-full');
-    el.classList.remove('prefilled');
+        if (nameData[sid]) {
+            const match = nameData[sid].find(n => {
+                const nClean = n.toLowerCase().replace(/^د\.\s*/, "");
+                const valClean = val.toLowerCase().replace(/^د\.\s*/, "");
+                return n.toLowerCase().startsWith(val.toLowerCase()) || nClean.startsWith(valClean);
+            });
 
-    if (!val.trim()) { 
-        el.classList.remove('new-entry'); 
-        return; 
-    }
-    
-    el.classList.add('new-entry');
-
-    if (nameData[sid]) {
-        const cleanInput = val.toLowerCase().replace(/^د\.\s*/, "");
-        const match = nameData[sid].find(n => {
-            const nLower = n.toLowerCase();
-            return nLower.startsWith(val.toLowerCase()) || 
-                   nLower.replace(/^د\.\s*/, "").startsWith(cleanInput);
-        });
-
-        if (match) {
-            ghost.setAttribute('data-full', match);
-            
-            // Determine if the user started with "د." or not to match display
-            let display = val.startsWith("د.") ? match : match.replace(/^د\.\s*/, "");
-            
-            if (display.toLowerCase().startsWith(val.toLowerCase())) {
-                // We wrap the already-typed part in a span that is invisible
-                // This pushes the "suggestion" to the left of your cursor
-                const typedPart = val;
-                const suggestionPart = display.substring(val.length);
-                ghost.innerHTML = `<span class="ghost-offset">${typedPart}</span><span>${suggestionPart}</span>`;
-            } else {
-                ghost.innerText = display;
+            if (match) {
+                ghost.setAttribute('data-full', match);
+                let display = val.startsWith("د.") ? match : match.replace(/^د\.\s*/, "");
+                
+                if (display.toLowerCase().startsWith(val.toLowerCase())) {
+                    // RTL Logic: Push the suggestion text left using an invisible spacer
+                    const typed = val;
+                    const suggestion = display.substring(val.length);
+                    ghost.innerHTML = `<span class="ghost-offset">${typed}</span><span>${suggestion}</span>`;
+                } else {
+                    ghost.innerText = display;
+                }
             }
         }
     }
-}
 
+    function handleKeys(e, el, uid) {
+        const ghost = document.getElementById(`ghost-${uid}`);
+        const full = ghost.getAttribute('data-full');
+        if (e.key === "Enter") {
+            e.preventDefault();
+            if (full) { el.value = full; el.classList.add('new-entry'); ghost.innerHTML = ""; }
+            const [d, sid] = uid.split('-');
+            const nextEl = document.getElementById(`input-${parseInt(d) + 1}-${sid}`);
+            if (nextEl) { nextEl.focus(); nextEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+            else el.blur();
+        }
+    }
 
     function toggleMenu(e, uid, sid) {
         e.stopPropagation();
@@ -268,21 +269,8 @@ function handleAC(el, sid, uid) {
     function selectName(uid, name) {
         const i = document.getElementById(`input-${uid}`);
         i.value = name; i.classList.add('new-entry');
-        document.getElementById(`ghost-${uid}`).innerText = "";
+        document.getElementById(`ghost-${uid}`).innerHTML = "";
         document.getElementById(`menu-${uid}`).style.display = 'none';
-    }
-
-    function handleKeys(e, el, uid) {
-        const ghost = document.getElementById(`ghost-${uid}`);
-        const full = ghost.getAttribute('data-full');
-        if (e.key === "Enter") {
-            e.preventDefault();
-            if (full) { el.value = full; el.classList.add('new-entry'); ghost.innerText = ""; }
-            const [d, sid] = uid.split('-');
-            const nextEl = document.getElementById(`input-${parseInt(d) + 1}-${sid}`);
-            if (nextEl) { nextEl.focus(); nextEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-            else el.blur();
-        }
     }
 
     function handleBlur(uid) {
@@ -295,8 +283,22 @@ function handleAC(el, sid, uid) {
                 input.value = g.getAttribute('data-full');
                 input.classList.add('new-entry');
             }
-            if (g) g.innerText = "";
+            if (g) g.innerHTML = "";
         }, 250);
+    }
+
+    async function saveAll() {
+        lockUI();
+        const btn = document.getElementById('sync-btn');
+        const inputs = Array.from(document.querySelectorAll('.cell-input')).filter(x => x.value.trim() !== "");
+        const payload = inputs.map(x => ({ date: x.dataset.date, specialty: x.dataset.spec, name: x.value.trim() }));
+        btn.innerText = "Syncing...";
+        try {
+            await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ payload }) });
+            btn.innerText = "Synced ✅";
+            inputs.forEach(x => { x.classList.remove('new-entry'); x.classList.add('prefilled'); });
+        } catch(e) { btn.innerText = "Error ⚠️"; }
+        finally { setTimeout(() => { btn.innerText = "Sync Schedule"; unlockUI(); }, 1500); }
     }
 </script>
 </body>
