@@ -212,28 +212,47 @@
         }
     }
 
-    function handleAC(el, sid, uid) {
-        const ghost = document.getElementById(`ghost-${uid}`);
-        const val = el.value;
-        ghost.innerText = ""; ghost.removeAttribute('data-full');
-        el.classList.remove('prefilled');
-        if (!val.trim()) { el.classList.remove('new-entry'); return; }
-        el.classList.add('new-entry');
-        if (nameData[sid]) {
-            const cleanInput = val.toLowerCase().replace(/^د\.\s*/, "");
-            const match = nameData[sid].find(n => {
-                const nLower = n.toLowerCase();
-                return nLower.startsWith(val.toLowerCase()) || nLower.replace(/^د\.\s*/, "").startsWith(cleanInput);
-            });
-            if (match) {
-                ghost.setAttribute('data-full', match);
-                let display = val.startsWith("د.") ? match : match.replace(/^د\.\s*/, "");
-                if (display.toLowerCase().startsWith(val.toLowerCase())) {
-                    ghost.innerHTML = `<span class="ghost-offset">${val}</span>${display.substring(val.length)}`;
-                } else ghost.innerText = display;
+function handleAC(el, sid, uid) {
+    const ghost = document.getElementById(`ghost-${uid}`);
+    const val = el.value;
+    ghost.innerText = ""; 
+    ghost.removeAttribute('data-full');
+    el.classList.remove('prefilled');
+
+    if (!val.trim()) { 
+        el.classList.remove('new-entry'); 
+        return; 
+    }
+    
+    el.classList.add('new-entry');
+
+    if (nameData[sid]) {
+        const cleanInput = val.toLowerCase().replace(/^د\.\s*/, "");
+        const match = nameData[sid].find(n => {
+            const nLower = n.toLowerCase();
+            return nLower.startsWith(val.toLowerCase()) || 
+                   nLower.replace(/^د\.\s*/, "").startsWith(cleanInput);
+        });
+
+        if (match) {
+            ghost.setAttribute('data-full', match);
+            
+            // Determine if the user started with "د." or not to match display
+            let display = val.startsWith("د.") ? match : match.replace(/^د\.\s*/, "");
+            
+            if (display.toLowerCase().startsWith(val.toLowerCase())) {
+                // We wrap the already-typed part in a span that is invisible
+                // This pushes the "suggestion" to the left of your cursor
+                const typedPart = val;
+                const suggestionPart = display.substring(val.length);
+                ghost.innerHTML = `<span class="ghost-offset">${typedPart}</span><span>${suggestionPart}</span>`;
+            } else {
+                ghost.innerText = display;
             }
         }
     }
+}
+
 
     function toggleMenu(e, uid, sid) {
         e.stopPropagation();
