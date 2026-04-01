@@ -95,7 +95,7 @@
         <div id="login-view">
             <div class="text-center mb-10">
                 <h1 class="text-white text-2xl font-extrabold tracking-tight">On-Call Portal</h1>
-                <p id="status-text" class="text-[0.6rem] mt-2 uppercase font-bold tracking-[0.3em] text-amber-500/60">Linking Database...</p>
+                <p id="status-text" class="text-[0.6rem] mt-2 uppercase font-bold tracking-[0.3em] text-amber-500/60">Fetching JSON...</p>
             </div>
             <div class="space-y-8">
                 <div class="recessed-input p-2">
@@ -127,10 +127,9 @@
                     <select id="name-list" class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none text-right" dir="rtl"></select>
                 </div>
                 <button id="submit-btn" onclick="submitRegistration()" class="embossed-btn w-full py-6 uppercase tracking-widest bg-amber-500/10 text-amber-500">
-                    UPDATE DUTY
+                    UPDATE VIA GITHUB
                 </button>
             </div>
-            <button onclick="location.reload()" class="w-full text-[0.6rem] text-slate-600 font-bold uppercase tracking-widest mt-4">← Logout</button>
         </div>
 
         <div id="lookup-view" class="hidden text-center">
@@ -146,7 +145,6 @@
             </div>
             
             <p id="time-stamp" class="text-[0.55rem] text-slate-600 mt-10 font-mono tracking-widest uppercase"></p>
-            <button onclick="location.reload()" class="mt-6 text-[0.6rem] font-bold text-slate-600 uppercase tracking-widest block mx-auto opacity-50">← Logout</button>
         </div>
     </div>
 
@@ -154,8 +152,10 @@
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
     const service = urlParams.get('service');
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
     
+    // PURE GITHUB CONFIG
+    const JSON_URL = "https://raw.githubusercontent.com/mHub96/s/main/data.json";
+
     const specialtyNames = {
         "NS": "جراحة الجملة العصبية", "CT": "جراحة الصدر و الاوعية الدموية",
         "GS": "الجراحة العامة", "US": "جراحة المسالك البولية",
@@ -165,16 +165,10 @@
         "ON": "الاورام", "PS": "جراحة التجميل"
     };
 
+    let db = null;
     let serverData = null;
-    let allResidents = [];
 
-    // --- Enter Key Support ---
-    document.getElementById('pw').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            handleEntry();
-        }
-    });
+    document.getElementById('pw').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleEntry(); });
 
     window.onload = async function() {
         setTimeout(() => { 
@@ -185,44 +179,51 @@
         const status = document.getElementById('status-text');
         const entryBtn = document.getElementById('entry-btn');
 
+        // Logic for 8AM Shift Change 🇮🇶
         const now = new Date();
         if (now.getHours() < 8) now.setDate(now.getDate() - 1);
         const dutyDateStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
 
         try {
+            // Fetch directly from GitHub (Fast!)
+            const res = await fetch(`${JSON_URL}?t=${Date.now()}`);
+            db = await res.json();
+
             if (mode === 'register') {
-                const res = await fetch(`${scriptUrl}?action=getNames`);
-                allResidents = (await res.json()).sort((a,b) => a[0].localeCompare(b[0], 'ar'));
                 status.innerText = "ADMIN READY 🇮🇶";
                 entryBtn.classList.add('fetched-active');
             } else if (service) {
-                const res = await fetch(`${scriptUrl}?service=${encodeURIComponent(service)}&date=${dutyDateStr}&json=true&t=${Date.now()}`);
-                serverData = await res.json();
-                if (serverData && serverData.resident) {
+                // LOCAL LOOKUP (No API lag)
+                const duty = db.schedule.find(item => item.date === dutyDateStr && item.specCode === service);
+                if (duty) {
+                    const resident = db.names.find(n => n.name === duty.name);
+                    serverData = {
+                        pin: "1234",
+                        name: duty.name,
+                        serviceCode: service,
+                        phone: resident ? resident.phone : "No Number",
+                        wa: resident ? resident.phone : null,
+                        time: dutyDateStr
+                    };
                     status.innerText = "LINK SECURE 🇮🇶";
                     entryBtn.classList.add('fetched-active');
-                    serverData.time = dutyDateStr;
                 } else {
-                    status.innerText = "NO DUTY FOUND";
-                    status.style.color = "#e11d48";
+                    status.innerText = "NO DUTY FOUND: " + dutyDateStr;
                 }
             } else {
                 status.innerText = "INVALID QR LINK";
-                status.style.color = "#e11d48";
             }
         } catch (e) {
-            status.innerText = "OFFLINE/ERROR";
+            status.innerText = "OFFLINE/JSON ERROR";
         }
     };
 
     function handleEntry() {
-        const pinField = document.getElementById('pw');
-        const pin = pinField.value;
+        const pin = document.getElementById('pw').value;
         const btn = document.getElementById('entry-btn');
         const card = document.getElementById('main-card');
-        const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
+        const correct = (serverData?.pin) || "1234";
 
-        // Button Animation
         btn.style.transform = "scale(0.95)";
         setTimeout(() => { btn.style.transform = "scale(1)"; }, 100);
 
@@ -230,12 +231,8 @@
             card.style.opacity = "0";
             setTimeout(() => {
                 document.getElementById('login-view').classList.add('hidden');
-                if (mode === 'register') {
-                    document.getElementById('register-view').classList.remove('hidden');
-                } else {
-                    showLookupUI();
-                    document.getElementById('lookup-view').classList.remove('hidden');
-                }
+                if (mode === 'register') document.getElementById('register-view').classList.remove('hidden');
+                else { showLookupUI(); document.getElementById('lookup-view').classList.remove('hidden'); }
                 card.style.opacity = "1";
             }, 600);
         } else {
@@ -248,64 +245,35 @@
     function toggleNameSection() {
         const val = document.getElementById('spec-select').value;
         const list = document.getElementById('name-list');
-        if (!val) { document.getElementById('name-section').classList.add('hidden'); return; }
+        if (!val || !db) return;
         
-        let filtered = (val === "OP" || val === "ICU") ? allResidents.filter(r => r[1] === "A") : (val === "D" ? allResidents : allResidents.filter(r => r[1] === val));
+        // Use db.names from the JSON
+        let filtered = (val === "OP" || val === "ICU") ? db.names.filter(n => n.spec === "A") : (val === "D" ? db.names : db.names.filter(n => n.spec === val));
         
         list.innerHTML = `<option value="">-- اختر الاسم --</option>` + 
-                        filtered.map(r => `<option value="${r[0]}" class="bg-[#1a1c20]">${r[0]}</option>`).join('');
+                        filtered.map(n => `<option value="${n.name}" class="bg-[#1a1c20]">${n.name}</option>`).join('');
         document.getElementById('name-section').classList.remove('hidden');
     }
 
-    async function submitRegistration() {
-        const btn = document.getElementById('submit-btn');
-        const doctorName = document.getElementById('name-list').value;
-        const card = document.getElementById('main-card');
-
-        if (!doctorName) {
-            btn.classList.add('crimson-warning'); btn.innerText = "SELECT NAME!";
-            setTimeout(() => { btn.classList.remove('crimson-warning'); btn.innerText = "UPDATE DUTY"; }, 2000);
-            return;
-        }
-
-        card.classList.add('loading-active');
-        btn.innerText = "UPLOADING...";
-
-        try {
-            await fetch(scriptUrl, { 
-                method: 'POST', mode: 'no-cors', 
-                body: JSON.stringify({
-                    action: "submitDuty",
-                    specialty: document.getElementById('spec-select').value,
-                    name: doctorName
-                })
-            });
-            card.classList.remove('loading-active');
-            btn.innerText = "SUCCESS ✅";
-            btn.style.background = "#10b981"; btn.style.color = "white";
-            setTimeout(() => { location.reload(); }, 1500);
-        } catch (e) { 
-            card.classList.remove('loading-active');
-            btn.innerText = "RETRY"; 
+    function showLookupUI() {
+        if (!serverData) return;
+        document.getElementById('service-display').innerText = specialtyNames[service] || service;
+        document.getElementById('name-display').innerText = serverData.name;
+        document.getElementById('phone-display').innerText = serverData.phone;
+        document.getElementById('time-stamp').innerText = "DUTY DATE: " + serverData.time;
+        document.getElementById('call-link').href = "tel:" + serverData.phone;
+        if (serverData.wa) {
+            const wa = document.getElementById('wa-link');
+            wa.classList.remove('hidden');
+            wa.href = "whatsapp://send?phone=" + serverData.wa;
         }
     }
 
-    function showLookupUI() {
-        if (!serverData || !serverData.resident) return;
-        const res = serverData.resident;
-        const arabicTitle = specialtyNames[service] || res.serviceArabic || service;
-        
-        document.getElementById('service-display').innerText = arabicTitle;
-        document.getElementById('name-display').innerText = res.name;
-        document.getElementById('phone-display').innerText = res.phone;
-        document.getElementById('time-stamp').innerText = "DUTY DATE: " + serverData.time;
-        document.getElementById('call-link').href = "tel:" + res.phone.toString().replace(/\s/g, '');
-        
-        if (serverData.whatsappDigits) {
-            const wa = document.getElementById('wa-link');
-            wa.classList.remove('hidden');
-            wa.href = "whatsapp://send?phone=" + serverData.whatsappDigits;
-        }
+    function submitRegistration() {
+        // NOTE: Since GitHub raw files are read-only for clients, 
+        // you would usually trigger a GitHub Action or use a small 
+        // helper worker to write back. 
+        alert("Registration Mode Active: Please manually update data.json in GitHub repo for now.");
     }
 </script>
 </body>
