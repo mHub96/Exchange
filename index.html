@@ -129,7 +129,22 @@
     const urlParams = new URLSearchParams(window.location.search);
     const service = urlParams.get('service');
     
-    // GitHub Config
+    // Arabic Specialty Mapping 🇮🇶
+    const specialtyNames = {
+        "NS": "جراحة الجملة العصبية",
+        "CT": "جراحة الصدر و الاوعية الدموية",
+        "GS": "الجراحة العامة",
+        "US": "جراحة المسالك البولية",
+        "ENT": "جراحة الاذن و الانف و الحنجرة",
+        "H": "القلبية",
+        "D": "الوفيات",
+        "ICU": "تخدير العناية المركزة",
+        "OP": "تخدير العمليات",
+        "R": "الاشعة و السونار",
+        "ON": "الاورام",
+        "PS": "جراحة التجميل"
+    };
+
     const CONFIG = {
         user: "mHub96",
         repo: "s",
@@ -141,7 +156,6 @@
     let serverData = null;
 
     window.onload = async function() {
-        // Remove shield
         setTimeout(() => { 
             const s = document.getElementById('shield');
             if(s) { s.style.opacity = '0'; setTimeout(() => s.remove(), 500); }
@@ -150,27 +164,23 @@
         const status = document.getElementById('status-text');
         const entryBtn = document.getElementById('entry-btn');
 
-        // Date String matching your Scheduler (DD/MM/YYYY)
         const now = new Date();
         const todayStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
 
         try {
-            // Fetch live data from GitHub
             const res = await fetch(`${CONFIG.rawUrl}?t=${Date.now()}`);
             db = await res.json();
 
             if (service) {
-                // Find today's doctor for this specialty
                 const duty = db.schedule.find(item => item.date === todayStr && item.specCode === service);
                 
                 if (duty) {
-                    // Get phone number from names list
                     const resident = db.names.find(n => n.name === duty.name);
                     
                     serverData = {
                         pin: "1234", 
                         name: duty.name,
-                        service: service,
+                        serviceCode: service, // Keep the code for logic
                         phone: resident ? resident.phone : "No Number",
                         wa: resident && resident.phone ? resident.phone.replace(/\D/g,'') : null,
                         time: todayStr
@@ -187,7 +197,6 @@
             }
         } catch (e) {
             status.innerText = "OFFLINE/ERROR";
-            console.error(e);
         }
     };
 
@@ -214,7 +223,10 @@
     function showLookupUI() {
         if (!serverData) return;
         
-        document.getElementById('service-display').innerText = serverData.service;
+        // Translate the code to the full Arabic name 🇮🇶
+        const arabicTitle = specialtyNames[serverData.serviceCode] || serverData.serviceCode;
+        
+        document.getElementById('service-display').innerText = arabicTitle;
         document.getElementById('name-display').innerText = serverData.name;
         document.getElementById('phone-display').innerText = serverData.phone;
         document.getElementById('time-stamp').innerText = "DATE: " + serverData.time;
@@ -224,7 +236,6 @@
         if (serverData.wa) {
             const wa = document.getElementById('wa-link');
             wa.classList.remove('hidden');
-            // Using standard wa.me format for universal compatibility
             wa.href = "https://wa.me/" + (serverData.wa.startsWith('964') ? serverData.wa : '964' + serverData.wa.replace(/^0/, ''));
         }
     }
