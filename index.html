@@ -14,9 +14,9 @@
         .embossed-btn { background: var(--bg); border-radius: 1.5rem; box-shadow: 10px 10px 20px var(--shadow), -5px -5px 15px var(--light); transition: all 0.2s ease; color: #64748b; font-weight: 800; }
         .fetched-active { background: var(--accent) !important; color: #1a1c20 !important; box-shadow: 0 0 25px rgba(251, 191, 36, 0.4) !important; }
         .crimson-warning { background: var(--crimson) !important; color: white !important; }
-        select { background-color: var(--bg) !important; color: #d1d5db !important; appearance: none; }
+        select { background-color: var(--bg) !important; color: #d1d5db !important; appearance: none; border: none; }
         option { background-color: var(--bg); color: #d1d5db; }
-        #shield { position: fixed; inset: 0; background: var(--bg); z-index: 100; transition: opacity 0.5s; }
+        #shield { position: fixed; inset: 0; background: var(--bg); z-index: 100; transition: opacity 0.5s; pointer-events: none; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -48,7 +48,7 @@
                 <div class="recessed-input p-2">
                     <select id="name-list" class="w-full bg-transparent p-4 font-bold outline-none text-right" dir="rtl"></select>
                 </div>
-                <button id="push-btn" onclick="pushToGitHub()" class="embossed-btn w-full py-6 text-amber-500 bg-amber-500/5 uppercase">Push to GitHub</button>
+                <button id="push-btn" onclick="triggerAction()" class="embossed-btn w-full py-6 text-amber-500 bg-amber-500/5 uppercase">Trigger Action Update</button>
             </div>
         </div>
 
@@ -60,10 +60,11 @@
             <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8">-</p>
             <div class="flex gap-2">
                 <a href="#" id="call-link" class="embossed-btn flex-1 py-5 uppercase text-xs">📞 Call</a>
-                <a href="#" id="wa-link" target="_blank" class="hidden flex-1 py-5 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-[1.5rem] font-bold text-xs text-center">💬 WhatsApp</a>
+                <button onclick="handleWhatsApp()" id="wa-btn" class="hidden flex-1 py-5 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-[1.5rem] font-bold text-xs text-center">💬 WhatsApp</button>
             </div>
         </div>
     </div>
+
 <script>
     const GITHUB_REPO = "mHub96/s";
     const FILE_PATH = "data.json";
@@ -73,13 +74,13 @@
     const params = new URLSearchParams(window.location.search);
     const mode = params.get('mode');
     const serviceParam = params.get('service');
+    let currentPhone = "";
 
     window.onload = async () => {
         try {
             const res = await fetch(`${JSON_URL}?t=${Date.now()}`);
             db = await res.json();
             
-            // Populate Dropdown: All unique specs except "Reserve"
             const specs = [...new Set(db.names.map(n => n.spec))].filter(s => s !== "Reserve");
             const select = document.getElementById('spec-select');
             select.innerHTML = '<option value="">اختر القسم</option>' + 
@@ -93,75 +94,109 @@
         }
     };
 
-    async function pushToGitHub() {
-        // Check if token is already "injected" in this browser's memory
-        let token = localStorage.getItem('gh_duty_token');
+    function handleEntry() {
+        if (document.getElementById('pw').value === "1234") {
+            document.getElementById('login-view').classList.add('hidden');
+            if (mode === 'register') {
+                document.getElementById('register-view').classList.remove('hidden');
+            } else {
+                showLookup();
+            }
+        } else {
+            const btn = document.getElementById('entry-btn');
+            btn.classList.add('crimson-warning');
+            setTimeout(() => btn.classList.remove('crimson-warning'), 1000);
+        }
+    }
+
+    function filterNames() {
+        const spec = document.getElementById('spec-select').value;
+        const list = document.getElementById('name-list');
+        const container = document.getElementById('name-container');
+        if (!spec) return container.classList.add('hidden');
         
+        const filtered = db.names.filter(n => n.spec === spec);
+        list.innerHTML = filtered.map(n => `<option value="${n.name}">${n.name}</option>`).join('');
+        container.classList.remove('hidden');
+    }
+
+    function showLookup() {
+        const now = new Date();
+        if (now.getHours() < 8) now.setDate(now.getDate() - 1);
+        const todayStr = `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
+        
+        const target = serviceParam || "NS";
+        const duty = db.schedule.find(s => s.date === todayStr && s.specCode === target);
+        
+        if (duty) {
+            const doc = db.names.find(n => n.name === duty.name);
+            document.getElementById('name-display').innerText = duty.name;
+            document.getElementById('phone-display').innerText = doc?.phone || "N/A";
+            document.getElementById('service-display').innerText = target;
+            document.getElementById('call-link').href = "tel:" + doc?.phone;
+            
+            if (doc?.phone) {
+                currentPhone = doc.phone;
+                document.getElementById('wa-btn').classList.remove('hidden');
+            }
+            document.getElementById('lookup-view').classList.remove('hidden');
+        } else {
+            alert("No duty found for " + todayStr);
+        }
+    }
+
+    async function triggerAction() {
+        let token = localStorage.getItem('gh_dispatch_token');
         if (!token) {
-            token = prompt("Enter GitHub Token (Stored locally on this device only):");
+            token = prompt("Enter Trigger Token (Metadata/Dispatch permissions only):");
             if (!token) return;
-            localStorage.setItem('gh_duty_token', token);
+            localStorage.setItem('gh_dispatch_token', token);
         }
 
         const btn = document.getElementById('push-btn');
-        btn.innerText = "UPLOADING...";
+        btn.innerText = "TRIGGERING...";
         btn.disabled = true;
 
+        const now = new Date();
+        if (now.getHours() < 8) now.setDate(now.getDate() - 1);
+        const todayStr = `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
+
+        const payload = {
+            date: todayStr,
+            specCode: document.getElementById('spec-select').value,
+            name: document.getElementById('name-list').value
+        };
+
         try {
-            const fileRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}`, {
-                headers: { 'Authorization': `token ${token}` }
-            });
-            
-            if (fileRes.status === 401) {
-                localStorage.removeItem('gh_duty_token');
-                throw new Error("Token expired or invalid. Please refresh and try again.");
-            }
-
-            const fileData = await fileRes.json();
-            const currentDb = JSON.parse(atob(fileData.content));
-
-            // Date Logic (It's 8:13 AM in Basra, so this will use 01/04/2026)
-            const now = new Date();
-            if (now.getHours() < 8) now.setDate(now.getDate() - 1);
-            const todayStr = `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
-            
-            const newEntry = {
-                date: todayStr,
-                specCode: document.getElementById('spec-select').value,
-                name: document.getElementById('name-list').value
-            };
-
-            const idx = currentDb.schedule.findIndex(s => s.date === todayStr && s.specCode === newEntry.specCode);
-            if (idx !== -1) currentDb.schedule[idx] = newEntry;
-            else currentDb.schedule.push(newEntry);
-
-            const pushRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}`, {
-                method: 'PUT',
-                headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+            const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/dispatches`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                },
                 body: JSON.stringify({
-                    message: `Duty Update 🇮🇶: ${newEntry.specCode}`,
-                    content: btoa(unescape(encodeURIComponent(JSON.stringify(currentDb, null, 2)))),
-                    sha: fileData.sha
+                    event_type: 'update_duty',
+                    client_payload: payload
                 })
             });
 
-            if (pushRes.ok) {
-                alert("Successfully Updated GitHub! 🇮🇶");
+            if (res.ok) {
+                alert("Action Sent! GitHub is now updating the file with your Secret. 🇮🇶");
                 location.reload();
             } else {
-                throw new Error("Push failed. Check repo permissions.");
+                localStorage.removeItem('gh_dispatch_token');
+                throw new Error("Trigger failed. Check token permissions.");
             }
         } catch (e) {
-            alert("Error: " + e.message);
+            alert(e.message);
         } finally {
-            btn.innerText = "PUSH TO GITHUB";
+            btn.innerText = "TRIGGER ACTION UPDATE";
             btn.disabled = false;
         }
     }
 
-    function openWhatsApp(phone) {
-        if (!phone) return;
-        let clean = phone.replace(/\D/g, ''); 
+    function handleWhatsApp() {
+        let clean = currentPhone.replace(/\D/g, ''); 
         if (clean.startsWith('07')) clean = '964' + clean.substring(1);
         window.open(`https://api.whatsapp.com/send?phone=${clean}`, '_blank');
     }
