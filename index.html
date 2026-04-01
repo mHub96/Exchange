@@ -7,273 +7,152 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #1a1c20;
-            --light: #2a2d34;
-            --shadow: #0d0e11;
-            --accent: #fbbf24;
-            --crimson: #e11d48;
-        }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; overflow-x: hidden; }
-
-        .embossed-card {
-            position: relative;
-            background: var(--bg);
-            border-radius: 3rem;
-            box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light);
-            z-index: 10;
-        }
-
-        .breathing { animation: frameBreath 3s infinite ease-in-out; }
-        @keyframes frameBreath {
-            0%, 100% { box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light), 0 0 0px transparent; }
-            50% { box-shadow: 15px 15px 45px var(--shadow), -8px -8px 30px var(--light), 0 0 50px rgba(251, 191, 36, 0.4); }
-        }
-
-        .tube-container { position: absolute; inset: 0; pointer-events: none; z-index: 20; width: 100%; height: 100%; }
-        #tube-bg { fill: none; stroke: rgba(251, 191, 36, 0.03); stroke-width: 4; }
-        #tube-fluid {
-            fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round;
-            filter: drop-shadow(0 0 12px var(--accent));
-            stroke-dasharray: 500 1200; stroke-dashoffset: 1700;
-            opacity: 0; transition: opacity 0.4s;
-        }
-
-        .loading-active #tube-fluid { opacity: 1; animation: seamlessFlow 2s linear infinite; }
-        @keyframes seamlessFlow { from { stroke-dashoffset: 1700; } to { stroke-dashoffset: 0; } }
-
-        .recessed-input {
-            background: var(--bg);
-            border-radius: 1.5rem;
-            box-shadow: inset 8px 8px 16px var(--shadow), inset -4px -4px 12px var(--light);
-        }
-
-        .embossed-btn {
-            background: var(--bg);
-            border-radius: 1.5rem;
-            box-shadow: 10px 10px 20px var(--shadow), -5px -5px 15px var(--light);
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            color: #64748b; font-weight: 800;
-        }
-
-        .fetched-active {
-            background: var(--accent) !important;
-            color: #1a1c20 !important;
-            box-shadow: 0 0 25px rgba(251, 191, 36, 0.6), -5px -5px 15px var(--light) !important;
-        }
-
-        .crimson-warning {
-            background: var(--crimson) !important;
-            color: white !important;
-            animation: shake 0.4s both;
-        }
-
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
-
+        :root { --bg: #1a1c20; --light: #2a2d34; --shadow: #0d0e11; --accent: #fbbf24; --crimson: #e11d48; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; overflow: hidden; }
+        .embossed-card { background: var(--bg); border-radius: 3rem; box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light); position: relative; z-index: 10; }
+        .recessed-input { background: var(--bg); border-radius: 1.5rem; box-shadow: inset 8px 8px 16px var(--shadow), inset -4px -4px 12px var(--light); }
+        .embossed-btn { background: var(--bg); border-radius: 1.5rem; box-shadow: 10px 10px 20px var(--shadow), -5px -5px 15px var(--light); transition: all 0.2s ease; color: #64748b; font-weight: 800; }
+        .fetched-active { background: var(--accent) !important; color: #1a1c20 !important; box-shadow: 0 0 25px rgba(251, 191, 36, 0.4) !important; }
+        .crimson-warning { background: var(--crimson) !important; color: white !important; }
         #shield { position: fixed; inset: 0; background: var(--bg); z-index: 100; transition: opacity 0.5s; }
         .hidden { display: none !important; }
-        
-        select.recessed-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23fbbf24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1.5rem center; background-size: 1rem; }
+        select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23fbbf24'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1rem; }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
-
     <div id="shield"></div>
 
-    <div id="main-card" class="w-full max-w-sm embossed-card breathing p-10 transition-all duration-700">
-        
-        <svg class="tube-container" viewBox="0 0 384 512" preserveAspectRatio="none">
-            <rect id="tube-bg" x="2" y="2" width="380" height="508" rx="48" />
-            <rect id="tube-fluid" x="2" y="2" width="380" height="508" rx="48" />
-        </svg>
-
+    <div id="main-card" class="w-full max-w-sm embossed-card p-10 transition-all duration-500">
         <div id="login-view">
             <div class="text-center mb-10">
                 <h1 class="text-white text-2xl font-extrabold tracking-tight">On-Call Portal</h1>
-                <p id="status-text" class="text-[0.6rem] mt-2 uppercase font-bold tracking-[0.3em] text-amber-500/60">Fetching JSON...</p>
+                <p id="status-text" class="text-[0.6rem] mt-2 uppercase font-bold tracking-widest text-amber-500/60">Loading JSON...</p>
             </div>
             <div class="space-y-8">
                 <div class="recessed-input p-2">
-                    <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" 
-                        class="w-full bg-transparent py-5 text-center text-4xl tracking-[1rem] text-amber-500 outline-none">
+                    <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" class="w-full bg-transparent py-5 text-center text-4xl tracking-[1rem] text-amber-500 outline-none">
                 </div>
-                <button id="entry-btn" onclick="handleEntry()" class="embossed-btn w-full py-6 tracking-widest uppercase">Authorize</button>
+                <button id="entry-btn" onclick="handleEntry()" class="embossed-btn w-full py-6 uppercase">Authorize</button>
             </div>
         </div>
 
         <div id="register-view" class="hidden space-y-6">
-            <div class="text-center mb-2">
-                <h2 class="text-white text-xl font-extrabold">Duty Update 🇮🇶</h2>
-            </div>
+            <h2 class="text-white text-center text-xl font-extrabold">Duty Update 🇮🇶</h2>
             <div class="recessed-input p-2">
-                <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none text-right" dir="rtl">
-                    <option value="" class="bg-[#1a1c20]">اختر القسم</option>
-                    <option value="NS" class="bg-[#1a1c20]">جراحة الجملة العصبية (NS)</option>
-                    <option value="CT" class="bg-[#1a1c20]">جراحة الصدر و الاوعية (CT)</option>
-                    <option value="GS" class="bg-[#1a1c20]">الجراحة العامة (GS)</option>
-                    <option value="US" class="bg-[#1a1c20]">جراحة المسالك البولية (US)</option>
-                    <option value="ENT" class="bg-[#1a1c20]">الاذن و الانف و الحنجرة (ENT)</option>
-                    <option value="H" class="bg-[#1a1c20]">القلبية (H)</option>
-                    <option value="D" class="bg-[#1a1c20]">الوفيات (D)</option>
+                <select id="spec-select" onchange="filterNames()" class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none text-right" dir="rtl">
+                    <option value="">اختر القسم</option>
+                    <option value="NS">جراحة الجملة العصبية (NS)</option>
+                    <option value="CT">جراحة الصدر و الاوعية (CT)</option>
+                    <option value="GS">الجراحة العامة (GS)</option>
+                    <option value="US">جراحة المسالك البولية (US)</option>
                 </select>
             </div>
-            <div id="name-section" class="hidden space-y-6">
+            <div id="name-container" class="hidden space-y-4">
                 <div class="recessed-input p-2">
                     <select id="name-list" class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none text-right" dir="rtl"></select>
                 </div>
-                <button id="submit-btn" onclick="submitRegistration()" class="embossed-btn w-full py-6 uppercase tracking-widest bg-amber-500/10 text-amber-500">
-                    UPDATE VIA GITHUB
-                </button>
+                <button onclick="copyUpdate()" class="embossed-btn w-full py-6 text-amber-500 bg-amber-500/5">COPY JSON UPDATE</button>
             </div>
         </div>
 
         <div id="lookup-view" class="hidden text-center">
-            <div class="recessed-input inline-block px-6 py-4 mb-6 max-w-full">
-                <span id="service-display" class="text-amber-500 text-lg font-black uppercase leading-tight">SERVICE</span>
+            <div class="recessed-input inline-block px-6 py-4 mb-6">
+                <span id="service-display" class="text-amber-500 text-lg font-black uppercase">SERVICE</span>
             </div>
             <h2 id="name-display" class="text-white text-3xl font-extrabold mb-1">...</h2>
             <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8">-</p>
-            
-            <div class="flex flex-row gap-2 w-full">
-                <a href="#" id="call-link" class="embossed-btn flex-1 py-5 px-1 uppercase tracking-tighter text-[0.7rem] sm:text-base">📞 SIM Call</a>
-                <a href="#" id="wa-link" class="hidden flex-1 py-5 px-1 bg-emerald-500/20 border border-emerald-500 text-emerald-500 rounded-[1.5rem] font-extrabold shadow-lg tracking-tighter text-[0.7rem] sm:text-base">💬 WhatsApp</a>
+            <div class="flex gap-2">
+                <a href="#" id="call-link" class="embossed-btn flex-1 py-5 uppercase text-xs">📞 Call</a>
+                <a href="#" id="wa-link" class="hidden flex-1 py-5 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-[1.5rem] font-bold text-xs">💬 WhatsApp</a>
             </div>
-            
-            <p id="time-stamp" class="text-[0.55rem] text-slate-600 mt-10 font-mono tracking-widest uppercase"></p>
         </div>
     </div>
 
 <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const mode = urlParams.get('mode');
-    const service = urlParams.get('service');
-    
-    // PURE GITHUB CONFIG
     const JSON_URL = "https://raw.githubusercontent.com/mHub96/s/main/data.json";
-
-    const specialtyNames = {
-        "NS": "جراحة الجملة العصبية", "CT": "جراحة الصدر و الاوعية الدموية",
-        "GS": "الجراحة العامة", "US": "جراحة المسالك البولية",
-        "ENT": "جراحة الاذن و الانف و الحنجرة", "H": "القلبية",
-        "D": "الوفيات", "ICU": "تخدير العناية المركزة",
-        "OP": "تخدير العمليات", "R": "الاشعة و السونار",
-        "ON": "الاورام", "PS": "جراحة التجميل"
-    };
-
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get('mode');
+    const service = params.get('service');
     let db = null;
-    let serverData = null;
 
+    // Handle Enter Key
     document.getElementById('pw').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleEntry(); });
 
-    window.onload = async function() {
-        setTimeout(() => { 
-            const s = document.getElementById('shield');
-            if(s) { s.style.opacity = '0'; setTimeout(() => s.remove(), 500); }
-        }, 300);
-
+    window.onload = async () => {
         const status = document.getElementById('status-text');
-        const entryBtn = document.getElementById('entry-btn');
-
-        // Logic for 8AM Shift Change 🇮🇶
-        const now = new Date();
-        if (now.getHours() < 8) now.setDate(now.getDate() - 1);
-        const dutyDateStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
-
         try {
-            // Fetch directly from GitHub (Fast!)
+            // Fetch directly from GitHub - no Google Scripts involved
             const res = await fetch(`${JSON_URL}?t=${Date.now()}`);
             db = await res.json();
-
-            if (mode === 'register') {
-                status.innerText = "ADMIN READY 🇮🇶";
-                entryBtn.classList.add('fetched-active');
-            } else if (service) {
-                // LOCAL LOOKUP (No API lag)
-                const duty = db.schedule.find(item => item.date === dutyDateStr && item.specCode === service);
-                if (duty) {
-                    const resident = db.names.find(n => n.name === duty.name);
-                    serverData = {
-                        pin: "1234",
-                        name: duty.name,
-                        serviceCode: service,
-                        phone: resident ? resident.phone : "No Number",
-                        wa: resident ? resident.phone : null,
-                        time: dutyDateStr
-                    };
-                    status.innerText = "LINK SECURE 🇮🇶";
-                    entryBtn.classList.add('fetched-active');
-                } else {
-                    status.innerText = "NO DUTY FOUND: " + dutyDateStr;
-                }
-            } else {
-                status.innerText = "INVALID QR LINK";
-            }
+            
+            status.innerText = mode === 'register' ? "ADMIN READY 🇮🇶" : "DATABASE SECURE 🇮🇶";
+            document.getElementById('entry-btn').classList.add('fetched-active');
+            document.getElementById('shield').style.opacity = '0';
         } catch (e) {
-            status.innerText = "OFFLINE/JSON ERROR";
+            status.innerText = "CONNECTION ERROR";
         }
     };
 
     function handleEntry() {
         const pin = document.getElementById('pw').value;
         const btn = document.getElementById('entry-btn');
-        const card = document.getElementById('main-card');
-        const correct = (serverData?.pin) || "1234";
-
-        btn.style.transform = "scale(0.95)";
-        setTimeout(() => { btn.style.transform = "scale(1)"; }, 100);
-
-        if (pin === correct) {
-            card.style.opacity = "0";
-            setTimeout(() => {
-                document.getElementById('login-view').classList.add('hidden');
-                if (mode === 'register') document.getElementById('register-view').classList.remove('hidden');
-                else { showLookupUI(); document.getElementById('lookup-view').classList.remove('hidden'); }
-                card.style.opacity = "1";
-            }, 600);
+        if (pin === "1234") { // Or use db.adminPin if you add it to JSON
+            document.getElementById('login-view').classList.add('hidden');
+            if (mode === 'register') document.getElementById('register-view').classList.remove('hidden');
+            else showLookup();
         } else {
             btn.classList.add('crimson-warning');
-            btn.innerText = "WRONG PIN";
-            setTimeout(() => { btn.classList.remove('crimson-warning'); btn.innerText = "Authorize"; }, 2000);
+            setTimeout(() => btn.classList.remove('crimson-warning'), 1000);
         }
     }
 
-    function toggleNameSection() {
-        const val = document.getElementById('spec-select').value;
+    function filterNames() {
+        const spec = document.getElementById('spec-select').value;
         const list = document.getElementById('name-list');
-        if (!val || !db) return;
+        const container = document.getElementById('name-container');
+        if (!spec) return container.classList.add('hidden');
         
-        // Use db.names from the JSON
-        let filtered = (val === "OP" || val === "ICU") ? db.names.filter(n => n.spec === "A") : (val === "D" ? db.names : db.names.filter(n => n.spec === val));
-        
-        list.innerHTML = `<option value="">-- اختر الاسم --</option>` + 
-                        filtered.map(n => `<option value="${n.name}" class="bg-[#1a1c20]">${n.name}</option>`).join('');
-        document.getElementById('name-section').classList.remove('hidden');
+        const filtered = db.names.filter(n => n.spec === spec);
+        list.innerHTML = filtered.map(n => `<option value="${n.name}">${n.name}</option>`).join('');
+        container.classList.remove('hidden');
     }
 
-    function showLookupUI() {
-        if (!serverData) return;
-        document.getElementById('service-display').innerText = specialtyNames[service] || service;
-        document.getElementById('name-display').innerText = serverData.name;
-        document.getElementById('phone-display').innerText = serverData.phone;
-        document.getElementById('time-stamp').innerText = "DUTY DATE: " + serverData.time;
-        document.getElementById('call-link').href = "tel:" + serverData.phone;
-        if (serverData.wa) {
-            const wa = document.getElementById('wa-link');
-            wa.classList.remove('hidden');
-            wa.href = "whatsapp://send?phone=" + serverData.wa;
+    function showLookup() {
+        const now = new Date();
+        if (now.getHours() < 8) now.setDate(now.getDate() - 1);
+        const today = `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
+        
+        const duty = db.schedule.find(s => s.date === today && s.specCode === service);
+        if (duty) {
+            const doc = db.names.find(n => n.name === duty.name);
+            document.getElementById('name-display').innerText = duty.name;
+            document.getElementById('phone-display').innerText = doc?.phone || "N/A";
+            document.getElementById('service-display').innerText = service;
+            document.getElementById('call-link').href = "tel:" + doc?.phone;
+            if (doc?.phone) {
+                const wa = document.getElementById('wa-link');
+                wa.classList.remove('hidden');
+                wa.href = `https://wa.me/${doc.phone.replace(/\+/g,'')}`;
+            }
+            document.getElementById('lookup-view').classList.remove('hidden');
+        } else {
+            alert("No duty found for " + today);
         }
     }
 
-    function submitRegistration() {
-        // NOTE: Since GitHub raw files are read-only for clients, 
-        // you would usually trigger a GitHub Action or use a small 
-        // helper worker to write back. 
-        alert("Registration Mode Active: Please manually update data.json in GitHub repo for now.");
+    function copyUpdate() {
+        const now = new Date();
+        if (now.getHours() < 8) now.setDate(now.getDate() - 1);
+        const today = `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
+        
+        const newEntry = {
+            date: today,
+            specCode: document.getElementById('spec-select').value,
+            name: document.getElementById('name-list').value
+        };
+        
+        navigator.clipboard.writeText(JSON.stringify(newEntry, null, 2));
+        alert("JSON Update Copied! Paste this into your GitHub data.json file.");
     }
 </script>
 </body>
