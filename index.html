@@ -16,7 +16,7 @@
         .crimson-warning { background: var(--crimson) !important; color: white !important; }
         #shield { position: fixed; inset: 0; background: var(--bg); z-index: 100; transition: opacity 0.5s; }
         .hidden { display: none !important; }
-        select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23fbbf24'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1rem; }
+        select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23fbbf24'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: left 1rem center; background-size: 1rem; }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
@@ -25,19 +25,19 @@
     <div id="main-card" class="w-full max-w-sm embossed-card p-10 transition-all duration-500">
         <div id="login-view">
             <div class="text-center mb-10">
-                <h1 class="text-white text-2xl font-extrabold tracking-tight">On-Call Portal</h1>
-                <p id="status-text" class="text-[0.6rem] mt-2 uppercase font-bold tracking-widest text-amber-500/60">Loading JSON...</p>
+                <h1 class="text-white text-2xl font-extrabold tracking-tight uppercase">Medical On-Call</h1>
+                <p id="status-text" class="text-[0.6rem] mt-2 uppercase font-bold tracking-widest text-amber-500/60 text-center">Connecting to GitHub Database...</p>
             </div>
             <div class="space-y-8">
                 <div class="recessed-input p-2">
                     <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" class="w-full bg-transparent py-5 text-center text-4xl tracking-[1rem] text-amber-500 outline-none">
                 </div>
-                <button id="entry-btn" onclick="handleEntry()" class="embossed-btn w-full py-6 uppercase">Authorize</button>
+                <button id="entry-btn" onclick="handleEntry()" class="embossed-btn w-full py-6 uppercase">Authorize 🇮🇶</button>
             </div>
         </div>
 
         <div id="register-view" class="hidden space-y-6">
-            <h2 class="text-white text-center text-xl font-extrabold">Duty Update 🇮🇶</h2>
+            <h2 class="text-white text-center text-xl font-extrabold uppercase">Duty Registration 🇮🇶</h2>
             <div class="recessed-input p-2">
                 <select id="spec-select" onchange="filterNames()" class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none text-right" dir="rtl">
                     <option value="">اختر القسم</option>
@@ -45,13 +45,14 @@
                     <option value="CT">جراحة الصدر و الاوعية (CT)</option>
                     <option value="GS">الجراحة العامة (GS)</option>
                     <option value="US">جراحة المسالك البولية (US)</option>
+                    <option value="A">التخدير (A)</option>
                 </select>
             </div>
             <div id="name-container" class="hidden space-y-4">
                 <div class="recessed-input p-2">
                     <select id="name-list" class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none text-right" dir="rtl"></select>
                 </div>
-                <button onclick="copyUpdate()" class="embossed-btn w-full py-6 text-amber-500 bg-amber-500/5">COPY JSON UPDATE</button>
+                <button onclick="copyUpdate()" class="embossed-btn w-full py-6 text-amber-500 bg-amber-500/5 uppercase">Copy JSON Snippet</button>
             </div>
         </div>
 
@@ -59,11 +60,14 @@
             <div class="recessed-input inline-block px-6 py-4 mb-6">
                 <span id="service-display" class="text-amber-500 text-lg font-black uppercase">SERVICE</span>
             </div>
+            <div id="service-arabic" class="text-slate-400 font-bold mb-4" dir="rtl"></div>
+            
             <h2 id="name-display" class="text-white text-3xl font-extrabold mb-1">...</h2>
             <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8">-</p>
-            <div class="flex gap-2">
-                <a href="#" id="call-link" class="embossed-btn flex-1 py-5 uppercase text-xs">📞 Call</a>
-                <a href="#" id="wa-link" class="hidden flex-1 py-5 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-[1.5rem] font-bold text-xs">💬 WhatsApp</a>
+            
+            <div class="flex flex-col gap-4">
+                <a href="#" id="call-link" class="embossed-btn py-5 uppercase text-sm tracking-widest text-white">📞 Call Resident</a>
+                <a href="#" id="wa-link" class="hidden py-5 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-[1.5rem] font-bold text-sm uppercase tracking-widest">💬 WhatsApp</a>
             </div>
         </div>
     </div>
@@ -71,35 +75,47 @@
 <script>
     const JSON_URL = "https://raw.githubusercontent.com/mHub96/s/main/data.json";
     const params = new URLSearchParams(window.location.search);
-    const mode = params.get('mode');
-    const service = params.get('service');
+    const mode = params.get('mode'); // 'register' or 'lookup'
+    const serviceParam = params.get('service'); // e.g., 'NS'
     let db = null;
 
-    // Handle Enter Key
+    // Translation Map
+    const depts = {
+        'NS': 'جراحة الجملة العصبية 🇮🇶',
+        'CT': 'جراحة الصدر و الاوعية 🇮🇶',
+        'GS': 'الجراحة العامة 🇮🇶',
+        'US': 'جراحة المسالك البولية 🇮🇶',
+        'A':  'التخدير 🇮🇶'
+    };
+
     document.getElementById('pw').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleEntry(); });
 
     window.onload = async () => {
         const status = document.getElementById('status-text');
         try {
-            // Fetch directly from GitHub - no Google Scripts involved
             const res = await fetch(`${JSON_URL}?t=${Date.now()}`);
             db = await res.json();
-            
-            status.innerText = mode === 'register' ? "ADMIN READY 🇮🇶" : "DATABASE SECURE 🇮🇶";
+            status.innerText = "READY 🇮🇶";
             document.getElementById('entry-btn').classList.add('fetched-active');
             document.getElementById('shield').style.opacity = '0';
+            setTimeout(() => document.getElementById('shield').classList.add('hidden'), 500);
         } catch (e) {
-            status.innerText = "CONNECTION ERROR";
+            status.innerText = "DATABASE OFFLINE";
+            status.classList.add('text-rose-500');
         }
     };
 
     function handleEntry() {
         const pin = document.getElementById('pw').value;
         const btn = document.getElementById('entry-btn');
-        if (pin === "1234") { // Or use db.adminPin if you add it to JSON
+        // Check PIN from JSON if available, otherwise default
+        if (pin === (db.adminPin || "1234")) {
             document.getElementById('login-view').classList.add('hidden');
-            if (mode === 'register') document.getElementById('register-view').classList.remove('hidden');
-            else showLookup();
+            if (mode === 'register') {
+                document.getElementById('register-view').classList.remove('hidden');
+            } else {
+                showLookup();
+            }
         } else {
             btn.classList.add('crimson-warning');
             setTimeout(() => btn.classList.remove('crimson-warning'), 1000);
@@ -119,40 +135,51 @@
 
     function showLookup() {
         const now = new Date();
+        // 8 AM Rule: If it is before 8:00 AM, we are still on yesterday's duty shift
         if (now.getHours() < 8) now.setDate(now.getDate() - 1);
-        const today = `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
         
-        const duty = db.schedule.find(s => s.date === today && s.specCode === service);
+        const day = String(now.getDate()).padStart(2, '0');
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = now.getFullYear();
+        const todayStr = `${day}/${month}/${year}`;
+        
+        const targetService = serviceParam || "NS"; // Default to NS if no param
+        const duty = db.schedule.find(s => s.date === todayStr && s.specCode === targetService);
+        
         if (duty) {
             const doc = db.names.find(n => n.name === duty.name);
             document.getElementById('name-display').innerText = duty.name;
-            document.getElementById('phone-display').innerText = doc?.phone || "N/A";
-            document.getElementById('service-display').innerText = service;
+            document.getElementById('phone-display').innerText = doc?.phone || "No Phone Registered";
+            document.getElementById('service-display').innerText = targetService;
+            document.getElementById('service-arabic').innerText = depts[targetService] || "";
             document.getElementById('call-link').href = "tel:" + doc?.phone;
+            
             if (doc?.phone) {
                 const wa = document.getElementById('wa-link');
                 wa.classList.remove('hidden');
-                wa.href = `https://wa.me/${doc.phone.replace(/\+/g,'')}`;
+                wa.href = `https://wa.me/${doc.phone.replace(/[^0-9]/g, '')}`;
             }
             document.getElementById('lookup-view').classList.remove('hidden');
         } else {
-            alert("No duty found for " + today);
+            alert("No duty record found for " + todayStr + " (" + targetService + ")");
         }
     }
 
     function copyUpdate() {
         const now = new Date();
         if (now.getHours() < 8) now.setDate(now.getDate() - 1);
-        const today = `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
+        const day = String(now.getDate()).padStart(2, '0');
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const todayStr = `${day}/${month}/${now.getFullYear()}`;
         
         const newEntry = {
-            date: today,
+            date: todayStr,
             specCode: document.getElementById('spec-select').value,
             name: document.getElementById('name-list').value
         };
         
         navigator.clipboard.writeText(JSON.stringify(newEntry, null, 2));
-        alert("JSON Update Copied! Paste this into your GitHub data.json file.");
+        alert("Entry copied! Update your GitHub data.json.");
     }
 </script>
 </body>
