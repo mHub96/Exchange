@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Duty Portal 🇮🇶</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
             --crimson: #e11d48;
             --btn-grey: #33373e;
         }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
 
         .embossed-card {
             position: relative;
@@ -58,11 +58,22 @@
         }
 
         .btn-register { background: var(--btn-grey); color: #e2e8f0; }
-        .fetched-active { background: var(--accent) !important; color: #1a1c20 !important; }
-        .crimson-warning { background: var(--crimson) !important; color: white !important; animation: shake 0.4s both; }
+
+        .fetched-active {
+            background: var(--accent) !important;
+            color: #1a1c20 !important;
+            box-shadow: 0 0 25px rgba(251, 191, 36, 0.6), -5px -5px 15px var(--light) !important;
+        }
+
+        .crimson-warning {
+            background: var(--crimson) !important;
+            color: white !important;
+            animation: shake 0.4s both;
+        }
 
         @keyframes shake {
             10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
             30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
             40%, 60% { transform: translate3d(4px, 0, 0); }
         }
@@ -72,11 +83,11 @@
         .hidden { display: none !important; }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
+<body class="p-4">
 
     <div id="shield"></div>
 
-    <div id="main-card" class="w-full max-w-sm embossed-card breathing p-10 transition-all duration-700">
+    <div id="main-card" class="w-full max-w-sm embossed-card breathing p-10 transition-all duration-700 mx-auto">
         
         <svg class="tube-container" viewBox="0 0 384 512" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
             <rect id="tube-bg" x="2" y="2" width="380" height="508" rx="48" />
@@ -101,31 +112,32 @@
             <h2 class="text-white text-xl font-extrabold text-center mb-2">Duty Update 🇮🇶</h2>
             <div class="recessed-input p-2">
                 <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none appearance-none">
-                    <option value="" class="bg-[#1a1c20]">SELECT SPECIALTY</option>
-                    <option value="NS" class="bg-[#1a1c20]">Neurosurgery</option>
-                    <option value="CT" class="bg-[#1a1c20]">Cardiothoracic</option>
-                    <option value="GS" class="bg-[#1a1c20]">General Surgery</option>
-                    <option value="US" class="bg-[#1a1c20]">Urosurgery</option>
-                    <option value="ENT" class="bg-[#1a1c20]">ENT</option>
-                    <option value="H" class="bg-[#1a1c20]">Cardiology</option>
-                    <option value="A" class="bg-[#1a1c20]">Anesthesia</option>
-                    <option value="R" class="bg-[#1a1c20]">Radiology</option>
-                    <option value="ON" class="bg-[#1a1c20]">Oncology</option>
+                    <option value="" class="bg-[#1a1c20]">SPECIALTY</option>
+                    <option value="NS" class="bg-[#1a1c20]">جراحة الجملة العصبية</option>
+                    <option value="CT" class="bg-[#1a1c20]">جراحة القلب والصدر</option>
+                    <option value="GS" class="bg-[#1a1c20]">الجراحة العامة</option>
+                    <option value="US" class="bg-[#1a1c20]">جراحة المسالك البولية</option>
+                    <option value="ENT" class="bg-[#1a1c20]">الأنف والأذن والحنجرة</option>
+                    <option value="H" class="bg-[#1a1c20]">أمراض القلب</option>
+                    <option value="A" class="bg-[#1a1c20]">التخدير والعناية المركزة</option>
+                    <option value="R" class="bg-[#1a1c20]">الأشعة التشخيصية</option>
+                    <option value="ON" class="bg-[#1a1c20]">الأورام</option>
+                    <option value="D" class="bg-[#1a1c20]">شهادات الوفاة</option>
                 </select>
             </div>
             <div id="name-section" class="hidden space-y-6">
                 <div class="recessed-input p-2">
-                    <select id="name-list" class="w-full bg-transparent p-4 text-slate-300 outline-none font-bold"></select>
+                    <select id="name-list" class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none"></select>
                 </div>
                 <button id="submit-btn" onclick="submitRegistration()" class="embossed-btn btn-register w-full py-6 uppercase tracking-widest">
-                    CONFIRM DUTY
+                    UPDATE
                 </button>
             </div>
         </div>
 
         <div id="lookup-view" class="hidden text-center">
             <div class="recessed-input inline-block px-10 py-3 mb-6">
-                <span id="service-display" class="text-amber-500 text-[0.8rem] font-black tracking-[0.2em] uppercase">SERVICE</span>
+                <span id="service-display" class="text-amber-500 text-base font-black uppercase">SERVICE</span>
             </div>
             <h2 id="name-display" class="text-white text-3xl font-extrabold mb-1">...</h2>
             <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8 phone-display">-</p>
@@ -134,7 +146,7 @@
                 <a href="#" id="call-link" class="embossed-btn flex-1 py-5 px-1 uppercase tracking-tighter whitespace-nowrap text-[0.75rem] sm:text-base text-center">
                     📞 SIM Call
                 </a>
-                <a href="#" id="wa-link" class="hidden flex-1 py-5 px-1 bg-emerald-500/20 border border-emerald-500 text-emerald-500 rounded-[1.5rem] font-extrabold shadow-lg tracking-tighter whitespace-nowrap text-[0.75rem] sm:text-base text-center">
+                <a href="#" id="wa-link" onclick="openWhatsApp(event)" class="hidden flex-1 py-5 px-1 bg-emerald-500/20 border border-emerald-500 text-emerald-500 rounded-[1.5rem] font-extrabold shadow-lg tracking-tighter whitespace-nowrap text-[0.75rem] sm:text-base text-center">
                     💬 WhatsApp
                 </a>
             </div>
@@ -143,15 +155,29 @@
     </div>
 
 <script>
-    // GitHub Configuration 🇮🇶
+    // GitHub API Configuration
     const CONFIG = { user: "mHub96", repo: "s", path: "data.json" };
     
-    // Token Split Protocol (Prevents Auto-Revocation)
+    // Token Split Protocol 🇮🇶
     const _pt1 = "ghp_dAUtsFhTH";
     const _pt2 = "a2KeJQOsxsC";
     const _pt3 = "Ct1vz8z1Z63";
     const _pt4 = "Am sjS"; 
     const GH_TOKEN = (_pt1 + _pt2 + _pt3 + _pt4).replace(/\s/g, '');
+
+    // Arabic Specialty Mapping
+    const arabicSpecs = {
+        "NS": "جراحة الجملة العصبية",
+        "CT": "جراحة القلب والصدر",
+        "GS": "الجراحة العامة",
+        "US": "جراحة المسالك البولية",
+        "ENT": "الأنف والأذن والحنجرة",
+        "H": "أمراض القلب",
+        "A": "التخدير والعناية المركزة",
+        "R": "الأشعة التشخيصية",
+        "ON": "الأورام",
+        "D": "شهادات الوفاة"
+    };
 
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
@@ -162,7 +188,6 @@
     let todayResident = null;
 
     window.onload = async function() {
-        // Loading Shield Fade-out
         setTimeout(() => { 
             const s = document.getElementById('shield');
             if(s) { s.style.opacity = '0'; setTimeout(() => s.remove(), 500); }
@@ -185,11 +210,8 @@
                 fileSha = data.sha;
                 db = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\s/g, '')))));
                 
-                console.log("Database Loaded:", db); // Debug check
-
                 if (service) {
                     const todayStr = getTodayStr();
-                    // Match against 'specCode' in your JSON
                     todayResident = db.schedule.find(s => s.specCode === service && s.date === todayStr);
                 }
 
@@ -197,7 +219,6 @@
                 entryBtn.classList.add('fetched-active');
             } else {
                 status.innerText = "Connection Failed";
-                status.style.color = "#e11d48";
             }
         } catch (e) {
             status.innerText = "Offline Mode";
@@ -215,7 +236,6 @@
         const btn = document.getElementById('entry-btn');
         const card = document.getElementById('main-card');
 
-        // Logic Check: Switch views on correct PIN
         if (pin === "1234") { 
             card.style.opacity = "0";
             setTimeout(() => {
@@ -230,7 +250,7 @@
             }, 600);
         } else {
             btn.classList.add('crimson-warning');
-            btn.innerText = "WRONG PIN";
+            btn.innerText = "INCORRECT PIN";
             setTimeout(() => { btn.classList.remove('crimson-warning'); btn.innerText = "Authorize"; }, 2000);
         }
     }
@@ -240,7 +260,7 @@
         const phoneDisp = document.getElementById('phone-display');
         const servDisp = document.getElementById('service-display');
         
-        servDisp.innerText = service || "Unknown";
+        servDisp.innerText = arabicSpecs[service] || service || "Service Unknown";
 
         if (todayResident) {
             const info = db.names.find(n => n.name === todayResident.name);
@@ -248,18 +268,30 @@
             
             nameDisp.innerText = todayResident.name;
             phoneDisp.innerText = phone;
+            document.getElementById('time-stamp').innerText = todayResident.timestamp ? "Updated: " + todayResident.timestamp : "";
 
             if (phone && phone !== "No Number") {
-                const clean = phone.replace(/\D/g, '');
                 document.getElementById('call-link').href = "tel:" + phone;
-                const wa = document.getElementById('wa-link');
-                wa.classList.remove('hidden');
-                wa.href = `https://wa.me/${clean}`;
+                document.getElementById('wa-link').classList.remove('hidden');
             }
         } else {
             nameDisp.innerText = "No Duty Found";
             phoneDisp.innerText = getTodayStr();
             document.getElementById('call-link').classList.add('hidden');
+        }
+    }
+
+    // UPDATED: Robust WhatsApp API Link 🇮🇶
+    function openWhatsApp(e) {
+        e.preventDefault();
+        const info = db.names.find(n => n.name === todayResident.name);
+        if (info && info.phone) {
+            // Pulling the string directly without formatting manipulation
+            const rawNumber = info.phone;
+            // Full API structure as requested
+            window.open(`https://api.whatsapp.com/send?phone=${rawNumber}`, '_blank');
+        } else {
+            alert("Number not found in registry.");
         }
     }
 
@@ -284,7 +316,7 @@
         if (!name || !spec) return;
 
         card.classList.add('loading-active');
-        btn.innerText = "SYNCING...";
+        btn.innerText = "UPLOADING...";
 
         const entry = {
             date: getTodayStr(),
@@ -313,16 +345,16 @@
                 const result = await res.json();
                 fileSha = result.content.sha;
                 btn.classList.add('fetched-active');
-                btn.innerText = "UPDATED ✅";
+                btn.innerText = "SUCCESS ✅";
             } else { throw new Error(); }
         } catch (e) {
-            btn.innerText = "FAILED ❌";
+            btn.innerText = "RETRY ❌";
         }
 
         setTimeout(() => {
             card.classList.remove('loading-active');
             btn.classList.remove('fetched-active');
-            btn.innerText = "CONFIRM DUTY";
+            btn.innerText = "UPDATE";
         }, 2000);
     }
 </script>
