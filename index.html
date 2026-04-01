@@ -78,6 +78,8 @@
 
         #shield { position: fixed; inset: 0; background: var(--bg); z-index: 100; transition: opacity 0.5s; }
         .hidden { display: none !important; }
+        
+        select.recessed-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23fbbf24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1.5rem center; background-size: 1rem; }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
@@ -105,6 +107,33 @@
             </div>
         </div>
 
+        <div id="register-view" class="hidden space-y-6">
+            <div class="text-center mb-2">
+                <h2 class="text-white text-xl font-extrabold">Duty Update 🇮🇶</h2>
+            </div>
+            <div class="recessed-input p-2">
+                <select id="spec-select" onchange="toggleNameSection()" class="recessed-input w-full bg-transparent p-4 text-slate-300 font-bold outline-none text-right" dir="rtl">
+                    <option value="" class="bg-[#1a1c20]">اختر القسم</option>
+                    <option value="NS" class="bg-[#1a1c20]">جراحة الجملة العصبية (NS)</option>
+                    <option value="CT" class="bg-[#1a1c20]">جراحة الصدر و الاوعية (CT)</option>
+                    <option value="GS" class="bg-[#1a1c20]">الجراحة العامة (GS)</option>
+                    <option value="US" class="bg-[#1a1c20]">جراحة المسالك البولية (US)</option>
+                    <option value="ENT" class="bg-[#1a1c20]">الاذن و الانف و الحنجرة (ENT)</option>
+                    <option value="H" class="bg-[#1a1c20]">القلبية (H)</option>
+                    <option value="D" class="bg-[#1a1c20]">الوفيات (D)</option>
+                </select>
+            </div>
+            <div id="name-section" class="hidden space-y-6">
+                <div class="recessed-input p-2">
+                    <select id="name-list" class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none text-right" dir="rtl"></select>
+                </div>
+                <button id="submit-btn" onclick="submitRegistration()" class="embossed-btn w-full py-6 uppercase tracking-widest bg-amber-500/10 text-amber-500">
+                    UPDATE DUTY
+                </button>
+            </div>
+            <button onclick="location.reload()" class="w-full text-[0.6rem] text-slate-600 font-bold uppercase tracking-widest mt-4">← Back</button>
+        </div>
+
         <div id="lookup-view" class="hidden text-center">
             <div class="recessed-input inline-block px-6 py-4 mb-6 max-w-full">
                 <span id="service-display" class="text-amber-500 text-lg font-black uppercase leading-tight">SERVICE</span>
@@ -122,39 +151,30 @@
             </div>
             
             <p id="time-stamp" class="text-[0.55rem] text-slate-600 mt-10 font-mono tracking-widest uppercase"></p>
+            <button onclick="location.reload()" class="mt-6 text-[0.6rem] font-bold text-slate-600 uppercase tracking-widest block mx-auto opacity-50">← Logout</button>
         </div>
     </div>
 
 <script>
     const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
     const service = urlParams.get('service');
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
     
     const specialtyNames = {
-        "NS": "جراحة الجملة العصبية",
-        "CT": "جراحة الصدر و الاوعية الدموية",
-        "GS": "الجراحة العامة",
-        "US": "جراحة المسالك البولية",
-        "ENT": "جراحة الاذن و الانف و الحنجرة",
-        "H": "القلبية",
-        "D": "الوفيات",
-        "ICU": "تخدير العناية المركزة",
-        "OP": "تخدير العمليات",
-        "R": "الاشعة و السونار",
-        "ON": "الاورام",
-        "PS": "جراحة التجميل"
+        "NS": "جراحة الجملة العصبية", "CT": "جراحة الصدر و الاوعية الدموية",
+        "GS": "الجراحة العامة", "US": "جراحة المسالك البولية",
+        "ENT": "جراحة الاذن و الانف و الحنجرة", "H": "القلبية",
+        "D": "الوفيات", "ICU": "تخدير العناية المركزة",
+        "OP": "تخدير العمليات", "R": "الاشعة و السونار",
+        "ON": "الاورام", "PS": "جراحة التجميل"
     };
 
-    const CONFIG = {
-        user: "mHub96",
-        repo: "s",
-        path: "data.json",
-        rawUrl: "https://raw.githubusercontent.com/mHub96/s/main/data.json"
-    };
-
-    let db = null;
     let serverData = null;
+    let allResidents = [];
 
     window.onload = async function() {
+        // Clear shield
         setTimeout(() => { 
             const s = document.getElementById('shield');
             if(s) { s.style.opacity = '0'; setTimeout(() => s.remove(), 500); }
@@ -165,34 +185,22 @@
 
         // Logic for 8AM Shift Change 🇮🇶
         const now = new Date();
-        const currentHour = now.getHours();
-        
-        // If before 8AM, we reference "yesterday's" duty resident
-        if (currentHour < 8) {
-            now.setDate(now.getDate() - 1);
-        }
-
+        if (now.getHours() < 8) now.setDate(now.getDate() - 1);
         const dutyDateStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
 
         try {
-            const res = await fetch(`${CONFIG.rawUrl}?t=${Date.now()}`);
-            db = await res.json();
-
-            if (service) {
-                const duty = db.schedule.find(item => item.date === dutyDateStr && item.specCode === service);
-                
-                if (duty) {
-                    const resident = db.names.find(n => n.name === duty.name);
-                    serverData = {
-                        pin: "1234", 
-                        name: duty.name,
-                        serviceCode: service,
-                        phone: resident ? resident.phone : "No Number",
-                        wa: resident ? resident.phone : null,
-                        time: dutyDateStr
-                    };
+            if (mode === 'register') {
+                const res = await fetch(`${scriptUrl}?action=getNames`);
+                allResidents = (await res.json()).sort((a,b) => a[0].localeCompare(b[0], 'ar'));
+                status.innerText = "ADMIN READY 🇮🇶";
+                entryBtn.classList.add('fetched-active');
+            } else if (service) {
+                const res = await fetch(`${scriptUrl}?service=${encodeURIComponent(service)}&date=${dutyDateStr}&json=true&t=${Date.now()}`);
+                serverData = await res.json();
+                if (serverData && serverData.resident) {
                     status.innerText = "LINK SECURE 🇮🇶";
                     entryBtn.classList.add('fetched-active');
+                    serverData.time = dutyDateStr; // For UI display
                 } else {
                     status.innerText = "NO DUTY FOUND";
                     status.style.color = "#e11d48";
@@ -207,40 +215,93 @@
 
     function handleEntry() {
         const pin = document.getElementById('pw').value;
-        const btn = document.getElementById('entry-btn');
+        const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
         const card = document.getElementById('main-card');
 
-        if (pin === (serverData?.pin || "1234")) {
+        if (pin === correct) {
             card.style.opacity = "0";
             setTimeout(() => {
                 document.getElementById('login-view').classList.add('hidden');
-                showLookupUI();
-                document.getElementById('lookup-view').classList.remove('hidden');
+                if (mode === 'register') {
+                    document.getElementById('register-view').classList.remove('hidden');
+                } else {
+                    showLookupUI();
+                    document.getElementById('lookup-view').classList.remove('hidden');
+                }
                 card.style.opacity = "1";
             }, 600);
         } else {
+            const btn = document.getElementById('entry-btn');
             btn.classList.add('crimson-warning');
             btn.innerText = "WRONG PIN";
             setTimeout(() => { btn.classList.remove('crimson-warning'); btn.innerText = "Authorize"; }, 2000);
         }
     }
 
-    function showLookupUI() {
-        if (!serverData) return;
+    function toggleNameSection() {
+        const val = document.getElementById('spec-select').value;
+        const list = document.getElementById('name-list');
+        if (!val) { document.getElementById('name-section').classList.add('hidden'); return; }
         
-        const arabicTitle = specialtyNames[serverData.serviceCode] || serverData.serviceCode;
+        let filtered = (val === "OP" || val === "ICU") ? allResidents.filter(r => r[1] === "A") : (val === "D" ? allResidents : allResidents.filter(r => r[1] === val));
+        
+        list.innerHTML = `<option value="">-- اختر الاسم --</option>` + 
+                        filtered.map(r => `<option value="${r[0]}" class="bg-[#1a1c20]">${r[0]}</option>`).join('');
+        document.getElementById('name-section').classList.remove('hidden');
+    }
+
+    async function submitRegistration() {
+        const btn = document.getElementById('submit-btn');
+        const doctorName = document.getElementById('name-list').value;
+        const card = document.getElementById('main-card');
+
+        if (!doctorName) {
+            btn.classList.add('crimson-warning');
+            btn.innerText = "SELECT NAME!";
+            setTimeout(() => { btn.classList.remove('crimson-warning'); btn.innerText = "UPDATE DUTY"; }, 2000);
+            return;
+        }
+
+        card.classList.add('loading-active');
+        btn.innerText = "UPLOADING...";
+
+        try {
+            await fetch(scriptUrl, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                body: JSON.stringify({
+                    action: "submitDuty",
+                    specialty: document.getElementById('spec-select').value,
+                    name: doctorName
+                })
+            });
+            card.classList.remove('loading-active');
+            btn.innerText = "SUCCESS ✅";
+            btn.style.background = "#10b981";
+            btn.style.color = "white";
+            setTimeout(() => { location.reload(); }, 1500);
+        } catch (e) { 
+            card.classList.remove('loading-active');
+            btn.innerText = "RETRY"; 
+        }
+    }
+
+    function showLookupUI() {
+        if (!serverData || !serverData.resident) return;
+        const res = serverData.resident;
+        const arabicTitle = specialtyNames[service] || res.serviceArabic || service;
         
         document.getElementById('service-display').innerText = arabicTitle;
-        document.getElementById('name-display').innerText = serverData.name;
-        document.getElementById('phone-display').innerText = serverData.phone;
+        document.getElementById('name-display').innerText = res.name;
+        document.getElementById('phone-display').innerText = res.phone;
         document.getElementById('time-stamp').innerText = "DUTY DATE: " + serverData.time;
         
-        document.getElementById('call-link').href = "tel:" + serverData.phone;
+        document.getElementById('call-link').href = "tel:" + res.phone.toString().replace(/\s/g, '');
         
-        if (serverData.wa) {
+        if (serverData.whatsappDigits) {
             const wa = document.getElementById('wa-link');
             wa.classList.remove('hidden');
-            wa.href = "whatsapp://send?phone=" + serverData.wa;
+            wa.href = "whatsapp://send?phone=" + serverData.whatsappDigits;
         }
     }
 </script>
