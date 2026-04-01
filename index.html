@@ -1,3 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Duty Portal 🇮🇶</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #1a1c20; --light: #2a2d34; --shadow: #0d0e11; --accent: #fbbf24; --crimson: #e11d48; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #94a3b8; margin: 0; overflow: hidden; }
+        .embossed-card { background: var(--bg); border-radius: 3rem; box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light); position: relative; }
+        .recessed-input { background: var(--bg); border-radius: 1.5rem; box-shadow: inset 8px 8px 16px var(--shadow), inset -4px -4px 12px var(--light); }
+        .embossed-btn { background: var(--bg); border-radius: 1.5rem; box-shadow: 10px 10px 20px var(--shadow), -5px -5px 15px var(--light); transition: all 0.2s ease; color: #64748b; font-weight: 800; }
+        .fetched-active { background: var(--accent) !important; color: #1a1c20 !important; box-shadow: 0 0 25px rgba(251, 191, 36, 0.4) !important; }
+        .crimson-warning { background: var(--crimson) !important; color: white !important; }
+        select { background-color: var(--bg) !important; color: #d1d5db !important; appearance: none; }
+        option { background-color: var(--bg); color: #d1d5db; }
+        #shield { position: fixed; inset: 0; background: var(--bg); z-index: 100; transition: opacity 0.5s; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div id="shield"></div>
+
+    <div id="main-card" class="w-full max-w-sm embossed-card p-10">
+        <div id="login-view">
+            <div class="text-center mb-10">
+                <h1 class="text-white text-2xl font-extrabold uppercase tracking-tight">On-Call Portal 🇮🇶</h1>
+                <p id="status-text" class="text-[0.6rem] mt-2 uppercase font-bold tracking-widest text-amber-500/60">Connecting...</p>
+            </div>
+            <div class="space-y-8">
+                <div class="recessed-input p-2">
+                    <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" class="w-full bg-transparent py-5 text-center text-4xl tracking-[1rem] text-amber-500 outline-none">
+                </div>
+                <button id="entry-btn" onclick="handleEntry()" class="embossed-btn w-full py-6 uppercase">Authorize</button>
+            </div>
+        </div>
+
+        <div id="register-view" class="hidden space-y-6">
+            <h2 class="text-white text-center text-xl font-extrabold">Duty Update 🇮🇶</h2>
+            <div class="recessed-input p-2">
+                <select id="spec-select" onchange="filterNames()" class="w-full bg-transparent p-4 font-bold outline-none text-right" dir="rtl">
+                    <option value="">Loading Specs...</option>
+                </select>
+            </div>
+            <div id="name-container" class="hidden space-y-4">
+                <div class="recessed-input p-2">
+                    <select id="name-list" class="w-full bg-transparent p-4 font-bold outline-none text-right" dir="rtl"></select>
+                </div>
+                <button id="push-btn" onclick="pushToGitHub()" class="embossed-btn w-full py-6 text-amber-500 bg-amber-500/5 uppercase">Push to GitHub</button>
+            </div>
+        </div>
+
+        <div id="lookup-view" class="hidden text-center">
+            <div class="recessed-input inline-block px-6 py-4 mb-6">
+                <span id="service-display" class="text-amber-500 text-lg font-black uppercase">SERVICE</span>
+            </div>
+            <h2 id="name-display" class="text-white text-3xl font-extrabold mb-1">...</h2>
+            <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8">-</p>
+            <div class="flex gap-2">
+                <a href="#" id="call-link" class="embossed-btn flex-1 py-5 uppercase text-xs">📞 Call</a>
+                <a href="#" id="wa-link" target="_blank" class="hidden flex-1 py-5 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-[1.5rem] font-bold text-xs text-center">💬 WhatsApp</a>
+            </div>
+        </div>
+    </div>
 <script>
     const GITHUB_REPO = "mHub96/s";
     const FILE_PATH = "data.json";
@@ -100,3 +166,5 @@
         window.open(`https://api.whatsapp.com/send?phone=${clean}`, '_blank');
     }
 </script>
+</body>
+</html>
