@@ -106,8 +106,8 @@
         </div>
 
         <div id="lookup-view" class="hidden text-center">
-            <div class="recessed-input inline-block px-10 py-3 mb-6">
-                <span id="service-display" class="text-amber-500 text-base font-black uppercase">SERVICE</span>
+            <div class="recessed-input inline-block px-6 py-4 mb-6 max-w-full">
+                <span id="service-display" class="text-amber-500 text-lg font-black uppercase leading-tight">SERVICE</span>
             </div>
             <h2 id="name-display" class="text-white text-3xl font-extrabold mb-1">...</h2>
             <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8">-</p>
@@ -129,7 +129,6 @@
     const urlParams = new URLSearchParams(window.location.search);
     const service = urlParams.get('service');
     
-    // Arabic Specialty Mapping 🇮🇶
     const specialtyNames = {
         "NS": "جراحة الجملة العصبية",
         "CT": "جراحة الصدر و الاوعية الدموية",
@@ -142,7 +141,7 @@
         "OP": "تخدير العمليات",
         "R": "الاشعة و السونار",
         "ON": "الاورام",
-        "PS": "جراحة التجميل"
+        "PS": "جراحة التجمil"
     };
 
     const CONFIG = {
@@ -176,16 +175,14 @@
                 
                 if (duty) {
                     const resident = db.names.find(n => n.name === duty.name);
-                    
                     serverData = {
                         pin: "1234", 
                         name: duty.name,
-                        serviceCode: service, // Keep the code for logic
+                        serviceCode: service,
                         phone: resident ? resident.phone : "No Number",
-                        wa: resident && resident.phone ? resident.phone.replace(/\D/g,'') : null,
+                        wa: resident ? resident.phone : null,
                         time: todayStr
                     };
-
                     status.innerText = "LINK SECURE 🇮🇶";
                     entryBtn.classList.add('fetched-active');
                 } else {
@@ -223,7 +220,6 @@
     function showLookupUI() {
         if (!serverData) return;
         
-        // Translate the code to the full Arabic name 🇮🇶
         const arabicTitle = specialtyNames[serverData.serviceCode] || serverData.serviceCode;
         
         document.getElementById('service-display').innerText = arabicTitle;
@@ -236,7 +232,8 @@
         if (serverData.wa) {
             const wa = document.getElementById('wa-link');
             wa.classList.remove('hidden');
-            wa.href = "https://wa.me/" + (serverData.wa.startsWith('964') ? serverData.wa : '964' + serverData.wa.replace(/^0/, ''));
+            // Using your exact requested format for the direct deep link
+            wa.href = "whatsapp://send?phone=" + serverData.wa;
         }
     }
 </script>
