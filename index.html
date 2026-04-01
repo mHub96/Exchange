@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -58,29 +58,15 @@
         }
 
         .btn-register { background: var(--btn-grey); color: #e2e8f0; }
-
-        .fetched-active {
-            background: var(--accent) !important;
-            color: #1a1c20 !important;
-            box-shadow: 0 0 25px rgba(251, 191, 36, 0.6), -5px -5px 15px var(--light) !important;
-        }
-
-        .crimson-warning {
-            background: var(--crimson) !important;
-            color: white !important;
-            animation: shake 0.4s both;
-        }
-
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
+        .fetched-active { background: var(--accent) !important; color: #1a1c20 !important; box-shadow: 0 0 25px rgba(251, 191, 36, 0.6) !important; }
 
         #shield { position: fixed; inset: 0; background: var(--bg); z-index: 100; transition: opacity 0.5s; }
         .phone-display { direction: ltr !important; unicode-bidi: isolate; display: inline-block; }
         .hidden { display: none !important; }
+
+        /* RTL & Alignment */
+        .centered-select { direction: ltr; text-align: center; text-align-last: center; }
+        .rtl-input { direction: rtl; text-align: right; }
 
         .suggestions-box {
             max-height: 200px;
@@ -93,9 +79,6 @@
         }
         .suggestion-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid var(--light); text-align: right; }
         .suggestion-item:hover, .suggestion-item.selected { background: var(--light); color: var(--accent); }
-        
-        /* RTL specialty dropdown alignment */
-        .rtl-select { direction: rtl; text-align: right; }
     </style>
 </head>
 <body class="p-4">
@@ -104,7 +87,7 @@
 
     <div id="main-card" class="w-full max-w-sm embossed-card breathing p-10 transition-all duration-700 mx-auto">
         
-        <svg class="tube-container" viewBox="0 0 384 512" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <svg class="tube-container" viewBox="0 0 384 512" preserveAspectRatio="none">
             <rect id="tube-bg" x="2" y="2" width="380" height="508" rx="48" />
             <rect id="tube-fluid" x="2" y="2" width="380" height="508" rx="48" />
         </svg>
@@ -147,11 +130,10 @@
                 <div class="relative">
                     <div class="recessed-input p-2">
                         <input type="text" id="name-input" autocomplete="off" placeholder="اسم المقيم..." 
-                            style="direction: rtl;"
                             oninput="filterNames()" 
                             onkeydown="handleNameKey(event)"
                             onblur="setTimeout(() => document.getElementById('suggestions').classList.add('hidden'), 200)"
-                            class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none text-right">
+                            class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none rtl-input">
                     </div>
                     <div id="suggestions" class="suggestions-box hidden absolute w-full z-50"></div>
                 </div>
@@ -169,14 +151,10 @@
             <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8 phone-display">-</p>
             
             <div class="flex flex-row gap-2 w-full">
-                <a href="#" id="call-link" class="embossed-btn flex-1 py-5 px-1 uppercase tracking-tighter whitespace-nowrap text-[0.75rem] sm:text-base text-center">
-                    📞 SIM Call
-                </a>
-                <a href="#" id="wa-link" onclick="openWhatsApp(event)" class="hidden flex-1 py-5 px-1 bg-emerald-500/20 border border-emerald-500 text-emerald-500 rounded-[1.5rem] font-extrabold shadow-lg tracking-tighter whitespace-nowrap text-[0.75rem] sm:text-base text-center">
-                    💬 WhatsApp
-                </a>
+                <a href="#" id="call-link" class="embossed-btn flex-1 py-5 px-1 uppercase tracking-tighter whitespace-nowrap text-[0.75rem] sm:text-base text-center">📞 SIM Call</a>
+                <a href="#" id="wa-link" onclick="openWhatsApp(event)" class="hidden flex-1 py-5 px-1 bg-emerald-500/20 border border-emerald-500 text-emerald-500 rounded-[1.5rem] font-extrabold shadow-lg tracking-tighter whitespace-nowrap text-[0.75rem] sm:text-base text-center">💬 WhatsApp</a>
             </div>
-            <p id="time-stamp" class="text-[0.55rem] text-slate-600 mt-10 font-mono tracking-widest uppercase"></p>
+            <p id="time-stamp" class="text-[0.65rem] text-slate-500 mt-10 font-bold tracking-wider uppercase"></p>
         </div>
     </div>
 
@@ -240,11 +218,8 @@
     }
 
     function handleEntry() {
-        const pwField = document.getElementById('pw');
-        const pin = pwField.value;
-        const btn = document.getElementById('entry-btn');
+        const pin = document.getElementById('pw').value;
         const card = document.getElementById('main-card');
-
         if (pin === "1234") { 
             card.style.opacity = "0";
             setTimeout(() => {
@@ -253,31 +228,19 @@
                 else { showLookupUI(); document.getElementById('lookup-view').classList.remove('hidden'); }
                 card.style.opacity = "1";
             }, 600);
-        } else {
-            pwField.value = "";
-            btn.classList.add('crimson-warning');
-            btn.innerText = "INCORRECT PIN";
-            setTimeout(() => { btn.classList.remove('crimson-warning'); btn.innerText = "Authorize"; }, 2000);
         }
     }
 
     function prepNameInput() {
         const spec = document.getElementById('spec-select').value;
-        const nameInput = document.getElementById('name-input');
         const section = document.getElementById('name-section');
-        
         if (!spec) { section.classList.add('hidden'); return; }
-        
-        nameInput.value = "";
+        document.getElementById('name-input').value = "";
         section.classList.remove('hidden');
-
-        if (spec === "ICU" || spec === "OP") {
-            currentPool = db.names.filter(n => n.spec === "A" && n.spec !== "RESERVE");
-        } else if (spec === "D") {
-            currentPool = db.names.filter(n => n.spec !== "RESERVE");
-        } else {
-            currentPool = db.names.filter(n => n.spec === spec && n.spec !== "RESERVE");
-        }
+        
+        if (spec === "ICU" || spec === "OP") currentPool = db.names.filter(n => n.spec === "A" && n.spec !== "RESERVE");
+        else if (spec === "D") currentPool = db.names.filter(n => n.spec !== "RESERVE");
+        else currentPool = db.names.filter(n => n.spec === spec && n.spec !== "RESERVE");
     }
 
     function filterNames() {
@@ -285,60 +248,33 @@
         const val = nameInput.value.trim().toLowerCase().replace(/^د\.?\s*/, '');
         const box = document.getElementById('suggestions');
         
-        // RELEVANT FIX: Hide list if input is empty (even on focus)
-        if (!val) {
-            box.classList.add('hidden');
-            return;
-        }
+        if (!val) { box.classList.add('hidden'); return; }
 
-        const matches = currentPool.filter(n => {
-            const cleanName = n.name.toLowerCase().replace(/^د\.?\s*/, '');
-            return cleanName.includes(val);
-        }).sort((a, b) => {
-            const cleanA = a.name.toLowerCase().replace(/^د\.?\s*/, '');
-            const cleanB = b.name.toLowerCase().replace(/^د\.?\s*/, '');
-            if (cleanA.startsWith(val) && !cleanB.startsWith(val)) return -1;
-            if (!cleanA.startsWith(val) && cleanB.startsWith(val)) return 1;
-            return 0;
-        });
+        const matches = currentPool.filter(n => n.name.toLowerCase().replace(/^د\.?\s*/, '').includes(val))
+            .sort((a, b) => {
+                const aC = a.name.toLowerCase().replace(/^د\.?\s*/, '');
+                const bC = b.name.toLowerCase().replace(/^د\.?\s*/, '');
+                return aC.startsWith(val) && !bC.startsWith(val) ? -1 : 1;
+            });
 
         if (matches.length > 0) {
-            box.innerHTML = matches.map((m, i) => 
-                `<div class="suggestion-item" onclick="selectSuggestion('${m.name}')">${m.name}</div>`
-            ).join('');
+            box.innerHTML = matches.map(m => `<div class="suggestion-item" onclick="selectSuggestion('${m.name}')">${m.name}</div>`).join('');
             box.classList.remove('hidden');
             selectedIndex = -1;
-        } else {
-            box.classList.add('hidden');
-        }
+        } else box.classList.add('hidden');
     }
 
     function handleNameKey(e) {
         const box = document.getElementById('suggestions');
         const items = box.querySelectorAll('.suggestion-item');
-
-        if (e.key === "ArrowDown") {
-            selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
-            updateSelection(items);
-        } else if (e.key === "ArrowUp") {
-            selectedIndex = Math.max(selectedIndex - 1, 0);
-            updateSelection(items);
-        } else if (e.key === "Enter") {
-            if (selectedIndex > -1) {
-                selectSuggestion(items[selectedIndex].innerText);
-            } else if (items.length > 0) {
-                selectSuggestion(items[0].innerText);
-            } else {
-                submitRegistration();
-            }
+        if (e.key === "ArrowDown") selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+        else if (e.key === "ArrowUp") selectedIndex = Math.max(selectedIndex - 1, 0);
+        else if (e.key === "Enter") {
+            if (selectedIndex > -1) selectSuggestion(items[selectedIndex].innerText);
+            else if (items.length > 0) selectSuggestion(items[0].innerText);
+            else submitRegistration();
         }
-    }
-
-    function updateSelection(items) {
-        items.forEach((item, i) => {
-            item.classList.toggle('selected', i === selectedIndex);
-            if(i === selectedIndex) item.scrollIntoView({ block: 'nearest' });
-        });
+        items.forEach((item, i) => item.classList.toggle('selected', i === selectedIndex));
     }
 
     function selectSuggestion(name) {
@@ -350,19 +286,14 @@
         const btn = document.getElementById('submit-btn');
         const nameInput = document.getElementById('name-input');
         const specSelect = document.getElementById('spec-select');
-        const name = nameInput.value;
-        const spec = specSelect.value;
         const card = document.getElementById('main-card');
-
-        if (!name || !spec) return;
+        if (!nameInput.value || !specSelect.value) return;
 
         card.classList.add('loading-active');
         btn.innerText = "UPLOADING...";
 
         const entry = {
-            date: getTodayStr(),
-            specCode: spec,
-            name: name,
+            date: getTodayStr(), specCode: specSelect.value, name: nameInput.value,
             timestamp: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
         };
 
@@ -370,22 +301,15 @@
         db.schedule.push(entry);
 
         try {
-            const body = {
-                message: `Duty Update: ${spec} - ${name} 🇮🇶`,
-                content: btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2)))),
-                sha: fileSha
-            };
-
+            const body = { message: `Update: ${entry.name}`, content: btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2)))), sha: fileSha };
             const res = await fetch(`https://api.github.com/repos/${CONFIG.user}/${CONFIG.repo}/contents/${CONFIG.path}`, {
-                method: "PUT",
-                headers: { "Authorization": `token ${GH_TOKEN}` },
-                body: JSON.stringify(body)
+                method: "PUT", headers: { "Authorization": `token ${GH_TOKEN}` }, body: JSON.stringify(body)
             });
 
             if (res.ok) {
                 const result = await res.json();
                 fileSha = result.content.sha;
-                card.classList.remove('loading-active');
+                card.classList.remove('loading-active'); // Instant removal
                 btn.classList.add('fetched-active');
                 btn.innerText = "SUCCESS ✅";
 
@@ -397,56 +321,31 @@
                     btn.innerText = "UPDATE";
                 }, 2000);
             }
-        } catch (e) { 
-            card.classList.remove('loading-active');
-            btn.innerText = "RETRY ❌"; 
-        }
+        } catch (e) { card.classList.remove('loading-active'); btn.innerText = "RETRY ❌"; }
     }
 
-function showLookupUI() {
-        const nameDisp = document.getElementById('name-display');
-        const phoneDisp = document.getElementById('phone-display');
-        const servDisp = document.getElementById('service-display');
-        const timeStampDisp = document.getElementById('time-stamp');
-        
-        servDisp.innerText = arabicSpecs[service] || service || "Service Unknown";
-
-        // Generate the "Link Visit" timestamp
+    function showLookupUI() {
         const now = new Date();
-        const day = String(now.getDate()).padStart(2, '0');
-        const month = now.toLocaleString('en-GB', { month: 'short' });
-        const year = now.getFullYear();
-        const time = now.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase();
+        const timestamp = `${String(now.getDate()).padStart(2, '0')}-${now.toLocaleString('en-GB', { month: 'short' })}-${now.getFullYear()} | ${now.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase()}`;
         
-        const visitTimestamp = `${day}-${month}-${year} | ${time}`;
+        document.getElementById('service-display').innerText = arabicSpecs[service] || service;
+        document.getElementById('time-stamp').innerText = timestamp;
 
         if (todayResident) {
             const info = db.names.find(n => n.name === todayResident.name);
-            const phone = info ? info.phone : "No Number";
-            nameDisp.innerText = todayResident.name;
-            phoneDisp.innerText = phone;
-            
-            // Display the visit timestamp at the bottom
-            timeStampDisp.innerText = visitTimestamp;
-
-            if (phone && phone !== "No Number") {
-                document.getElementById('call-link').href = "tel:" + phone;
+            document.getElementById('name-display').innerText = todayResident.name;
+            document.getElementById('phone-display').innerText = info ? info.phone : "No Number";
+            if (info?.phone) {
+                document.getElementById('call-link').href = "tel:" + info.phone;
                 document.getElementById('wa-link').classList.remove('hidden');
             }
-        } else {
-            nameDisp.innerText = "No Duty Found";
-            phoneDisp.innerText = getTodayStr();
-            timeStampDisp.innerText = visitTimestamp;
-            document.getElementById('call-link').classList.add('hidden');
-        }
+        } else document.getElementById('name-display').innerText = "No Duty Found";
     }
 
     function openWhatsApp(e) {
         e.preventDefault();
         const info = db.names.find(n => n.name === todayResident.name);
-        if (info && info.phone) {
-            window.location.href = "whatsapp://send?phone=" + info.phone;
-        }
+        if (info?.phone) window.location.href = "whatsapp://send?phone=" + info.phone;
     }
 </script>
 </body>
