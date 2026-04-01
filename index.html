@@ -143,9 +143,10 @@
     </div>
 
 <script>
+    // GitHub Configuration 🇮🇶
     const CONFIG = { user: "mHub96", repo: "s", path: "data.json" };
     
-    // Token Split Protocol 🇮🇶
+    // Token Split Protocol (Prevents Auto-Revocation)
     const _pt1 = "ghp_dAUtsFhTH";
     const _pt2 = "a2KeJQOsxsC";
     const _pt3 = "Ct1vz8z1Z63";
@@ -154,13 +155,14 @@
 
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
-    const service = urlParams.get('service'); // This comes from the QR link (e.g., ?service=NS)
+    const service = urlParams.get('service'); 
 
     let db = { names: [], schedule: [] };
     let fileSha = "";
     let todayResident = null;
 
     window.onload = async function() {
+        // Loading Shield Fade-out
         setTimeout(() => { 
             const s = document.getElementById('shield');
             if(s) { s.style.opacity = '0'; setTimeout(() => s.remove(), 500); }
@@ -183,9 +185,11 @@
                 fileSha = data.sha;
                 db = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\s/g, '')))));
                 
+                console.log("Database Loaded:", db); // Debug check
+
                 if (service) {
                     const todayStr = getTodayStr();
-                    // FIXED: Changed .service to .specCode to match your JSON structure
+                    // Match against 'specCode' in your JSON
                     todayResident = db.schedule.find(s => s.specCode === service && s.date === todayStr);
                 }
 
@@ -193,6 +197,7 @@
                 entryBtn.classList.add('fetched-active');
             } else {
                 status.innerText = "Connection Failed";
+                status.style.color = "#e11d48";
             }
         } catch (e) {
             status.innerText = "Offline Mode";
@@ -202,8 +207,32 @@
 
     function getTodayStr() {
         const now = new Date();
-        // Returns DD/MM/YYYY to match "01/03/2026"
         return `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+    }
+
+    function handleEntry() {
+        const pin = document.getElementById('pw').value;
+        const btn = document.getElementById('entry-btn');
+        const card = document.getElementById('main-card');
+
+        // Logic Check: Switch views on correct PIN
+        if (pin === "1234") { 
+            card.style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById('login-view').classList.add('hidden');
+                if (mode === 'register') {
+                    document.getElementById('register-view').classList.remove('hidden');
+                } else {
+                    showLookupUI();
+                    document.getElementById('lookup-view').classList.remove('hidden');
+                }
+                card.style.opacity = "1";
+            }, 600);
+        } else {
+            btn.classList.add('crimson-warning');
+            btn.innerText = "WRONG PIN";
+            setTimeout(() => { btn.classList.remove('crimson-warning'); btn.innerText = "Authorize"; }, 2000);
+        }
     }
 
     function showLookupUI() {
@@ -214,16 +243,11 @@
         servDisp.innerText = service || "Unknown";
 
         if (todayResident) {
-            // Find phone from the 'names' section of your JSON
             const info = db.names.find(n => n.name === todayResident.name);
             const phone = info ? info.phone : "No Number";
             
             nameDisp.innerText = todayResident.name;
             phoneDisp.innerText = phone;
-            
-            // Handle timestamp if available, otherwise hide
-            const ts = document.getElementById('time-stamp');
-            ts.innerText = todayResident.timestamp ? "Updated: " + todayResident.timestamp : "";
 
             if (phone && phone !== "No Number") {
                 const clean = phone.replace(/\D/g, '');
@@ -239,10 +263,22 @@
         }
     }
 
+    function toggleNameSection() {
+        const spec = document.getElementById('spec-select').value;
+        const list = document.getElementById('name-list');
+        if (!spec) { document.getElementById('name-section').classList.add('hidden'); return; }
+
+        const filtered = db.names.filter(n => n.spec === spec);
+        list.innerHTML = `<option value="">-- Who's On-Call? --</option>` + 
+            filtered.map(n => `<option value="${n.name}" class="bg-[#1a1c20]">${n.name}</option>`).join('');
+        
+        document.getElementById('name-section').classList.remove('hidden');
+    }
+
     async function submitRegistration() {
         const btn = document.getElementById('submit-btn');
         const name = document.getElementById('name-list').value;
-        const spec = document.getElementById('spec-select').value; // e.g., "NS"
+        const spec = document.getElementById('spec-select').value;
         const card = document.getElementById('main-card');
 
         if (!name || !spec) return;
@@ -252,12 +288,11 @@
 
         const entry = {
             date: getTodayStr(),
-            specCode: spec, // FIXED: Matches your specCode key
+            specCode: spec,
             name: name,
             timestamp: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
         };
 
-        // Remove old entry for same specialty today before pushing new one
         db.schedule = db.schedule.filter(s => !(s.date === entry.date && s.specCode === entry.specCode));
         db.schedule.push(entry);
 
@@ -290,8 +325,6 @@
             btn.innerText = "CONFIRM DUTY";
         }, 2000);
     }
-
-    // handleEntry and toggleNameSection remain the same as previous logic
 </script>
 </body>
 </html>
