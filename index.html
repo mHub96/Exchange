@@ -403,18 +403,32 @@
         }
     }
 
-    function showLookupUI() {
+function showLookupUI() {
         const nameDisp = document.getElementById('name-display');
         const phoneDisp = document.getElementById('phone-display');
         const servDisp = document.getElementById('service-display');
+        const timeStampDisp = document.getElementById('time-stamp');
+        
         servDisp.innerText = arabicSpecs[service] || service || "Service Unknown";
+
+        // Generate the "Link Visit" timestamp
+        const now = new Date();
+        const day = String(now.getDate()).padStart(2, '0');
+        const month = now.toLocaleString('en-GB', { month: 'short' });
+        const year = now.getFullYear();
+        const time = now.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase();
+        
+        const visitTimestamp = `${day}-${month}-${year} | ${time}`;
 
         if (todayResident) {
             const info = db.names.find(n => n.name === todayResident.name);
             const phone = info ? info.phone : "No Number";
             nameDisp.innerText = todayResident.name;
             phoneDisp.innerText = phone;
-            document.getElementById('time-stamp').innerText = todayResident.timestamp ? "Updated: " + todayResident.timestamp : "";
+            
+            // Display the visit timestamp at the bottom
+            timeStampDisp.innerText = visitTimestamp;
+
             if (phone && phone !== "No Number") {
                 document.getElementById('call-link').href = "tel:" + phone;
                 document.getElementById('wa-link').classList.remove('hidden');
@@ -422,6 +436,7 @@
         } else {
             nameDisp.innerText = "No Duty Found";
             phoneDisp.innerText = getTodayStr();
+            timeStampDisp.innerText = visitTimestamp;
             document.getElementById('call-link').classList.add('hidden');
         }
     }
