@@ -82,7 +82,6 @@
         .phone-display { direction: ltr !important; unicode-bidi: isolate; display: inline-block; }
         .hidden { display: none !important; }
 
-        /* Suggestion List Styles */
         .suggestions-box {
             max-height: 200px;
             overflow-y: auto;
@@ -90,8 +89,9 @@
             margin-top: 0.5rem;
             background: var(--bg);
             box-shadow: 10px 10px 20px var(--shadow);
+            direction: rtl;
         }
-        .suggestion-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid var(--light); }
+        .suggestion-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid var(--light); text-align: right; }
         .suggestion-item:hover, .suggestion-item.selected { background: var(--light); color: var(--accent); }
     </style>
 </head>
@@ -130,7 +130,7 @@
                     <option value="CT" class="bg-[#1a1c20]">جراحة القلب والصدر</option>
                     <option value="GS" class="bg-[#1a1c20]">الجراحة العامة</option>
                     <option value="US" class="bg-[#1a1c20]">جراحة المسالك البولية</option>
-                    <option value="ENT" class="bg-[#1a1c20]">الأنف والأذن والحنجرة</option>
+                    <option value="ENT" class="bg-[#1a1c20]">جراحة الأذن و الانف و الحنجرة</option>
                     <option value="H" class="bg-[#1a1c20]">أمراض القلب</option>
                     <option value="ICU" class="bg-[#1a1c20]">تخدير العناية المركزة</option>
                     <option value="OP" class="bg-[#1a1c20]">تخدير العمليات</option>
@@ -143,9 +143,13 @@
             <div id="name-section" class="hidden space-y-4">
                 <div class="relative">
                     <div class="recessed-input p-2">
-                        <input type="text" id="name-input" autocomplete="off" placeholder="Resident Name..." 
-                            oninput="filterNames()" onkeydown="handleNameKey(event)"
-                            class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none">
+                        <input type="text" id="name-input" autocomplete="off" placeholder="اسم المقيم..." 
+                            style="direction: rtl;"
+                            oninput="filterNames()" 
+                            onkeydown="handleNameKey(event)"
+                            onfocus="filterNames()"
+                            onblur="setTimeout(() => document.getElementById('suggestions').classList.add('hidden'), 200)"
+                            class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none text-right">
                     </div>
                     <div id="suggestions" class="suggestions-box hidden absolute w-full z-50"></div>
                 </div>
@@ -184,7 +188,7 @@
 
     const arabicSpecs = {
         "NS": "جراحة الجملة العصبية", "CT": "جراحة القلب والصدر", "GS": "الجراحة العامة",
-        "US": "جراحة المسالك البولية", "ENT": "الأنف والأذن والحنجرة", "H": "أمراض القلب",
+        "US": "جراحة المسالك البولية", "ENT": "جراحة الاذن و الانف و الحنجرة", "H": "أمراض القلب",
         "ICU": "تخدير العناية المركزة", "OP": "تخدير العمليات", "R": "الأشعة و السونار",
         "ON": "الأورام", "D": "الوفيات"
     };
@@ -248,7 +252,7 @@
                 card.style.opacity = "1";
             }, 600);
         } else {
-            pwField.value = ""; // Clear on fail
+            pwField.value = "";
             btn.classList.add('crimson-warning');
             btn.innerText = "INCORRECT PIN";
             setTimeout(() => { btn.classList.remove('crimson-warning'); btn.innerText = "Authorize"; }, 2000);
@@ -265,7 +269,6 @@
         nameInput.value = "";
         section.classList.remove('hidden');
 
-        // Logic for pool selection
         if (spec === "ICU" || spec === "OP") {
             currentPool = db.names.filter(n => n.spec === "A" && n.spec !== "RESERVE");
         } else if (spec === "D") {
@@ -276,14 +279,30 @@
     }
 
     function filterNames() {
-        const val = document.getElementById('name-input').value.toLowerCase().replace(/^د\.?\s*/, '');
+        const nameInput = document.getElementById('name-input');
+        const val = nameInput.value.trim().toLowerCase().replace(/^د\.?\s*/, '');
         const box = document.getElementById('suggestions');
         
-        if (!val) { box.classList.add('hidden'); return; }
+        // If empty, show full pool or hide
+        if (!val) {
+            box.innerHTML = currentPool.slice(0, 10).map(m => 
+                `<div class="suggestion-item" onclick="selectSuggestion('${m.name}')">${m.name}</div>`
+            ).join('');
+            box.classList.remove('hidden');
+            return;
+        }
 
-        const matches = currentPool.filter(n => 
-            n.name.toLowerCase().replace(/^د\.?\s*/, '').includes(val)
-        );
+        // Improved filtering: Starts with first, then includes
+        const matches = currentPool.filter(n => {
+            const cleanName = n.name.toLowerCase().replace(/^د\.?\s*/, '');
+            return cleanName.includes(val);
+        }).sort((a, b) => {
+            const cleanA = a.name.toLowerCase().replace(/^د\.?\s*/, '');
+            const cleanB = b.name.toLowerCase().replace(/^د\.?\s*/, '');
+            if (cleanA.startsWith(val) && !cleanB.startsWith(val)) return -1;
+            if (!cleanA.startsWith(val) && cleanB.startsWith(val)) return 1;
+            return 0;
+        });
 
         if (matches.length > 0) {
             box.innerHTML = matches.map((m, i) => 
@@ -310,9 +329,9 @@
             if (selectedIndex > -1) {
                 selectSuggestion(items[selectedIndex].innerText);
             } else if (items.length > 0) {
-                selectSuggestion(items[0].innerText); // Select first if nothing highlighted
+                selectSuggestion(items[0].innerText);
             } else {
-                submitRegistration(); // Direct submit if pool is small/exact
+                submitRegistration();
             }
         }
     }
@@ -331,8 +350,10 @@
 
     async function submitRegistration() {
         const btn = document.getElementById('submit-btn');
-        const name = document.getElementById('name-input').value;
-        const spec = document.getElementById('spec-select').value;
+        const nameInput = document.getElementById('name-input');
+        const specSelect = document.getElementById('spec-select');
+        const name = nameInput.value;
+        const spec = specSelect.value;
         const card = document.getElementById('main-card');
 
         if (!name || !spec) return;
@@ -342,7 +363,7 @@
 
         const entry = {
             date: getTodayStr(),
-            specCode: spec, // Logic handled: ICU, OP, or D saved as selected
+            specCode: spec,
             name: name,
             timestamp: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
         };
@@ -366,16 +387,26 @@
             if (res.ok) {
                 const result = await res.json();
                 fileSha = result.content.sha;
+                
+                // CIRCLE DISAPPEARS IMMEDIATELY
+                card.classList.remove('loading-active');
+                
                 btn.classList.add('fetched-active');
                 btn.innerText = "SUCCESS ✅";
-            }
-        } catch (e) { btn.innerText = "RETRY ❌"; }
 
-        setTimeout(() => {
+                // RESET FORM
+                setTimeout(() => {
+                    specSelect.value = "";
+                    nameInput.value = "";
+                    document.getElementById('name-section').classList.add('hidden');
+                    btn.classList.remove('fetched-active');
+                    btn.innerText = "UPDATE";
+                }, 2000);
+            }
+        } catch (e) { 
             card.classList.remove('loading-active');
-            btn.classList.remove('fetched-active');
-            btn.innerText = "UPDATE";
-        }, 2000);
+            btn.innerText = "RETRY ❌"; 
+        }
     }
 
     function showLookupUI() {
