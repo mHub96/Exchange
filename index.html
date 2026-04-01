@@ -141,7 +141,7 @@
         "OP": "تخدير العمليات",
         "R": "الاشعة و السونار",
         "ON": "الاورام",
-        "PS": "جراحة التجمil"
+        "PS": "جراحة التجميل"
     };
 
     const CONFIG = {
@@ -163,15 +163,23 @@
         const status = document.getElementById('status-text');
         const entryBtn = document.getElementById('entry-btn');
 
+        // Logic for 8AM Shift Change 🇮🇶
         const now = new Date();
-        const todayStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+        const currentHour = now.getHours();
+        
+        // If before 8AM, we reference "yesterday's" duty resident
+        if (currentHour < 8) {
+            now.setDate(now.getDate() - 1);
+        }
+
+        const dutyDateStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
 
         try {
             const res = await fetch(`${CONFIG.rawUrl}?t=${Date.now()}`);
             db = await res.json();
 
             if (service) {
-                const duty = db.schedule.find(item => item.date === todayStr && item.specCode === service);
+                const duty = db.schedule.find(item => item.date === dutyDateStr && item.specCode === service);
                 
                 if (duty) {
                     const resident = db.names.find(n => n.name === duty.name);
@@ -181,7 +189,7 @@
                         serviceCode: service,
                         phone: resident ? resident.phone : "No Number",
                         wa: resident ? resident.phone : null,
-                        time: todayStr
+                        time: dutyDateStr
                     };
                     status.innerText = "LINK SECURE 🇮🇶";
                     entryBtn.classList.add('fetched-active');
@@ -225,14 +233,13 @@
         document.getElementById('service-display').innerText = arabicTitle;
         document.getElementById('name-display').innerText = serverData.name;
         document.getElementById('phone-display').innerText = serverData.phone;
-        document.getElementById('time-stamp').innerText = "DATE: " + serverData.time;
+        document.getElementById('time-stamp').innerText = "DUTY DATE: " + serverData.time;
         
         document.getElementById('call-link').href = "tel:" + serverData.phone;
         
         if (serverData.wa) {
             const wa = document.getElementById('wa-link');
             wa.classList.remove('hidden');
-            // Using your exact requested format for the direct deep link
             wa.href = "whatsapp://send?phone=" + serverData.wa;
         }
     }
