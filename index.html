@@ -5,102 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Duty Portal 🇮🇶</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #030712;
-            --glass: rgba(17, 24, 39, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --accent: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.4);
-            --crimson: #f43f5e;
-            --input-bg: rgba(0, 0, 0, 0.4);
+            --bg: #041e18;
+            --card-bg: linear-gradient(145deg, #05261f, #031712);
+            --gold: #d4af37;
+            --gold-glow: rgba(212, 175, 55, 0.3);
+            --gold-border: rgba(212, 175, 55, 0.2);
+            --crimson: #991b1b;
+            --input-bg: #02110e;
+            --text-light: #f4f4f0;
         }
         
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background: var(--bg); 
-            color: #f1f5f9; 
+            color: var(--text-light); 
             margin: 0; 
             min-height: 100vh; 
             display: flex; 
             align-items: center; 
             justify-content: center;
             position: relative;
-            overflow-x: hidden;
         }
 
-        /* Decorative Background Aurora Glows */
-        body::before, body::after {
+        /* Subtle ambient vignette lighting */
+        body::before {
             content: '';
             position: absolute;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            filter: blur(120px);
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 30%, #010a08 90%);
             z-index: 1;
             pointer-events: none;
         }
-        body::before { top: 15%; left: 10%; background: rgba(56, 189, 248, 0.15); }
-        body::after { bottom: 15%; right: 10%; background: rgba(99, 102, 241, 0.15); }
 
-        .glass-card {
+        .regal-card {
             position: relative;
-            background: var(--glass);
-            border-radius: 2rem;
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            background: var(--card-bg);
+            border-radius: 1.5rem;
+            border: 1px solid var(--gold-border);
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(212, 175, 55, 0.1);
             z-index: 10;
         }
 
         .breathing { animation: frameBreath 4s infinite ease-in-out; }
         @keyframes frameBreath {
-            0%, 100% { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1); }
-            50% { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.2), 0 0 30px rgba(54, 163, 248, 0.2); }
+            0%, 100% { box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8), border-color: var(--gold-border); }
+            50% { box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8), border-color: rgba(212, 175, 55, 0.5), 0 0 20px var(--gold-glow); }
         }
 
         .tube-container { position: absolute; inset: -1px; pointer-events: none; z-index: 20; width: calc(100% + 2px); height: calc(100% + 2px); }
         #tube-bg { fill: none; stroke: transparent; stroke-width: 2; }
         #tube-fluid {
-            fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round;
-            filter: drop-shadow(0 0 8px var(--accent));
-            stroke-dasharray: 80 800; stroke-dashoffset: 880;
+            fill: none; stroke: var(--gold); stroke-width: 2; stroke-linecap: round;
+            filter: drop-shadow(0 0 6px var(--gold));
+            stroke-dasharray: 120 700; stroke-dashoffset: 820;
             opacity: 0; transition: opacity 0.4s;
         }
 
-        .loading-active #tube-fluid { opacity: 1; animation: seamlessFlow 1.5s linear infinite; }
-        @keyframes seamlessFlow { from { stroke-dashoffset: 880; } to { stroke-dashoffset: 0; } }
+        .loading-active #tube-fluid { opacity: 1; animation: seamlessFlow 1.8s linear infinite; }
+        @keyframes seamlessFlow { from { stroke-dashoffset: 820; } to { stroke-dashoffset: 0; } }
 
-        .cyber-input {
+        .regal-heading {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.05em;
+        }
+
+        .regal-input {
             background: var(--input-bg);
-            border-radius: 1.25rem;
-            border: 1px solid var(--glass-border);
+            border-radius: 0.75rem;
+            border: 1px solid var(--gold-border);
             transition: all 0.3s ease;
         }
-        .cyber-input:focus-within {
-            border-color: var(--accent);
-            box-shadow: 0 0 15px var(--accent-glow);
+        .regal-input:focus-within {
+            border-color: var(--gold);
+            box-shadow: 0 0 12px var(--gold-glow);
         }
 
-        .cyber-btn {
-            background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.07));
-            border-radius: 1.25rem;
-            border: 1px solid var(--glass-border);
+        .regal-btn {
+            background: linear-gradient(135deg, #111827, #030712);
+            border-radius: 0.75rem;
+            border: 1px solid var(--gold-border);
+            color: var(--gold);
+            font-weight: 800;
+            letter-spacing: 0.1em;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            color: #94a3b8; font-weight: 800;
         }
-        .cyber-btn:hover {
-            border-color: rgba(255,255,255,0.2);
-            color: #fff;
+        .regal-btn:hover {
+            background: linear-gradient(135deg, #1f2937, #111827);
+            border-color: var(--gold);
+            box-shadow: 0 0 15px var(--gold-glow);
         }
 
         .fetched-active { 
-            background: linear-gradient(135deg, #0284c7, #0369a1) !important; 
-            color: #ffffff !important; 
-            border-color: var(--accent) !important;
-            box-shadow: 0 0 25px rgba(56, 189, 248, 0.4) !important; 
+            background: linear-gradient(135deg, #78350f, #451a03) !important; 
+            color: var(--gold) !important; 
+            border-color: var(--gold) !important;
+            box-shadow: 0 0 20px var(--gold-glow) !important; 
         }
 
         #shield { position: fixed; inset: 0; background: var(--bg); z-index: 100; transition: opacity 0.5s; }
@@ -113,65 +115,66 @@
         .suggestions-box {
             max-height: 200px;
             overflow-y: auto;
-            border-radius: 1rem;
+            border-radius: 0.75rem;
             margin-top: 0.5rem;
-            background: #111827;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            background: #02110e;
+            border: 1px solid var(--gold-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             direction: rtl;
         }
-        .suggestion-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: right; color: #94a3b8; }
-        .suggestion-item:hover, .suggestion-item.selected { background: rgba(56, 189, 248, 0.1); color: var(--accent); }
+        .suggestion-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid rgba(212,175,55,0.1); text-align: right; color: #a3a3a3; }
+        .suggestion-item:hover, .suggestion-item.selected { background: rgba(212, 175, 55, 0.15); color: var(--gold); }
     </style>
 </head>
 <body class="p-4">
 
     <div id="shield"></div>
 
-    <div id="main-card" class="w-full max-w-sm glass-card breathing p-10 transition-all duration-700 mx-auto">
+    <div id="main-card" class="w-full max-w-sm regal-card breathing p-10 transition-all duration-700 mx-auto">
         
         <svg class="tube-container" viewBox="0 0 384 512" preserveAspectRatio="none">
-            <rect id="tube-bg" x="1" y="1" width="382" height="510" rx="32" />
-            <rect id="tube-fluid" x="1" y="1" width="382" height="510" rx="32" />
+            <rect id="tube-bg" x="1" y="1" width="382" height="510" rx="24" />
+            <rect id="tube-fluid" x="1" y="1" width="382" height="510" rx="24" />
         </svg>
 
         <div id="login-view">
             <div class="text-center mb-10">
-                <h1 class="text-white text-2xl font-extrabold tracking-tight">On-Call Portal</h1>
-                <p id="status-text" class="text-[0.6rem] mt-2 uppercase font-bold tracking-[0.3em] text-sky-400/60">Connecting Database...</p>
+                <h1 class="text-white text-2xl font-extrabold regal-heading">ON-CALL PORTAL</h1>
+                <div class="w-12 h-[1px] bg-amber-500/30 mx-auto mt-3"></div>
+                <p id="status-text" class="text-[0.6rem] mt-3 uppercase font-bold tracking-[0.3em] text-amber-500/60">Connecting Database...</p>
             </div>
             <div class="space-y-8">
-                <div class="cyber-input p-2">
+                <div class="regal-input p-2">
                     <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" 
                         onkeydown="if(event.key==='Enter') handleEntry()"
-                        class="w-full bg-transparent py-5 text-center text-4xl tracking-[1rem] text-sky-400 outline-none">
+                        class="w-full bg-transparent py-5 text-center text-4xl tracking-[1rem] text-amber-500 outline-none">
                 </div>
-                <button id="entry-btn" onclick="handleEntry()" class="cyber-btn w-full py-6 tracking-widest uppercase text-sm">Authorize</button>
+                <button id="entry-btn" onclick="handleEntry()" class="regal-btn w-full py-6 text-xs uppercase">Authorize Access</button>
             </div>
         </div>
 
         <div id="register-view" class="hidden space-y-6">
-            <h2 class="text-white text-xl font-extrabold text-center mb-2">Duty Update 🇮🇶</h2>
-            <div class="cyber-input p-2">
+            <h2 class="text-white text-xl font-extrabold text-center mb-2 regal-heading">DUTY UPDATE 🇮🇶</h2>
+            <div class="regal-input p-2">
                 <select id="spec-select" onchange="prepNameInput()" class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none appearance-none centered-select">
-                    <option value="" class="bg-[#111827]">SPECIALTY</option>
-                    <option value="NS" class="bg-[#111827]">جراحة الجملة العصبية</option>
-                    <option value="CT" class="bg-[#111827]">جراحة القلب والصدر</option>
-                    <option value="GS" class="bg-[#111827]">الجراحة العامة</option>
-                    <option value="US" class="bg-[#111827]">جراحة المسالك البولية</option>
-                    <option value="ENT" class="bg-[#111827]">الأنف والأذن والحنجرة</option>
-                    <option value="H" class="bg-[#111827]">أمراض القلب</option>
-                    <option value="ICU" class="bg-[#111827]">تخدير العناية المركزة</option>
-                    <option value="OP" class="bg-[#111827]">تخدير العمليات</option>
-                    <option value="R" class="bg-[#111827]">الأشعة و السونار</option>
-                    <option value="ON" class="bg-[#111827]">الأورام</option>
-                    <option value="D" class="bg-[#111827]">الوفيات</option>
+                    <option value="" class="bg-[#031712]">SPECIALTY</option>
+                    <option value="NS" class="bg-[#031712]">جراحة الجملة العصبية</option>
+                    <option value="CT" class="bg-[#031712]">جراحة القلب والصدر</option>
+                    <option value="GS" class="bg-[#031712]">الجراحة العامة</option>
+                    <option value="US" class="bg-[#031712]">جراحة المسالك البولية</option>
+                    <option value="ENT" class="bg-[#031712]">الأنف والأذن والحنجرة</option>
+                    <option value="H" class="bg-[#031712]">أمراض القلب</option>
+                    <option value="ICU" class="bg-[#031712]">تخدير العناية المركزة</option>
+                    <option value="OP" class="bg-[#031712]">تخدير العمليات</option>
+                    <option value="R" class="bg-[#031712]">الأشعة و السونار</option>
+                    <option value="ON" class="bg-[#031712]">الأورام</option>
+                    <option value="D" class="bg-[#031712]">الوفيات</option>
                 </select>
             </div>
 
             <div id="name-section" class="hidden space-y-4">
                 <div class="relative">
-                    <div class="cyber-input p-2">
+                    <div class="regal-input p-2">
                         <input type="text" id="name-input" autocomplete="off" placeholder="اسم المقيم..." 
                             oninput="filterNames()" 
                             onkeydown="handleNameKey(event)"
@@ -180,24 +183,24 @@
                     </div>
                     <div id="suggestions" class="suggestions-box hidden absolute w-full z-50"></div>
                 </div>
-                <button id="submit-btn" onclick="submitRegistration()" class="cyber-btn w-full py-6 uppercase tracking-widest text-sm">
-                    UPDATE
+                <button id="submit-btn" onclick="submitRegistration()" class="regal-btn w-full py-6 text-xs uppercase">
+                    UPDATE REGISTRY
                 </button>
             </div>
         </div>
 
         <div id="lookup-view" class="hidden text-center">
-            <div class="cyber-input inline-block px-6 py-4 mb-6">
-                <span id="service-display" class="text-sky-400 text-xl sm:text-2xl font-black uppercase">SERVICE</span>
+            <div class="regal-input inline-block px-6 py-4 mb-6">
+                <span id="service-display" class="text-amber-500 text-lg sm:text-xl font-bold regal-heading">SERVICE</span>
             </div>
             <h2 id="name-display" class="text-white text-3xl font-extrabold mb-1">...</h2>
-            <p id="phone-display" class="text-slate-400 font-bold text-lg mb-8 phone-display">-</p>
+            <p id="phone-display" class="text-stone-400 font-bold text-lg mb-8 phone-display">-</p>
             
             <div class="flex flex-row gap-2 w-full">
-                <a href="#" id="call-link" class="cyber-btn flex-1 py-5 px-1 uppercase tracking-tighter whitespace-nowrap text-[0.75rem] sm:text-base text-center">📞 SIM Call</a>
-                <a href="#" id="wa-link" onclick="openWhatsApp(event)" class="hidden flex-1 py-5 px-1 bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 rounded-[1.25rem] font-extrabold shadow-lg tracking-tighter whitespace-nowrap text-[0.75rem] sm:text-base text-center hover:bg-emerald-500/20 transition-all duration-300">💬 WhatsApp</a>
+                <a href="#" id="call-link" class="regal-btn flex-1 py-5 px-1 text-xs uppercase text-center">📞 SIM Call</a>
+                <a href="#" id="wa-link" onclick="openWhatsApp(event)" class="hidden flex-1 py-5 px-1 bg-emerald-950/40 border border-emerald-600/50 text-emerald-400 rounded-[0.75rem] font-extrabold shadow-lg tracking-tighter whitespace-nowrap text-[0.75rem] sm:text-base text-center hover:bg-emerald-900/40 transition-all duration-300">💬 WhatsApp</a>
             </div>
-            <p id="time-stamp" class="text-[0.65rem] text-slate-500 mt-10 font-bold tracking-wider uppercase"></p>
+            <p id="time-stamp" class="text-[0.65rem] text-stone-500 mt-10 font-bold tracking-wider uppercase"></p>
         </div>
     </div>
 
@@ -361,7 +364,7 @@
                     nameInput.value = "";
                     document.getElementById('name-section').classList.add('hidden');
                     btn.classList.remove('fetched-active');
-                    btn.innerText = "UPDATE";
+                    btn.innerText = "UPDATE REGISTRY";
                 }, 2000);
             }
         } catch (e) { card.classList.remove('loading-active'); btn.innerText = "RETRY ❌"; }
