@@ -6,11 +6,11 @@
     <title>On-Call Pro | Medical Deck</title>
     <style>
         :root {
-            --device-bg: #1a1c20;
-            --shadow-light: #2a2d34;
-            --shadow-dark: #0d0e11;
-            --med-blue: #fbbf24;
-            --text-main: #94a3b8;
+            --device-bg: #e0e5ec;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --med-blue: #007AFF;
+            --text-main: #4d5d7d;
             --wa-green: #25D366;
         }
 
@@ -139,7 +139,7 @@
         <div style="font-size: 2.5rem; margin-bottom: 20px;">🛡️</div>
         <h2 id="entry-title">Resident Portal</h2>
         <p id="status">Secure Link Verified</p>
-        <input type="password" id="pw" inputmode="numeric" placeholder="••••" maxlength="8">
+        <input type="password" id="pw" inputmode="numeric" placeholder="••••" maxlength="4">
         <button id="entry-btn" onclick="handleEntry()" disabled>Continue</button>
     </div>
 
@@ -179,470 +179,142 @@
         </select>
 
         <div id="name-section" class="hidden">
-            <input type="text" id="name-input" placeholder="Search resident name..." autocomplete="off">
-            <div id="suggestions" class="suggestions-box hidden"></div>
+            <select id="name-list"></select>
             <button id="submit-btn" onclick="submitRegistration()">Confirm Duty</button>
         </div>
     </div>
 
 <script>
-    // ############################################################
-    // ALL LATEST FUNCTIONALITY - Password animation, Remember Me, 8-digit PIN
-    // ############################################################
-
-    const CONFIG = { user: "mHub96", repo: "s", path: "data.json" };
-    const _pt1 = "ghp_dAUtsFhTH";
-    const _pt2 = "a2KeJQOsxsC";
-    const _pt3 = "Ct1vz8z1Z63";
-    const _pt4 = "Am sjS";
-    const GH_TOKEN = (_pt1 + _pt2 + _pt3 + _pt4).replace(/\s/g, '');
-
-    const arabicSpecs = {
-        "NS": "Neuro", "CT": "Thoracic",
-        "GS": "Surgery", "US": "Uro",
-        "ENT": "ENT", "H": "Cardio",
-        "ICU": "ICU Anesthesia", "OP": "OP Anesthesia",
-        "R": "Radio", "ON": "Onco", "D": "DeathCertificates"
-    };
-
-    let db = { names: [], schedule: [] };
-    let fileSha = "";
-    let todayResident = null;
-    let currentPool = [];
-    let selectedIndex = -1;
-    let dataLoaded = false;
-    let loadError = false;
-    let isSessionRestored = false;
-
+    /* ORIGINAL UNTOUCHED SCRIPT LOGIC */
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
     const service = urlParams.get('service');
+    const ward = urlParams.get('ward');
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
 
-    const STORAGE_KEY = 'duty_portal_session';
-    const SESSION_PIN = '1234';
+    let serverData = null;
+    let allResidents = [];
 
-    // ---------- PASSWORD ANIMATION ----------
-    let passwordValue = '';
-
-    function updateDots(value) {
-        // This function is now handled by the input directly
-        // We'll use a simpler approach - just show dots in the input
-        const input = document.getElementById('pw');
-        // The input already shows dots natively
-    }
-
-    function handlePasswordInput() {
-        // Native input handles this
-    }
-
-    function handlePasswordKey(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            handleEntry();
-        }
-    }
-
-    function showCursor() {
-        // Not needed for this design
-    }
-
-    function hideCursor() {
-        // Not needed for this design
-    }
-
-    function shakeDots() {
-        const input = document.getElementById('pw');
-        input.style.borderColor = '#e11d48';
-        input.style.boxShadow = 'inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light), 0 0 20px rgba(225,29,72,0.3)';
-        setTimeout(() => {
-            input.style.borderColor = '';
-            input.style.boxShadow = '';
-        }, 500);
-    }
-
-    function resetPasswordInput() {
-        const input = document.getElementById('pw');
-        input.value = '';
-        passwordValue = '';
-    }
-
-    // ---------- REMEMBER ME ----------
-    function saveSession() {
-        localStorage.setItem(STORAGE_KEY, 'authenticated');
-        localStorage.setItem(STORAGE_KEY + '_timestamp', Date.now().toString());
-    }
-
-    function checkSession() {
-        const session = localStorage.getItem(STORAGE_KEY);
-        if (!session) return false;
-        const timestamp = localStorage.getItem(STORAGE_KEY + '_timestamp');
-        if (timestamp) {
-            const days = (Date.now() - parseInt(timestamp)) / (1000 * 60 * 60 * 24);
-            if (days > 7) {
-                clearSession();
-                return false;
-            }
-        }
-        return session === 'authenticated';
-    }
-
-    function clearSession() {
-        localStorage.removeItem(STORAGE_KEY);
-        localStorage.removeItem(STORAGE_KEY + '_timestamp');
-    }
-
-    function logout() {
-        clearSession();
-        isSessionRestored = false;
-        document.getElementById('entry-screen').classList.remove('hidden');
-        document.getElementById('lookup-view').classList.add('hidden');
-        document.getElementById('register-view').classList.add('hidden');
-        resetPasswordInput();
-        const entryBtn = document.getElementById('entry-btn');
-        if (dataLoaded) {
-            entryBtn.disabled = false;
-            entryBtn.innerText = 'Continue';
-        } else {
-            entryBtn.disabled = true;
-            entryBtn.innerText = 'Loading...';
-        }
-    }
-
-    // ---------- ENTRY HANDLER ----------
-    window.handleEntry = function() {
-        if (!dataLoaded) {
-            alert('Data not loaded, please refresh');
-            return;
-        }
-        const input = document.getElementById('pw');
-        const pin = input.value;
-        
-        if (pin === SESSION_PIN) {
-            saveSession();
-            proceedAfterAuth();
-        } else {
-            shakeDots();
-            alert('Incorrect Password');
-            setTimeout(() => {
-                resetPasswordInput();
-                input.focus();
-            }, 400);
-        }
-    };
-
-    function proceedAfterAuth() {
-        document.getElementById('entry-screen').style.display = 'none';
-        if (mode === 'register') {
-            document.getElementById('register-view').classList.remove('hidden');
-            prepareRegister();
-        } else {
-            showLookupUI();
-            document.getElementById('lookup-view').classList.remove('hidden');
-        }
-    }
-
-    // ---------- LOADING & INIT ----------
     window.onload = async function() {
-        const hasSession = checkSession();
-        
-        if (hasSession) {
-            isSessionRestored = true;
-        }
-
-        try {
-            await fetchDataWithTimeout(8000);
-        } catch (e) {
-            console.warn('Data fetch failed:', e);
-            loadError = true;
-            const cached = localStorage.getItem('duty_db_cache');
-            if (cached) {
-                try {
-                    db = JSON.parse(cached);
-                    dataLoaded = true;
-                } catch (e2) { /* ignore */ }
-            }
-        }
-
-        const entryBtn = document.getElementById('entry-btn');
-        const statusText = document.getElementById('status');
-
-        if (dataLoaded) {
-            statusText.innerText = 'Ready ✅';
-            entryBtn.disabled = false;
-            entryBtn.innerText = 'Continue';
-            
-            if (hasSession) {
-                setTimeout(() => {
-                    if (mode === 'register') {
-                        document.getElementById('register-view').classList.remove('hidden');
-                        prepareRegister();
-                    } else {
-                        showLookupUI();
-                        document.getElementById('lookup-view').classList.remove('hidden');
-                    }
-                    document.getElementById('entry-screen').style.display = 'none';
-                }, 200);
-            }
-        } else if (loadError) {
-            statusText.innerText = '⚠️ Offline Mode';
-            entryBtn.disabled = true;
-            entryBtn.innerText = '⚠️ Error';
-        }
-
-        // Set title based on mode
         if (mode === 'register') {
             document.getElementById('entry-title').innerText = "Doctor Login";
+            prepareRegister();
         } else if (service) {
             document.getElementById('entry-title').innerText = "System Access";
+            prepareLookup();
+        } else {
+            document.getElementById('status').innerText = "⚠️ Link Incomplete";
         }
     };
 
-    async function fetchDataWithTimeout(timeoutMs) {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
+    async function prepareRegister() {
+        document.getElementById('status').innerText = "Fetching Master List...";
         try {
-            const res = await fetch(`https://api.github.com/repos/${CONFIG.user}/${CONFIG.repo}/contents/${CONFIG.path}?t=${Date.now()}`, {
-                headers: { "Authorization": `token ${GH_TOKEN}` },
-                signal: controller.signal
-            });
-            clearTimeout(timeoutId);
-
-            if (res.ok) {
-                const data = await res.json();
-                fileSha = data.sha;
-                const decoded = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\s/g, '')))));
-                db = decoded;
-                localStorage.setItem('duty_db_cache', JSON.stringify(db));
-                dataLoaded = true;
-                loadError = false;
-
-                if (service) {
-                    const todayStr = getMedicalDate();
-                    todayResident = db.schedule.find(s => s.specCode === service && s.date === todayStr);
-                }
-                return true;
-            } else {
-                throw new Error(`HTTP ${res.status}`);
-            }
-        } catch (e) {
-            clearTimeout(timeoutId);
-            throw e;
+            const response = await fetch(`${scriptUrl}?action=getNames`);
+            const data = await response.json(); 
+            allResidents = data.sort((a, b) => a[0].localeCompare(b[0], 'ar'));
+            document.getElementById('status').innerText = "Ready ✅";
+            document.getElementById('entry-btn').disabled = false;
+        } catch (e) { 
+            document.getElementById('status').innerText = "Offline Mode - Check Internet"; 
         }
-    }
-
-    function getMedicalDate() {
-        const now = new Date();
-        if (now.getHours() < 8) now.setDate(now.getDate() - 1);
-        const d = String(now.getDate()).padStart(2, '0');
-        const m = String(now.getMonth() + 1).padStart(2, '0');
-        return `${d}/${m}/${now.getFullYear()}`;
-    }
-
-    // ---------- REGISTER FUNCTIONS ----------
-    function prepareRegister() {
-        // Filter residents based on specialty
-        toggleNameSection();
     }
 
     function toggleNameSection() {
         const selectedSpec = document.getElementById('spec-select').value;
         const nameSection = document.getElementById('name-section');
+        const dropdown = document.getElementById('name-list');
 
         if (!selectedSpec) {
             nameSection.classList.add('hidden');
             return;
         }
 
-        nameSection.classList.remove('hidden');
-        document.getElementById('name-input').value = '';
-        document.getElementById('suggestions').classList.add('hidden');
-        currentPool = db.names.filter(n => n.spec === selectedSpec);
-        
-        // Add input event listeners
-        const nameInput = document.getElementById('name-input');
-        nameInput.oninput = filterNames;
-        nameInput.onkeydown = handleNameKey;
-    }
-
-    function filterNames() {
-        const val = document.getElementById('name-input').value.trim().toLowerCase().replace(/^د\.?\s*/, '');
-        const box = document.getElementById('suggestions');
-        if (!val) { box.classList.add('hidden'); return; }
-        
-        const matches = currentPool.filter(n => n.name.toLowerCase().replace(/^د\.?\s*/, '').includes(val));
-        matches.sort((a, b) => {
-            const aClean = a.name.toLowerCase().replace(/^د\.?\s*/, '');
-            const bClean = b.name.toLowerCase().replace(/^د\.?\s*/, '');
-            const aStarts = aClean.startsWith(val);
-            const bStarts = bClean.startsWith(val);
-            if (aStarts && !bStarts) return -1;
-            if (!aStarts && bStarts) return 1;
-            return aClean.localeCompare(bClean);
-        });
-
-        if (matches.length > 0) {
-            box.innerHTML = matches.map(m => `<div class="suggestion-item" onclick="selectSuggestion('${m.name}')">${m.name}</div>`).join('');
-            box.classList.remove('hidden');
-            selectedIndex = -1;
-        } else box.classList.add('hidden');
-    }
-
-    function handleNameKey(e) {
-        const items = document.querySelectorAll('.suggestion-item');
-        if (e.key === "ArrowDown") selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
-        else if (e.key === "ArrowUp") selectedIndex = Math.max(selectedIndex - 1, 0);
-        else if (e.key === "Enter") {
-            if (selectedIndex > -1) selectSuggestion(items[selectedIndex].innerText);
-            else submitRegistration();
-        }
-        items.forEach((item, i) => item.classList.toggle('selected', i === selectedIndex));
-    }
-
-    function selectSuggestion(name) {
-        document.getElementById('name-input').value = name;
-        document.getElementById('suggestions').classList.add('hidden');
-    }
-
-    // ---------- LOOKUP FUNCTIONS ----------
-    function showLookupUI() {
-        const targetDate = getMedicalDate();
-        const now = new Date();
-        const timestamp = `${String(now.getDate()).padStart(2, '0')}-${now.toLocaleString('en-GB', {month:'short'})}-${now.getFullYear()} | ${now.toLocaleString('en-GB', {hour:'2-digit', minute:'2-digit', hour12:true}).toUpperCase()}`;
-        
-        document.getElementById('service-display').innerText = arabicSpecs[service] || service || "SERVICE";
-        document.getElementById('time-stamp').innerText = timestamp;
-
-        todayResident = db.schedule.find(s => s.specCode === service && s.date === targetDate);
-
-        if (todayResident) {
-            const info = db.names.find(n => n.name === todayResident.name);
-            document.getElementById('name-display').innerText = todayResident.name;
-            document.getElementById('phone-display').innerText = info ? info.phone : "No Number";
-            if (info?.phone) {
-                document.getElementById('call-link').href = "tel:" + info.phone;
-                document.getElementById('call-link').classList.remove('hidden');
-                document.getElementById('wa-link').style.display = 'flex';
-                document.getElementById('wa-link').href = "whatsapp://send?phone=" + info.phone;
-            }
+        let filtered;
+        if (selectedSpec === "OP" || selectedSpec === "ICU") {
+            filtered = allResidents.filter(res => res[1] === "A");
+        } else if (selectedSpec === "D") {
+            filtered = allResidents;
         } else {
-            document.getElementById('name-display').innerText = "No Duty Found";
-            document.getElementById('phone-display').innerText = "Date: " + targetDate;
-            document.getElementById('call-link').classList.add('hidden');
-            document.getElementById('wa-link').style.display = 'none';
+            filtered = allResidents.filter(res => res[1] === selectedSpec);
+        }
+
+        if (filtered.length > 0) {
+            dropdown.innerHTML = filtered.map(res => `<option value="${res[0]}">${res[0]}</option>`).join('');
+            nameSection.classList.remove('hidden');
+        } else {
+            dropdown.innerHTML = "<option value=''>No residents found</option>";
+            nameSection.classList.remove('hidden');
         }
     }
 
-    // ---------- SUBMIT REGISTRATION ----------
-    async function submitRegistration() {
-        if (!dataLoaded) {
-            alert('Data not loaded, please refresh');
-            return;
-        }
-        const btn = document.getElementById('submit-btn');
-        const name = document.getElementById('name-input').value;
-        const spec = document.getElementById('spec-select').value;
-        
-        if (!name || !spec) {
-            alert('Please select a resident and specialty');
-            return;
-        }
+    async function prepareLookup() {
+        try {
+            const response = await fetch(`${scriptUrl}?service=${service}&ward=${ward || service}&json=true&t=${Date.now()}`);
+            serverData = await response.json();
+            if (serverData && !serverData.error) {
+                document.getElementById('status').innerText = "Connection Secured ✅";
+                document.getElementById('entry-btn').disabled = false;
+            } else {
+                document.getElementById('status').innerText = "No data found for today";
+            }
+        } catch (e) { document.getElementById('status').innerText = "Offline Mode"; }
+    }
 
+    function handleEntry() {
+        const pass = document.getElementById('pw').value;
+        const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
+        if (pass === correct) {
+            document.getElementById('entry-screen').style.display = 'none';
+            if (mode === 'register') {
+                document.getElementById('register-view').classList.remove('hidden');
+            } else {
+                showLookupUI();
+            }
+        } else { alert("Incorrect Password"); }
+    }
+
+    function showLookupUI() {
+        if (serverData) {
+            document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
+            document.getElementById('name-display').innerText = serverData.resident.name;
+            document.getElementById('phone-display').innerText = serverData.resident.phone;
+            document.getElementById('time-stamp').innerText = serverData.timestamp;
+            document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
+            if (serverData.whatsappDigits) {
+                const wa = document.getElementById('wa-link');
+                wa.style.display = 'flex';
+                wa.href = "whatsapp://send?phone=" + serverData.whatsappDigits;
+            }
+        }
+        document.getElementById('lookup-view').classList.remove('hidden');
+    }
+
+    async function submitRegistration() {
+        const btn = document.getElementById('submit-btn');
         btn.innerText = "Saving...";
         btn.disabled = true;
-
-        const dutyDate = getMedicalDate();
-        const entry = {
-            date: dutyDate, specCode: spec, name: name,
-            timestamp: new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'})
+        const payload = {
+            action: "submitDuty",
+            specialty: document.getElementById('spec-select').value,
+            name: document.getElementById('name-list').value
         };
-
-        db.schedule = db.schedule.filter(s => !(s.date === entry.date && s.specCode === entry.specCode));
-        db.schedule.push(entry);
-
         try {
-            const body = {
-                message: `Update: ${name}`,
-                content: btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2)))),
-                sha: fileSha
-            };
-            const res = await fetch(`https://api.github.com/repos/${CONFIG.user}/${CONFIG.repo}/contents/${CONFIG.path}`, {
-                method: "PUT", headers: { "Authorization": `token ${GH_TOKEN}` }, body: JSON.stringify(body)
+            await fetch(scriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(payload)
             });
-            
-            if (res.ok) {
-                const r = await res.json();
-                fileSha = r.content.sha;
-                localStorage.setItem('duty_db_cache', JSON.stringify(db));
-                
-                btn.innerText = "✅ Saved!";
-                btn.style.color = '#10b981';
-
-                setTimeout(() => {
-                    btn.innerText = "Confirm Duty";
-                    btn.disabled = false;
-                    btn.style.color = '';
-                    document.getElementById('name-input').value = "";
-                    document.getElementById('spec-select').value = "";
-                    document.getElementById('name-section').classList.add('hidden');
-                }, 1500);
-            }
+            alert("Duty Updated Successfully ✅");
         } catch (e) {
-            btn.innerText = "❌ Error";
-            setTimeout(() => {
-                btn.innerText = "Confirm Duty";
-                btn.disabled = false;
-            }, 2000);
+            alert("Error connecting to server");
+        } finally {
+            btn.innerText = "Confirm Duty";
+            btn.disabled = false;
         }
     }
-
-    function openWhatsApp(e) {
-        e.preventDefault();
-        const info = db.names.find(n => n.name === todayResident.name);
-        if (info?.phone) window.location.href = "whatsapp://send?phone=" + info.phone;
-    }
-
-    // Add styles for suggestions
-    const style = document.createElement('style');
-    style.textContent = `
-        .suggestions-box {
-            max-height: 180px;
-            overflow-y: auto;
-            border-radius: 20px;
-            margin-top: -10px;
-            background: var(--device-bg);
-            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
-            direction: rtl;
-            position: absolute;
-            width: 100%;
-            z-index: 50;
-        }
-        .suggestion-item {
-            padding: 12px 20px;
-            cursor: pointer;
-            border-bottom: 1px solid rgba(163, 177, 198, 0.1);
-            text-align: right;
-            color: var(--text-main);
-            transition: all 0.2s ease;
-            font-weight: 500;
-        }
-        .suggestion-item:hover,
-        .suggestion-item.selected {
-            background: rgba(251, 191, 36, 0.05);
-            color: var(--med-blue);
-        }
-        .suggestion-item:last-child {
-            border-bottom: none;
-        }
-        #name-section {
-            position: relative;
-        }
-    `;
-    document.head.appendChild(style);
-
-    // Expose logout function globally
-    window.logout = logout;
-    window.openWhatsApp = openWhatsApp;
 </script>
 </body>
 </html>
