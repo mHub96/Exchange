@@ -13,16 +13,42 @@
             --light: #ffffff;
             --shadow: #c8d0d8;
             --shadow-dark: #b0b8c0;
-            --accent: #4a7c9e;
-            --accent-dim: rgba(74, 124, 158, 0.12);
-            --accent-glow: rgba(74, 124, 158, 0.25);
-            --crimson: #c0392b;
-            --emerald: #27ae60;
-            --blue: #4a7c9e;
-            --text-primary: #2c3e50;
-            --text-secondary: #5d6d7e;
-            --border-glow: rgba(74, 124, 158, 0.15);
-            --card-border: rgba(74, 124, 158, 0.06);
+            
+            /* Accent colors - more pronounced */
+            --accent: #2c6b9e;
+            --accent-hover: #1f5a8a;
+            --accent-dim: rgba(44, 107, 158, 0.12);
+            --accent-glow: rgba(44, 107, 158, 0.3);
+            
+            /* Action-specific colors */
+            --auth-color: #2c6b9e;
+            --auth-hover: #1f5a8a;
+            --auth-bg: rgba(44, 107, 158, 0.08);
+            
+            --call-color: #2563eb;
+            --call-hover: #1d4ed8;
+            --call-bg: rgba(37, 99, 235, 0.08);
+            
+            --wa-color: #059669;
+            --wa-hover: #047857;
+            --wa-bg: rgba(5, 150, 105, 0.08);
+            
+            --success-color: #059669;
+            --success-hover: #047857;
+            --success-bg: rgba(5, 150, 105, 0.08);
+            
+            --danger-color: #dc2626;
+            --danger-hover: #b91c1c;
+            --danger-bg: rgba(220, 38, 38, 0.08);
+            
+            --update-color: #7c3aed;
+            --update-hover: #6d28d9;
+            --update-bg: rgba(124, 58, 237, 0.08);
+            
+            --text-primary: #1a2938;
+            --text-secondary: #4a5a6a;
+            --text-muted: #8a9aaa;
+            --card-border: rgba(44, 107, 158, 0.06);
         }
         
         body {
@@ -38,14 +64,13 @@
             position: relative;
         }
 
-        /* Subtle animated background */
         body::before {
             content: '';
             position: fixed;
             inset: 0;
             background: 
-                radial-gradient(ellipse at 20% 50%, rgba(74, 124, 158, 0.04) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 50%, rgba(74, 124, 158, 0.03) 0%, transparent 60%);
+                radial-gradient(ellipse at 20% 50%, rgba(44, 107, 158, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(44, 107, 158, 0.03) 0%, transparent 60%);
             pointer-events: none;
             z-index: 0;
             animation: bgPulse 8s ease-in-out infinite;
@@ -72,7 +97,6 @@
             animation: cardFloat 6s ease-in-out infinite;
         }
 
-        /* Breathing shadow - restored and enhanced */
         @keyframes cardFloat {
             0%, 100% { 
                 box-shadow: 
@@ -86,19 +110,18 @@
                     18px 18px 45px var(--shadow-dark),
                     -12px -12px 35px var(--light),
                     inset 0 1px 0 rgba(255, 255, 255, 0.7),
-                    0 0 60px rgba(74, 124, 158, 0.06);
+                    0 0 60px rgba(44, 107, 158, 0.06);
                 transform: translateY(-4px);
             }
         }
 
-        /* Subtle breathing glow on the card border */
         .embossed-card::after {
             content: '';
             position: absolute;
             inset: -1px;
             border-radius: 3rem;
             padding: 1px;
-            background: linear-gradient(135deg, transparent, rgba(74, 124, 158, 0.05), transparent);
+            background: linear-gradient(135deg, transparent, rgba(44, 107, 158, 0.05), transparent);
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
@@ -120,7 +143,7 @@
         }
         #tube-bg {
             fill: none;
-            stroke: rgba(74, 124, 158, 0.04);
+            stroke: rgba(44, 107, 158, 0.04);
             stroke-width: 4;
         }
         #tube-fluid {
@@ -149,7 +172,7 @@
             box-shadow: 
                 inset 8px 8px 18px var(--shadow),
                 inset -6px -6px 16px var(--light),
-                0 0 0 1px rgba(74, 124, 158, 0.04);
+                0 0 0 1px rgba(44, 107, 158, 0.04);
             transition: all 0.4s ease;
             position: relative;
         }
@@ -157,8 +180,8 @@
             box-shadow: 
                 inset 8px 8px 18px var(--shadow),
                 inset -6px -6px 16px var(--light),
-                0 0 0 1px rgba(74, 124, 158, 0.15),
-                0 0 30px rgba(74, 124, 158, 0.04);
+                0 0 0 1px rgba(44, 107, 158, 0.15),
+                0 0 30px rgba(44, 107, 158, 0.04);
             transform: scale(1.01);
         }
 
@@ -176,8 +199,8 @@
             width: 1.2rem;
             height: 1.2rem;
             border-radius: 50%;
-            background: rgba(74, 124, 158, 0.06);
-            border: 2px solid rgba(74, 124, 158, 0.06);
+            background: rgba(44, 107, 158, 0.06);
+            border: 2px solid rgba(44, 107, 158, 0.06);
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             transform: scale(0.5);
             opacity: 0;
@@ -192,7 +215,7 @@
             opacity: 1;
             box-shadow: 
                 0 0 30px var(--accent-glow),
-                0 0 60px rgba(74, 124, 158, 0.08),
+                0 0 60px rgba(44, 107, 158, 0.08),
                 inset 0 2px 4px rgba(255,255,255,0.2);
             animation: dotPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -208,7 +231,7 @@
             position: absolute;
             inset: -4px;
             border-radius: 50%;
-            border: 2px solid rgba(74, 124, 158, 0.15);
+            border: 2px solid rgba(44, 107, 158, 0.15);
             animation: rippleDot 0.6s ease-out;
         }
 
@@ -223,7 +246,7 @@
             transform: scale(1);
             opacity: 1;
             box-shadow: 
-                0 0 20px rgba(74, 124, 158, 0.15),
+                0 0 20px rgba(44, 107, 158, 0.15),
                 inset 0 2px 4px rgba(255,255,255,0.15);
         }
 
@@ -232,7 +255,7 @@
             position: absolute;
             inset: -3px;
             border-radius: 50%;
-            border: 2px solid rgba(74, 124, 158, 0.08);
+            border: 2px solid rgba(44, 107, 158, 0.08);
             animation: pulseFilled 2s ease-in-out infinite;
         }
 
@@ -248,9 +271,9 @@
 
         .password-dot.error-shake {
             animation: shakeError 0.5s ease;
-            border-color: var(--crimson);
-            background: var(--crimson);
-            box-shadow: 0 0 30px rgba(192, 57, 43, 0.3);
+            border-color: var(--danger-color);
+            background: var(--danger-color);
+            box-shadow: 0 0 30px rgba(220, 38, 38, 0.3);
         }
 
         @keyframes shakeError {
@@ -309,6 +332,10 @@
             50% { transform: translateX(-50%) scale(3); opacity: 1; }
         }
 
+        /* ============================================================
+           BUTTON STYLES - PRONOUNCED & ACTION-SPECIFIC
+           ============================================================ */
+
         .embossed-btn {
             background: var(--bg-card);
             border-radius: 1.5rem;
@@ -316,8 +343,7 @@
                 12px 12px 24px var(--shadow),
                 -8px -8px 20px var(--light),
                 inset 0 1px 0 rgba(255, 255, 255, 0.5);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            color: var(--text-secondary);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             font-weight: 700;
             border: none;
             cursor: pointer;
@@ -329,103 +355,157 @@
             position: relative;
             overflow: hidden;
         }
-
-        .embossed-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(74, 124, 158, 0.04), transparent 60%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        .embossed-btn:hover:not(:disabled)::before {
-            opacity: 1;
-        }
-        .embossed-btn:hover:not(:disabled) {
-            transform: translateY(-3px) scale(1.01);
-            box-shadow: 
-                16px 16px 32px var(--shadow),
-                -10px -10px 24px var(--light),
-                0 0 30px rgba(74, 124, 158, 0.04);
-        }
-        .embossed-btn:active:not(:disabled) {
-            transform: scale(0.97);
-            transition-duration: 0.1s;
-        }
         .embossed-btn:disabled {
             opacity: 0.4;
             cursor: not-allowed;
         }
 
-        .btn-fetched {
-            background: linear-gradient(135deg, rgba(74, 124, 158, 0.08), rgba(74, 124, 158, 0.02)) !important;
-            color: var(--accent) !important;
+        /* --- AUTH / LOGIN BUTTON --- */
+        .btn-auth {
+            background: linear-gradient(135deg, var(--auth-color), var(--auth-hover));
+            color: #ffffff !important;
             box-shadow: 
-                0 0 40px rgba(74, 124, 158, 0.08),
+                0 8px 25px rgba(44, 107, 158, 0.35),
                 12px 12px 24px var(--shadow),
-                -8px -8px 20px var(--light) !important;
-            border: 1px solid rgba(74, 124, 158, 0.1) !important;
+                -8px -8px 20px var(--light);
+            border: 1px solid rgba(44, 107, 158, 0.2);
         }
-        .btn-fetched:hover {
+        .btn-auth:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.01);
             box-shadow: 
-                0 0 60px rgba(74, 124, 158, 0.15),
+                0 12px 35px rgba(44, 107, 158, 0.45),
                 16px 16px 32px var(--shadow),
-                -10px -10px 24px var(--light) !important;
-            border-color: rgba(74, 124, 158, 0.2) !important;
+                -10px -10px 24px var(--light);
+            background: linear-gradient(135deg, var(--auth-hover), #1a4a70);
+        }
+        .btn-auth:active:not(:disabled) {
+            transform: scale(0.97);
+        }
+        .btn-auth.btn-ready {
+            animation: pulseReady 2s ease-in-out infinite;
+        }
+        @keyframes pulseReady {
+            0%, 100% { box-shadow: 0 8px 25px rgba(44, 107, 158, 0.35), 12px 12px 24px var(--shadow), -8px -8px 20px var(--light); }
+            50% { box-shadow: 0 8px 40px rgba(44, 107, 158, 0.5), 12px 12px 24px var(--shadow), -8px -8px 20px var(--light); }
         }
 
-        .btn-success {
-            background: linear-gradient(135deg, rgba(39, 174, 96, 0.12), rgba(39, 174, 96, 0.03)) !important;
-            color: var(--emerald) !important;
-            box-shadow: 0 0 40px rgba(39, 174, 96, 0.08) !important;
-            border: 1px solid rgba(39, 174, 96, 0.15) !important;
-        }
-        .btn-success:hover {
-            box-shadow: 0 0 60px rgba(39, 174, 96, 0.15) !important;
-        }
-
+        /* --- CALL BUTTON --- */
         .btn-call {
-            background: var(--bg-card) !important;
-            color: var(--blue) !important;
-            border: 1px solid rgba(74, 124, 158, 0.08) !important;
+            background: linear-gradient(135deg, var(--call-color), var(--call-hover));
+            color: #ffffff !important;
             box-shadow: 
+                0 8px 25px rgba(37, 99, 235, 0.35),
                 12px 12px 24px var(--shadow),
-                -8px -8px 20px var(--light) !important;
+                -8px -8px 20px var(--light);
+            border: 1px solid rgba(37, 99, 235, 0.2);
         }
         .btn-call:hover {
-            border-color: rgba(74, 124, 158, 0.2) !important;
+            transform: translateY(-3px) scale(1.01);
             box-shadow: 
+                0 12px 35px rgba(37, 99, 235, 0.45),
                 16px 16px 32px var(--shadow),
-                -10px -10px 24px var(--light),
-                0 0 30px rgba(74, 124, 158, 0.04) !important;
+                -10px -10px 24px var(--light);
+            background: linear-gradient(135deg, var(--call-hover), #1a4a8a);
+        }
+        .btn-call:active {
+            transform: scale(0.97);
         }
 
+        /* --- WHATSAPP BUTTON --- */
         .btn-wa {
-            background: var(--bg-card) !important;
-            color: var(--emerald) !important;
-            border: 1px solid rgba(39, 174, 96, 0.08) !important;
+            background: linear-gradient(135deg, var(--wa-color), var(--wa-hover));
+            color: #ffffff !important;
             box-shadow: 
+                0 8px 25px rgba(5, 150, 105, 0.35),
                 12px 12px 24px var(--shadow),
-                -8px -8px 20px var(--light) !important;
+                -8px -8px 20px var(--light);
+            border: 1px solid rgba(5, 150, 105, 0.2);
         }
         .btn-wa:hover {
-            border-color: rgba(39, 174, 96, 0.2) !important;
+            transform: translateY(-3px) scale(1.01);
             box-shadow: 
+                0 12px 35px rgba(5, 150, 105, 0.45),
                 16px 16px 32px var(--shadow),
-                -10px -10px 24px var(--light),
-                0 0 30px rgba(39, 174, 96, 0.04) !important;
+                -10px -10px 24px var(--light);
+            background: linear-gradient(135deg, var(--wa-hover), #065f46);
+        }
+        .btn-wa:active {
+            transform: scale(0.97);
         }
 
+        /* --- UPDATE / SUBMIT BUTTON --- */
+        .btn-update {
+            background: linear-gradient(135deg, var(--update-color), var(--update-hover));
+            color: #ffffff !important;
+            box-shadow: 
+                0 8px 25px rgba(124, 58, 237, 0.35),
+                12px 12px 24px var(--shadow),
+                -8px -8px 20px var(--light);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+        }
+        .btn-update:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 
+                0 12px 35px rgba(124, 58, 237, 0.45),
+                16px 16px 32px var(--shadow),
+                -10px -10px 24px var(--light);
+            background: linear-gradient(135deg, var(--update-hover), #5b21b6);
+        }
+        .btn-update:active:not(:disabled) {
+            transform: scale(0.97);
+        }
+
+        /* --- SUCCESS BUTTON (after update) --- */
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), var(--success-hover)) !important;
+            color: #ffffff !important;
+            box-shadow: 
+                0 8px 30px rgba(5, 150, 105, 0.4),
+                12px 12px 24px var(--shadow),
+                -8px -8px 20px var(--light) !important;
+            border: 1px solid rgba(5, 150, 105, 0.2) !important;
+        }
+        .btn-success:hover {
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 
+                0 12px 40px rgba(5, 150, 105, 0.5),
+                16px 16px 32px var(--shadow),
+                -10px -10px 24px var(--light) !important;
+        }
+
+        /* --- DANGER / ERROR BUTTON --- */
         .btn-danger {
-            background: linear-gradient(135deg, rgba(192, 57, 43, 0.08), rgba(192, 57, 43, 0.02)) !important;
-            color: var(--crimson) !important;
-            border: 1px solid rgba(192, 57, 43, 0.12) !important;
+            background: linear-gradient(135deg, var(--danger-color), var(--danger-hover)) !important;
+            color: #ffffff !important;
+            box-shadow: 
+                0 8px 25px rgba(220, 38, 38, 0.35),
+                12px 12px 24px var(--shadow),
+                -8px -8px 20px var(--light) !important;
+            border: 1px solid rgba(220, 38, 38, 0.2) !important;
             animation: quickShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
         }
         @keyframes quickShake {
             10%, 90% { transform: translate3d(-2px, 0, 0); }
             30%, 70% { transform: translate3d(4px, 0, 0); }
             40%, 60% { transform: translate3d(-4px, 0, 0); }
+        }
+
+        /* --- LOGOUT BUTTON (subtle) --- */
+        .btn-logout {
+            background: transparent !important;
+            color: var(--text-muted) !important;
+            box-shadow: none !important;
+            border: none !important;
+            font-size: 0.6rem;
+            font-weight: 500;
+            padding: 0.5rem;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+        .btn-logout:hover {
+            opacity: 0.8;
+            transform: none;
+            box-shadow: none !important;
         }
 
         .recessed-input input,
@@ -440,12 +520,12 @@
             font-size: 1rem;
         }
         .recessed-input input::placeholder {
-            color: rgba(93, 109, 126, 0.3);
+            color: rgba(74, 90, 106, 0.3);
             font-weight: 400;
         }
         .recessed-input select {
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%234a7c9e' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%232c6b9e' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: left 1rem center;
             padding-right: 2.5rem;
@@ -467,7 +547,7 @@
                 16px 16px 32px var(--shadow),
                 -10px -10px 24px var(--light);
             direction: rtl;
-            border: 1px solid rgba(74, 124, 158, 0.04);
+            border: 1px solid rgba(44, 107, 158, 0.04);
         }
         .suggestion-item {
             padding: 14px 20px;
@@ -480,7 +560,7 @@
         }
         .suggestion-item:hover,
         .suggestion-item.selected {
-            background: rgba(74, 124, 158, 0.04);
+            background: rgba(44, 107, 158, 0.04);
             color: var(--accent);
         }
         .suggestion-item:last-child {
@@ -502,15 +582,15 @@
         #shield .shield-spinner {
             width: 3rem;
             height: 3rem;
-            border: 3px solid rgba(74, 124, 158, 0.06);
+            border: 3px solid rgba(44, 107, 158, 0.06);
             border-top-color: var(--accent);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            box-shadow: 0 0 30px rgba(74, 124, 158, 0.04);
+            box-shadow: 0 0 30px rgba(44, 107, 158, 0.04);
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         #shield .shield-text {
-            color: rgba(74, 124, 158, 0.3);
+            color: rgba(44, 107, 158, 0.3);
             font-size: 0.75rem;
             font-weight: 600;
             letter-spacing: 0.2em;
@@ -527,19 +607,19 @@
             width: 0.5rem;
             height: 0.5rem;
             border-radius: 50%;
-            background: rgba(93, 109, 126, 0.15);
+            background: rgba(74, 90, 106, 0.15);
             transition: all 0.4s ease;
             margin-right: 0.5rem;
         }
         .status-dot.ready {
-            background: var(--emerald);
+            background: var(--success-color);
             animation: pulse-dot 2s infinite;
-            box-shadow: 0 0 10px rgba(39, 174, 96, 0.2);
+            box-shadow: 0 0 10px rgba(5, 150, 105, 0.3);
         }
         .status-dot.error {
-            background: var(--crimson);
+            background: var(--danger-color);
             animation: pulse-dot 1.5s infinite;
-            box-shadow: 0 0 10px rgba(192, 57, 43, 0.2);
+            box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
         }
         @keyframes pulse-dot {
             0%, 100% { opacity: 1; transform: scale(1); }
@@ -550,20 +630,20 @@
             font-size: 0.6rem;
             font-weight: 600;
             letter-spacing: 0.15em;
-            color: rgba(93, 109, 126, 0.3);
+            color: rgba(74, 90, 106, 0.3);
             transition: all 0.4s ease;
             text-transform: uppercase;
         }
-        .status-text.ready { color: rgba(39, 174, 96, 0.4); }
-        .status-text.error { color: rgba(192, 57, 43, 0.4); }
+        .status-text.ready { color: rgba(5, 150, 105, 0.5); }
+        .status-text.error { color: rgba(220, 38, 38, 0.5); }
 
         .toast-error {
-            background: rgba(192, 57, 43, 0.04);
-            border: 1px solid rgba(192, 57, 43, 0.08);
+            background: rgba(220, 38, 38, 0.04);
+            border: 1px solid rgba(220, 38, 38, 0.08);
             border-radius: 1rem;
             padding: 0.75rem 1rem;
             font-size: 0.7rem;
-            color: #c0392b;
+            color: var(--danger-color);
             text-align: center;
             animation: slideDown 0.4s ease;
         }
@@ -577,13 +657,13 @@
             align-items: center;
             gap: 0.5rem;
             font-size: 0.7rem;
-            color: rgba(93, 109, 126, 0.3);
+            color: rgba(74, 90, 106, 0.3);
             cursor: pointer;
             user-select: none;
             transition: color 0.3s ease;
         }
         .toggle-remember:hover {
-            color: rgba(93, 109, 126, 0.6);
+            color: rgba(74, 90, 106, 0.6);
         }
         .toggle-remember input[type="checkbox"] {
             accent-color: var(--accent);
@@ -615,17 +695,17 @@
 
         .royal-divider {
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(74, 124, 158, 0.08), transparent);
+            background: linear-gradient(90deg, transparent, rgba(44, 107, 158, 0.08), transparent);
             margin: 0.5rem 0;
         }
 
         .service-badge {
-            background: rgba(74, 124, 158, 0.04);
-            border: 1px solid rgba(74, 124, 158, 0.06);
+            background: rgba(44, 107, 158, 0.04);
+            border: 1px solid rgba(44, 107, 158, 0.06);
             border-radius: 2rem;
             padding: 0.4rem 1.2rem;
             font-size: 0.7rem;
-            color: rgba(74, 124, 158, 0.5);
+            color: rgba(44, 107, 158, 0.5);
             font-weight: 600;
             letter-spacing: 0.05em;
         }
@@ -637,11 +717,10 @@
             background: transparent;
         }
         .suggestions-box::-webkit-scrollbar-thumb {
-            background: rgba(74, 124, 158, 0.1);
+            background: rgba(44, 107, 158, 0.1);
             border-radius: 2px;
         }
 
-        /* Service display with 3D effect */
         .service-display-3d {
             background: var(--bg-card);
             border-radius: 1.5rem;
@@ -652,23 +731,12 @@
             display: inline-block;
         }
 
-        /* Additional animations */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
         .fade-in-up {
             animation: fadeInUp 0.6s ease forwards;
-        }
-
-        /* Page transition overlay */
-        .page-transition {
-            animation: pageFade 0.3s ease;
-        }
-        @keyframes pageFade {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
         }
     </style>
 </head>
@@ -723,12 +791,12 @@
                         <input type="checkbox" id="rememberMe" checked>
                         <span>تذكرني</span>
                     </label>
-                    <span class="text-[0.5rem] tracking-widest" style="color: rgba(74, 124, 158, 0.15);">✦ SECURE</span>
+                    <span class="text-[0.5rem] tracking-widest" style="color: rgba(44, 107, 158, 0.15);">✦ SECURE</span>
                 </div>
-                <button id="entry-btn" onclick="handleEntry()" class="embossed-btn" disabled>جاري التحميل...</button>
+                <button id="entry-btn" onclick="handleEntry()" class="embossed-btn btn-auth" disabled>جاري التحميل...</button>
                 <div id="login-error" class="hidden toast-error"></div>
             </div>
-            <p class="text-[0.5rem] text-center mt-6 tracking-[0.15em]" style="color: rgba(93, 109, 126, 0.08);">ROYAL MEDICAL NETWORK</p>
+            <p class="text-[0.5rem] text-center mt-6 tracking-[0.15em]" style="color: rgba(74, 90, 106, 0.08);">ROYAL MEDICAL NETWORK</p>
         </div>
 
         <!-- LOOKUP VIEW -->
@@ -745,7 +813,7 @@
             </div>
             <p id="time-stamp" class="text-[0.6rem] mt-8 font-bold tracking-wider uppercase" style="color: var(--text-secondary);"></p>
             <div class="mt-4">
-                <button onclick="logout()" class="text-[0.6rem] underline-offset-2 underline transition-colors" style="color: rgba(93, 109, 126, 0.15); hover: rgba(93, 109, 126, 0.3);">تسجيل الخروج</button>
+                <button onclick="logout()" class="btn-logout">تسجيل الخروج</button>
             </div>
         </div>
 
@@ -778,10 +846,10 @@
                     </div>
                     <div id="suggestions" class="suggestions-box hidden absolute w-full z-50"></div>
                 </div>
-                <button id="submit-btn" onclick="submitRegistration()" class="embossed-btn btn-fetched py-6 uppercase tracking-widest">UPDATE</button>
+                <button id="submit-btn" onclick="submitRegistration()" class="embossed-btn btn-update py-6 uppercase tracking-widest">UPDATE</button>
             </div>
             <div class="text-center pt-2">
-                <button onclick="logout()" class="text-[0.6rem] underline-offset-2 underline transition-colors" style="color: rgba(93, 109, 126, 0.15); hover: rgba(93, 109, 126, 0.3);">تسجيل الخروج</button>
+                <button onclick="logout()" class="btn-logout">تسجيل الخروج</button>
             </div>
         </div>
     </div>
@@ -969,11 +1037,11 @@
             if (dataLoaded) {
                 entryBtn.disabled = false;
                 entryBtn.innerText = 'Authorize Access';
-                entryBtn.className = 'embossed-btn btn-fetched';
+                entryBtn.className = 'embossed-btn btn-auth btn-ready';
             } else {
                 entryBtn.disabled = true;
                 entryBtn.innerText = 'جاري التحميل...';
-                entryBtn.className = 'embossed-btn';
+                entryBtn.className = 'embossed-btn btn-auth';
             }
         }, 300);
     }
@@ -994,11 +1062,11 @@
             shakeDots();
             showLoginError('الرمز غير صحيح');
             const btn = document.getElementById('entry-btn');
-            btn.classList.add('btn-danger');
+            btn.className = 'embossed-btn btn-danger';
             const original = btn.innerText;
             btn.innerText = "INCORRECT!";
             setTimeout(() => {
-                btn.classList.remove('btn-danger');
+                btn.className = 'embossed-btn btn-auth btn-ready';
                 btn.innerText = original;
             }, 1000);
             setTimeout(() => {
@@ -1084,7 +1152,7 @@
             statusDot.className = 'status-dot ready';
             entryBtn.disabled = false;
             entryBtn.innerText = 'Authorize Access';
-            entryBtn.className = 'embossed-btn btn-fetched';
+            entryBtn.className = 'embossed-btn btn-auth btn-ready';
             
             if (hasSession) {
                 setTimeout(() => {
@@ -1119,7 +1187,7 @@
             statusDot.className = 'status-dot error';
             entryBtn.disabled = true;
             entryBtn.innerText = '⚠️ خطأ في الاتصال';
-            entryBtn.className = 'embossed-btn';
+            entryBtn.className = 'embossed-btn btn-danger';
             showLoginError('تعذر الاتصال بقاعدة البيانات. يرجى تحديث الصفحة.');
             
             if (loginView.classList.contains('hidden-view')) {
@@ -1302,7 +1370,7 @@
                 btn.innerText = "SUCCESS ✅";
 
                 setTimeout(() => {
-                    btn.className = 'embossed-btn btn-fetched';
+                    btn.className = 'embossed-btn btn-update';
                     btn.innerText = originalText;
                     document.getElementById('name-input').value = "";
                     document.getElementById('spec-select').value = "";
@@ -1311,8 +1379,10 @@
             }
         } catch (e) { 
             card.classList.remove('loading-active');
+            btn.className = 'embossed-btn btn-danger';
             btn.innerText = "RETRY ❌"; 
             setTimeout(() => {
+                btn.className = 'embossed-btn btn-update';
                 btn.innerText = "UPDATE";
             }, 2000);
         }
