@@ -8,16 +8,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #1a1c20;
-            --light: #2a2d34;
-            --shadow: #0d0e11;
-            --accent: #fbbf24;
-            --accent-dim: rgba(251, 191, 36, 0.15);
-            --crimson: #e11d48;
-            --emerald: #10b981;
-            --blue: #3b82f6;
-            --text-primary: #e8e6e3;
-            --text-secondary: #94a3b8;
+            --bg: #0d1117;
+            --bg-card: #161b22;
+            --light: #2d3748;
+            --shadow: #06080a;
+            --accent: #58a6ff;
+            --accent-dim: rgba(88, 166, 255, 0.15);
+            --accent-glow: rgba(88, 166, 255, 0.4);
+            --crimson: #f85149;
+            --emerald: #3fb950;
+            --blue: #58a6ff;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --border-glow: rgba(88, 166, 255, 0.2);
         }
         
         body {
@@ -37,29 +40,70 @@
             content: '';
             position: fixed;
             inset: 0;
-            background: radial-gradient(ellipse at 50% 30%, rgba(251, 191, 36, 0.03) 0%, transparent 60%);
+            background: 
+                radial-gradient(ellipse at 20% 50%, rgba(88, 166, 255, 0.05) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(88, 166, 255, 0.03) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 100%, rgba(88, 166, 255, 0.02) 0%, transparent 40%);
             pointer-events: none;
             z-index: 0;
         }
 
         .embossed-card {
             position: relative;
-            background: var(--bg);
+            background: var(--bg-card);
             border-radius: 3rem;
-            box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light);
+            box-shadow: 
+                25px 25px 60px var(--shadow),
+                -12px -12px 40px var(--light),
+                inset 0 1px 0 rgba(255, 255, 255, 0.03);
             z-index: 10;
             transition: all 0.7s ease;
             width: 100%;
             max-width: 420px;
             padding: 2.5rem 2rem;
+            border: 1px solid rgba(88, 166, 255, 0.06);
         }
 
         .breathing {
-            animation: frameBreath 3s infinite ease-in-out;
+            animation: frameBreath 4s infinite ease-in-out;
         }
         @keyframes frameBreath {
-            0%, 100% { box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light); }
-            50% { box-shadow: 15px 15px 45px var(--shadow), -8px -8px 30px var(--light), 0 0 50px rgba(251, 191, 36, 0.15); }
+            0%, 100% { 
+                box-shadow: 
+                    25px 25px 60px var(--shadow),
+                    -12px -12px 40px var(--light),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+            }
+            50% { 
+                box-shadow: 
+                    20px 20px 50px var(--shadow),
+                    -10px -10px 35px var(--light),
+                    0 0 60px rgba(88, 166, 255, 0.06),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            }
+        }
+
+        /* 3D Depth - Inner shadow glow */
+        .embossed-card::before {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            border-radius: 2.8rem;
+            background: linear-gradient(145deg, rgba(88, 166, 255, 0.02), transparent 50%, rgba(88, 166, 255, 0.01));
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .embossed-card::after {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(88, 166, 255, 0.15), rgba(88, 166, 255, 0.3), rgba(88, 166, 255, 0.15), transparent);
+            border-radius: 50%;
+            filter: blur(1px);
         }
 
         .tube-container {
@@ -72,7 +116,7 @@
         }
         #tube-bg {
             fill: none;
-            stroke: rgba(251, 191, 36, 0.03);
+            stroke: rgba(88, 166, 255, 0.03);
             stroke-width: 4;
         }
         #tube-fluid {
@@ -80,7 +124,7 @@
             stroke: var(--accent);
             stroke-width: 5;
             stroke-linecap: round;
-            filter: drop-shadow(0 0 12px var(--accent));
+            filter: drop-shadow(0 0 15px var(--accent-glow));
             stroke-dasharray: 500 1200;
             stroke-dashoffset: 1700;
             opacity: 0;
@@ -96,17 +140,23 @@
         }
 
         .recessed-input {
-            background: var(--bg);
+            background: var(--bg-card);
             border-radius: 1.5rem;
-            box-shadow: inset 8px 8px 16px var(--shadow), inset -4px -4px 12px var(--light);
-            transition: all 0.3s ease;
+            box-shadow: 
+                inset 10px 10px 20px var(--shadow),
+                inset -6px -6px 16px var(--light),
+                0 0 0 1px rgba(88, 166, 255, 0.03);
+            transition: all 0.4s ease;
             position: relative;
         }
         .recessed-input:focus-within {
-            box-shadow: inset 8px 8px 16px var(--shadow), inset -4px -4px 12px var(--light), 0 0 20px rgba(251, 191, 36, 0.05);
+            box-shadow: 
+                inset 10px 10px 20px var(--shadow),
+                inset -6px -6px 16px var(--light),
+                0 0 0 1px rgba(88, 166, 255, 0.2),
+                0 0 30px rgba(88, 166, 255, 0.05);
         }
 
-        /* Password dot animation container */
         .password-container {
             display: flex;
             align-items: center;
@@ -121,12 +171,13 @@
             width: 1.2rem;
             height: 1.2rem;
             border-radius: 50%;
-            background: rgba(251, 191, 36, 0.15);
-            border: 2px solid rgba(251, 191, 36, 0.1);
+            background: rgba(88, 166, 255, 0.08);
+            border: 2px solid rgba(88, 166, 255, 0.08);
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             transform: scale(0.5);
             opacity: 0;
             position: relative;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .password-dot.active {
@@ -134,7 +185,10 @@
             border-color: var(--accent);
             transform: scale(1);
             opacity: 1;
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+            box-shadow: 
+                0 0 25px var(--accent-glow),
+                0 0 60px rgba(88, 166, 255, 0.1),
+                inset 0 2px 4px rgba(255,255,255,0.2);
         }
 
         .password-dot.active::after {
@@ -142,7 +196,7 @@
             position: absolute;
             inset: -4px;
             border-radius: 50%;
-            border: 2px solid rgba(251, 191, 36, 0.2);
+            border: 2px solid rgba(88, 166, 255, 0.2);
             animation: rippleDot 0.6s ease-out;
         }
 
@@ -156,7 +210,9 @@
             border-color: var(--accent);
             transform: scale(1);
             opacity: 1;
-            box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+            box-shadow: 
+                0 0 20px rgba(88, 166, 255, 0.25),
+                inset 0 2px 4px rgba(255,255,255,0.15);
         }
 
         .password-dot.filled::after {
@@ -164,13 +220,13 @@
             position: absolute;
             inset: -3px;
             border-radius: 50%;
-            border: 2px solid rgba(251, 191, 36, 0.15);
+            border: 2px solid rgba(88, 166, 255, 0.12);
             animation: pulseFilled 2s ease-in-out infinite;
         }
 
         @keyframes pulseFilled {
             0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.4; }
         }
 
         .password-dot.empty {
@@ -182,7 +238,7 @@
             animation: shakeError 0.4s ease;
             border-color: var(--crimson);
             background: var(--crimson);
-            box-shadow: 0 0 20px rgba(225, 29, 72, 0.3);
+            box-shadow: 0 0 30px rgba(248, 81, 73, 0.4);
         }
 
         @keyframes shakeError {
@@ -191,7 +247,6 @@
             75% { transform: translateX(8px) scale(1.05); }
         }
 
-        /* Hidden input overlay */
         .password-input-overlay {
             position: absolute;
             inset: 0;
@@ -217,32 +272,35 @@
             background: transparent;
         }
 
-        /* Cursor blinking indicator */
         .cursor-indicator {
             position: absolute;
             bottom: -2px;
             left: 50%;
             transform: translateX(-50%);
-            width: 2px;
-            height: 2px;
+            width: 3px;
+            height: 3px;
             background: var(--accent);
             border-radius: 50%;
             animation: cursorPulse 1.2s ease-in-out infinite;
             opacity: 0;
             transition: opacity 0.3s ease;
+            box-shadow: 0 0 10px var(--accent-glow);
         }
         .cursor-indicator.visible {
             opacity: 1;
         }
         @keyframes cursorPulse {
             0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.3; }
-            50% { transform: translateX(-50%) scale(2.5); opacity: 1; }
+            50% { transform: translateX(-50%) scale(3); opacity: 1; }
         }
 
         .embossed-btn {
-            background: var(--bg);
+            background: var(--bg-card);
             border-radius: 1.5rem;
-            box-shadow: 10px 10px 20px var(--shadow), -5px -5px 15px var(--light);
+            box-shadow: 
+                12px 12px 24px var(--shadow),
+                -6px -6px 18px var(--light),
+                inset 0 1px 0 rgba(255, 255, 255, 0.02);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             color: var(--text-secondary);
             font-weight: 700;
@@ -253,59 +311,96 @@
             text-align: center;
             font-size: 0.75rem;
             letter-spacing: 0.05em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .embossed-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(88, 166, 255, 0.05), transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .embossed-btn:hover:not(:disabled)::before {
+            opacity: 1;
         }
         .embossed-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 12px 12px 24px var(--shadow), -6px -6px 18px var(--light);
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 
+                16px 16px 32px var(--shadow),
+                -8px -8px 24px var(--light),
+                0 0 30px rgba(88, 166, 255, 0.05);
         }
         .embossed-btn:active:not(:disabled) {
             transform: scale(0.97);
         }
         .embossed-btn:disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
         }
 
         .btn-fetched {
-            background: var(--accent) !important;
-            color: #1a1c20 !important;
-            box-shadow: 0 0 30px rgba(251, 191, 36, 0.3) !important;
+            background: linear-gradient(135deg, rgba(88, 166, 255, 0.15), rgba(88, 166, 255, 0.05)) !important;
+            color: var(--accent) !important;
+            box-shadow: 
+                0 0 40px rgba(88, 166, 255, 0.15),
+                12px 12px 24px var(--shadow),
+                -6px -6px 18px var(--light) !important;
+            border: 1px solid rgba(88, 166, 255, 0.15) !important;
         }
         .btn-fetched:hover {
-            box-shadow: 0 0 40px rgba(251, 191, 36, 0.5) !important;
+            box-shadow: 
+                0 0 60px rgba(88, 166, 255, 0.25),
+                16px 16px 32px var(--shadow),
+                -8px -8px 24px var(--light) !important;
+            border-color: rgba(88, 166, 255, 0.3) !important;
         }
 
         .btn-success {
-            background: var(--emerald) !important;
-            color: white !important;
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3) !important;
+            background: linear-gradient(135deg, rgba(63, 185, 80, 0.2), rgba(63, 185, 80, 0.05)) !important;
+            color: var(--emerald) !important;
+            box-shadow: 0 0 40px rgba(63, 185, 80, 0.15) !important;
+            border: 1px solid rgba(63, 185, 80, 0.2) !important;
         }
 
         .btn-call {
-            background: var(--bg) !important;
+            background: var(--bg-card) !important;
             color: var(--blue) !important;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            box-shadow: 10px 10px 20px var(--shadow), -5px -5px 15px var(--light) !important;
+            border: 1px solid rgba(88, 166, 255, 0.12) !important;
+            box-shadow: 
+                12px 12px 24px var(--shadow),
+                -6px -6px 18px var(--light) !important;
         }
         .btn-call:hover {
-            border-color: rgba(59, 130, 246, 0.4);
-            box-shadow: 12px 12px 24px var(--shadow), -6px -6px 18px var(--light), 0 0 20px rgba(59, 130, 246, 0.05) !important;
+            border-color: rgba(88, 166, 255, 0.3) !important;
+            box-shadow: 
+                16px 16px 32px var(--shadow),
+                -8px -8px 24px var(--light),
+                0 0 30px rgba(88, 166, 255, 0.05) !important;
         }
 
         .btn-wa {
-            background: var(--bg) !important;
+            background: var(--bg-card) !important;
             color: var(--emerald) !important;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            box-shadow: 10px 10px 20px var(--shadow), -5px -5px 15px var(--light) !important;
+            border: 1px solid rgba(63, 185, 80, 0.12) !important;
+            box-shadow: 
+                12px 12px 24px var(--shadow),
+                -6px -6px 18px var(--light) !important;
         }
         .btn-wa:hover {
-            border-color: rgba(16, 185, 129, 0.4);
-            box-shadow: 12px 12px 24px var(--shadow), -6px -6px 18px var(--light), 0 0 20px rgba(16, 185, 129, 0.05) !important;
+            border-color: rgba(63, 185, 80, 0.3) !important;
+            box-shadow: 
+                16px 16px 32px var(--shadow),
+                -8px -8px 24px var(--light),
+                0 0 30px rgba(63, 185, 80, 0.05) !important;
         }
 
         .btn-danger {
-            background: var(--crimson) !important;
-            color: white !important;
+            background: linear-gradient(135deg, rgba(248, 81, 73, 0.2), rgba(248, 81, 73, 0.05)) !important;
+            color: var(--crimson) !important;
+            border: 1px solid rgba(248, 81, 73, 0.2) !important;
             animation: quickShake 0.3s cubic-bezier(.36,.07,.19,.97) both;
         }
         @keyframes quickShake {
@@ -326,12 +421,12 @@
             font-size: 1rem;
         }
         .recessed-input input::placeholder {
-            color: rgba(148, 163, 184, 0.3);
+            color: rgba(139, 148, 158, 0.3);
             font-weight: 400;
         }
         .recessed-input select {
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23fbbf24' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%2358a6ff' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: left 1rem center;
             padding-right: 2.5rem;
@@ -339,7 +434,7 @@
             text-align: center;
         }
         .recessed-input select option {
-            background: var(--bg);
+            background: var(--bg-card);
             color: var(--text-primary);
         }
 
@@ -348,15 +443,17 @@
             overflow-y: auto;
             border-radius: 1.5rem;
             margin-top: 0.5rem;
-            background: var(--bg);
-            box-shadow: 10px 10px 20px var(--shadow), -5px -5px 15px var(--light);
+            background: var(--bg-card);
+            box-shadow: 
+                16px 16px 32px var(--shadow),
+                -8px -8px 24px var(--light);
             direction: rtl;
-            border: 1px solid rgba(251, 191, 36, 0.05);
+            border: 1px solid rgba(88, 166, 255, 0.05);
         }
         .suggestion-item {
             padding: 14px 20px;
             cursor: pointer;
-            border-bottom: 1px solid rgba(42, 45, 52, 0.5);
+            border-bottom: 1px solid rgba(45, 55, 72, 0.3);
             text-align: right;
             color: var(--text-secondary);
             transition: all 0.2s ease;
@@ -364,7 +461,7 @@
         }
         .suggestion-item:hover,
         .suggestion-item.selected {
-            background: var(--light);
+            background: rgba(88, 166, 255, 0.05);
             color: var(--accent);
         }
         .suggestion-item:last-child {
@@ -386,14 +483,15 @@
         #shield .shield-spinner {
             width: 3rem;
             height: 3rem;
-            border: 3px solid rgba(251, 191, 36, 0.05);
+            border: 3px solid rgba(88, 166, 255, 0.05);
             border-top-color: var(--accent);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
+            box-shadow: 0 0 30px rgba(88, 166, 255, 0.05);
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         #shield .shield-text {
-            color: rgba(251, 191, 36, 0.3);
+            color: rgba(88, 166, 255, 0.3);
             font-size: 0.75rem;
             font-weight: 600;
             letter-spacing: 0.2em;
@@ -405,17 +503,19 @@
             width: 0.5rem;
             height: 0.5rem;
             border-radius: 50%;
-            background: rgba(148, 163, 184, 0.2);
+            background: rgba(139, 148, 158, 0.2);
             transition: all 0.4s ease;
             margin-right: 0.5rem;
         }
         .status-dot.ready {
             background: var(--emerald);
             animation: pulse-dot 2s infinite;
+            box-shadow: 0 0 10px rgba(63, 185, 80, 0.3);
         }
         .status-dot.error {
             background: var(--crimson);
             animation: pulse-dot 1.5s infinite;
+            box-shadow: 0 0 10px rgba(248, 81, 73, 0.3);
         }
         @keyframes pulse-dot {
             0%, 100% { opacity: 1; transform: scale(1); }
@@ -426,16 +526,16 @@
             font-size: 0.6rem;
             font-weight: 600;
             letter-spacing: 0.15em;
-            color: rgba(148, 163, 184, 0.3);
+            color: rgba(139, 148, 158, 0.3);
             transition: all 0.4s ease;
             text-transform: uppercase;
         }
-        .status-text.ready { color: rgba(16, 185, 129, 0.5); }
-        .status-text.error { color: rgba(225, 29, 72, 0.5); }
+        .status-text.ready { color: rgba(63, 185, 80, 0.5); }
+        .status-text.error { color: rgba(248, 81, 73, 0.5); }
 
         .toast-error {
-            background: rgba(225, 29, 72, 0.08);
-            border: 1px solid rgba(225, 29, 72, 0.15);
+            background: rgba(248, 81, 73, 0.08);
+            border: 1px solid rgba(248, 81, 73, 0.15);
             border-radius: 1rem;
             padding: 0.75rem 1rem;
             font-size: 0.7rem;
@@ -453,13 +553,13 @@
             align-items: center;
             gap: 0.5rem;
             font-size: 0.7rem;
-            color: rgba(148, 163, 184, 0.3);
+            color: rgba(139, 148, 158, 0.3);
             cursor: pointer;
             user-select: none;
             transition: color 0.3s ease;
         }
         .toggle-remember:hover {
-            color: rgba(148, 163, 184, 0.6);
+            color: rgba(139, 148, 158, 0.6);
         }
         .toggle-remember input[type="checkbox"] {
             accent-color: var(--accent);
@@ -491,17 +591,17 @@
 
         .royal-divider {
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgba(88, 166, 255, 0.1), transparent);
             margin: 0.5rem 0;
         }
 
         .service-badge {
-            background: rgba(251, 191, 36, 0.05);
-            border: 1px solid rgba(251, 191, 36, 0.08);
+            background: rgba(88, 166, 255, 0.05);
+            border: 1px solid rgba(88, 166, 255, 0.08);
             border-radius: 2rem;
             padding: 0.4rem 1.2rem;
             font-size: 0.7rem;
-            color: rgba(251, 191, 36, 0.5);
+            color: rgba(88, 166, 255, 0.5);
             font-weight: 600;
             letter-spacing: 0.05em;
         }
@@ -513,13 +613,28 @@
             background: transparent;
         }
         .suggestions-box::-webkit-scrollbar-thumb {
-            background: rgba(251, 191, 36, 0.15);
+            background: rgba(88, 166, 255, 0.15);
             border-radius: 2px;
         }
 
-        /* Hide login view initially if session exists - prevents flash */
         .login-hidden-initially {
             display: none !important;
+        }
+
+        /* 3D Depth for text */
+        .text-3d {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* Service display with 3D effect */
+        .service-display-3d {
+            background: var(--bg-card);
+            border-radius: 1.5rem;
+            box-shadow: 
+                inset 8px 8px 16px var(--shadow),
+                inset -4px -4px 12px var(--light);
+            padding: 0.5rem 1.5rem;
+            display: inline-block;
         }
     </style>
 </head>
@@ -539,7 +654,7 @@
         <!-- LOGIN VIEW -->
         <div id="login-view" class="view-wrapper">
             <div class="text-center mb-8">
-                <h1 class="text-white text-2xl font-extrabold tracking-tight">On-Call Portal</h1>
+                <h1 class="text-white text-2xl font-extrabold tracking-tight text-3d" style="text-shadow: 0 2px 8px rgba(0,0,0,0.4);">On-Call Portal</h1>
                 <div class="royal-divider my-4"></div>
                 <div class="flex items-center justify-center gap-2 mt-3">
                     <span id="statusDot" class="status-dot"></span>
@@ -547,7 +662,6 @@
                 </div>
             </div>
             <div class="space-y-5">
-                <!-- Password input with animated dots -->
                 <div class="recessed-input" id="passwordContainer">
                     <div class="password-container" id="dotContainer">
                         <div class="password-dot empty" id="dot0"></div>
@@ -575,20 +689,20 @@
                         <input type="checkbox" id="rememberMe" checked>
                         <span>تذكرني</span>
                     </label>
-                    <span class="text-[0.5rem] text-[rgba(251,191,36,0.15)] tracking-widest">✦ SECURE</span>
+                    <span class="text-[0.5rem] text-[rgba(88,166,255,0.15)] tracking-widest">✦ SECURE</span>
                 </div>
                 <button id="entry-btn" onclick="handleEntry()" class="embossed-btn" disabled>جاري التحميل...</button>
                 <div id="login-error" class="hidden toast-error"></div>
             </div>
-            <p class="text-[0.5rem] text-center mt-6 tracking-[0.15em] text-[rgba(148,163,184,0.08)]">ROYAL MEDICAL NETWORK</p>
+            <p class="text-[0.5rem] text-center mt-6 tracking-[0.15em] text-[rgba(139,148,158,0.08)]">ROYAL MEDICAL NETWORK</p>
         </div>
 
         <!-- LOOKUP VIEW -->
         <div id="lookup-view" class="hidden-view view-wrapper text-center">
-            <div class="recessed-input inline-block px-6 py-4 mb-6">
+            <div class="service-display-3d mb-6">
                 <span id="service-display" class="text-xl font-black uppercase" style="color: var(--accent);">...</span>
             </div>
-            <h2 id="name-display" class="text-white text-3xl font-extrabold mb-1 rtl-text">...</h2>
+            <h2 id="name-display" class="text-white text-3xl font-extrabold mb-1 rtl-text text-3d" style="text-shadow: 0 2px 8px rgba(0,0,0,0.3);">...</h2>
             <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8 phone-display">-</p>
             
             <div class="flex flex-row gap-3 w-full">
@@ -597,13 +711,13 @@
             </div>
             <p id="time-stamp" class="text-[0.6rem] text-slate-500 mt-8 font-bold tracking-wider uppercase"></p>
             <div class="mt-4">
-                <button onclick="logout()" class="text-[0.6rem] text-[rgba(148,163,184,0.15)] hover:text-[rgba(148,163,184,0.3)] underline-offset-2 underline transition-colors">تسجيل الخروج</button>
+                <button onclick="logout()" class="text-[0.6rem] text-[rgba(139,148,158,0.15)] hover:text-[rgba(139,148,158,0.3)] underline-offset-2 underline transition-colors">تسجيل الخروج</button>
             </div>
         </div>
 
         <!-- REGISTER VIEW -->
         <div id="register-view" class="hidden-view view-wrapper space-y-6">
-            <h2 class="text-white text-xl font-extrabold text-center mb-2">Duty Update 🇮🇶</h2>
+            <h2 class="text-white text-xl font-extrabold text-center mb-2 text-3d" style="text-shadow: 0 2px 8px rgba(0,0,0,0.3);">Duty Update 🇮🇶</h2>
             <div class="recessed-input">
                 <select id="spec-select" onchange="prepNameInput()">
                     <option value="">SELECT SPECIALTY</option>
@@ -633,14 +747,14 @@
                 <button id="submit-btn" onclick="submitRegistration()" class="embossed-btn btn-fetched py-6 uppercase tracking-widest">UPDATE</button>
             </div>
             <div class="text-center pt-2">
-                <button onclick="logout()" class="text-[0.6rem] text-[rgba(148,163,184,0.15)] hover:text-[rgba(148,163,184,0.3)] underline-offset-2 underline transition-colors">تسجيل الخروج</button>
+                <button onclick="logout()" class="text-[0.6rem] text-[rgba(139,148,158,0.15)] hover:text-[rgba(139,148,158,0.3)] underline-offset-2 underline transition-colors">تسجيل الخروج</button>
             </div>
         </div>
     </div>
 
 <script>
     // ############################################################
-    // PASSWORD ANIMATION + ALL ORIGINAL FUNCTIONS
+    // ALL ORIGINAL SCRIPTS - UNCHANGED
     // ############################################################
 
     const CONFIG = { user: "mHub96", repo: "s", path: "data.json" };
@@ -710,7 +824,6 @@
         const value = input.value;
         passwordValue = value;
         updateDots(value);
-        // NO AUTO-SUBMIT - user must press Enter or click button
     }
 
     function handlePasswordKey(e) {
@@ -893,12 +1006,10 @@
 
     // ---------- LOADING & INIT ----------
     window.onload = async function() {
-        // Check session FIRST - if exists, hide login view immediately to prevent flash
         const hasSession = checkSession();
         const loginView = document.getElementById('login-view');
         
         if (hasSession) {
-            // Immediately hide login view to prevent flash
             loginView.classList.add('hidden-view');
             isSessionRestored = true;
         }
@@ -942,7 +1053,6 @@
             entryBtn.className = 'embossed-btn btn-fetched';
             
             if (hasSession) {
-                // Session exists - go directly to main view (no flash)
                 setTimeout(() => {
                     if (mode === 'register') {
                         document.getElementById('register-view').classList.remove('hidden-view');
@@ -956,14 +1066,11 @@
                     }
                 }, 200);
             } else {
-                // Show login view (it was hidden if session existed, now show it)
                 if (!loginView.classList.contains('hidden-view')) {
-                    // Already visible, just focus
                     setTimeout(() => {
                         document.getElementById('pw').focus();
                     }, 300);
                 } else {
-                    // Was hidden due to session check, show it
                     loginView.classList.remove('hidden-view');
                     loginView.classList.add('enter');
                     setTimeout(() => {
@@ -981,7 +1088,6 @@
             entryBtn.className = 'embossed-btn';
             showLoginError('تعذر الاتصال بقاعدة البيانات. يرجى تحديث الصفحة.');
             
-            // Show login view if it was hidden
             if (loginView.classList.contains('hidden-view')) {
                 loginView.classList.remove('hidden-view');
                 loginView.classList.add('enter');
@@ -994,7 +1100,6 @@
             rememberCheck.checked = checkSession();
         }
 
-        // Initialize dots
         resetPasswordInput();
     };
 
@@ -1187,7 +1292,6 @@
 
     window.logout = logout;
 
-    // Focus password input when clicking on the dot container
     document.addEventListener('DOMContentLoaded', function() {
         const container = document.getElementById('passwordContainer');
         container.addEventListener('click', function() {
