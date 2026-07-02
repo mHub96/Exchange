@@ -34,7 +34,6 @@
             box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light);
             z-index: 10;
             transition: all 0.7s ease;
-            /* Faint dark grey outline - slightly lighter than the box itself */
             outline: 1px solid rgba(148, 163, 184, 0.06);
             outline-offset: 0px;
         }
@@ -238,11 +237,17 @@
             50% { transform: translateX(-50%) scale(3); opacity: 1; }
         }
 
+        /* ============================================================
+           3D BLOCK BUTTON - Extruded from the card
+           ============================================================ */
         .embossed-btn {
             background: var(--bg);
             border-radius: 1.5rem;
-            box-shadow: 10px 10px 20px var(--shadow), -5px -5px 15px var(--light);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 
+                12px 12px 24px var(--shadow), 
+                -8px -8px 20px var(--light),
+                0 4px 0 rgba(0,0,0,0.3);
+            transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             color: #64748b;
             font-weight: 800;
             border: none;
@@ -252,22 +257,59 @@
             text-align: center;
             font-size: 0.75rem;
             letter-spacing: 0.05em;
+            position: relative;
+            transform: translateY(0);
+        }
+        .embossed-btn:active {
+            box-shadow: 
+                6px 6px 12px var(--shadow), 
+                -4px -4px 10px var(--light),
+                0 2px 0 rgba(0,0,0,0.3);
+            transform: translateY(2px);
         }
         .embossed-btn:disabled {
             opacity: 0.4;
             cursor: not-allowed;
+            transform: none;
+            box-shadow: 
+                12px 12px 24px var(--shadow), 
+                -8px -8px 20px var(--light),
+                0 4px 0 rgba(0,0,0,0.2);
         }
 
         .fetched-active {
             background: var(--accent) !important;
             color: #1a1c20 !important;
-            box-shadow: 0 0 25px rgba(251, 191, 36, 0.5) !important;
+            box-shadow: 
+                12px 12px 24px var(--shadow), 
+                -8px -8px 20px var(--light),
+                0 4px 0 rgba(0,0,0,0.3),
+                0 0 25px rgba(251, 191, 36, 0.5) !important;
+        }
+        .fetched-active:active {
+            box-shadow: 
+                6px 6px 12px var(--shadow), 
+                -4px -4px 10px var(--light),
+                0 2px 0 rgba(0,0,0,0.3),
+                0 0 25px rgba(251, 191, 36, 0.4) !important;
         }
         .success-state {
             background: var(--emerald) !important;
             color: white !important;
-            box-shadow: 0 0 25px rgba(16, 185, 129, 0.5) !important;
+            box-shadow: 
+                12px 12px 24px var(--shadow), 
+                -8px -8px 20px var(--light),
+                0 4px 0 rgba(0,0,0,0.3),
+                0 0 25px rgba(16, 185, 129, 0.5) !important;
         }
+        .success-state:active {
+            box-shadow: 
+                6px 6px 12px var(--shadow), 
+                -4px -4px 10px var(--light),
+                0 2px 0 rgba(0,0,0,0.3),
+                0 0 25px rgba(16, 185, 129, 0.4) !important;
+        }
+
         .wa-glow {
             background: rgba(16, 185, 129, 0.1) !important;
             border: 1px solid var(--emerald);
@@ -357,25 +399,53 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* ============================================================
+           REMEMBER ME CHECKBOX - Dark grey, distinguishable from box
+           ============================================================ */
         .toggle-remember {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
             font-size: 0.7rem;
-            color: rgba(148, 163, 184, 0.3);
+            color: rgba(148, 163, 184, 0.4);
             cursor: pointer;
             user-select: none;
             transition: color 0.3s ease;
+            margin-top: 4px;
         }
         .toggle-remember:hover {
             color: rgba(148, 163, 184, 0.6);
         }
         .toggle-remember input[type="checkbox"] {
-            accent-color: var(--accent);
-            width: 1rem;
-            height: 1rem;
+            appearance: none;
+            -webkit-appearance: none;
+            width: 1.2rem;
+            height: 1.2rem;
+            background: #2a2d34;
+            border-radius: 4px;
             cursor: pointer;
-            border-radius: 0.25rem;
+            position: relative;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        .toggle-remember input[type="checkbox"]:checked {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        .toggle-remember input[type="checkbox"]:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #1a1c20;
+            font-size: 0.8rem;
+            font-weight: 900;
+        }
+        .toggle-remember input[type="checkbox"]:hover {
+            border-color: rgba(148, 163, 184, 0.2);
         }
 
         .view-wrapper {
@@ -464,14 +534,18 @@
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between px-1">
+                <!-- SIGN IN BUTTON - NOW ABOVE REMEMBER ME -->
+                <button id="entry-btn" onclick="handleEntry()" class="embossed-btn w-full py-6 tracking-widest uppercase" disabled>جاري التحميل...</button>
+                
+                <!-- REMEMBER ME - BELOW THE SIGN IN BUTTON -->
+                <div class="flex items-center justify-center px-1">
                     <label class="toggle-remember">
                         <input type="checkbox" id="rememberMe" checked>
                         <span>تذكرني</span>
                     </label>
-                    <span class="text-[0.5rem] tracking-widest" style="color: rgba(251, 191, 36, 0.15);">✦ SECURE</span>
+                    <span class="text-[0.5rem] tracking-widest ml-3" style="color: rgba(251, 191, 36, 0.12);">✦ SECURE</span>
                 </div>
-                <button id="entry-btn" onclick="handleEntry()" class="embossed-btn w-full py-6 tracking-widest uppercase" disabled>جاري التحميل...</button>
+                
                 <div id="login-error" class="hidden toast-error"></div>
             </div>
             <p class="text-[0.5rem] text-center mt-6 tracking-[0.15em]" style="color: rgba(148, 163, 184, 0.08);">By Dr. MOHAMMED RIYADH</p>
