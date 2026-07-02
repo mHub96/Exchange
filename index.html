@@ -210,6 +210,7 @@
             padding: 0;
             margin: 0;
             cursor: text;
+            text-align: center;
         }
         .password-input-overlay input::selection {
             background: transparent;
@@ -487,6 +488,78 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.3; }
         }
+
+        /* ============================================================
+           ACTION BUTTONS - Full label in one line
+           ============================================================ */
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 0.75rem 0.5rem;
+            border-radius: 1.5rem;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.65rem;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+            min-width: 0;
+            flex: 1;
+            background: var(--bg);
+            box-shadow: 
+                12px 12px 24px var(--shadow), 
+                -8px -8px 20px var(--light),
+                0 4px 0 rgba(0,0,0,0.3);
+            color: #64748b;
+            transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translateY(0);
+            border: none;
+            cursor: pointer;
+        }
+        .action-btn:active {
+            box-shadow: 
+                6px 6px 12px var(--shadow), 
+                -4px -4px 10px var(--light),
+                0 2px 0 rgba(0,0,0,0.3);
+            transform: translateY(2px);
+        }
+        .action-btn.wa {
+            color: var(--emerald);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+        }
+        .action-btn.call {
+            color: #60a5fa;
+            border: 1px solid rgba(96, 165, 250, 0.15);
+        }
+        .action-btn.wa:hover {
+            background: rgba(16, 185, 129, 0.05);
+        }
+        .action-btn.call:hover {
+            background: rgba(96, 165, 250, 0.05);
+        }
+        .action-btn .icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .action-btn .label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+        @media (max-width: 380px) {
+            .action-btn .label {
+                font-size: 0.55rem;
+            }
+            .action-btn .icon {
+                font-size: 0.85rem;
+            }
+        }
+        @media (min-width: 640px) {
+            .action-btn .label {
+                font-size: 0.75rem;
+            }
+        }
     </style>
 </head>
 <body class="p-4">
@@ -534,10 +607,10 @@
                     </div>
                 </div>
 
-                <!-- SIGN IN BUTTON - NOW ABOVE REMEMBER ME -->
+                <!-- SIGN IN BUTTON -->
                 <button id="entry-btn" onclick="handleEntry()" class="embossed-btn w-full py-6 tracking-widest uppercase" disabled>جاري التحميل...</button>
                 
-                <!-- REMEMBER ME - BELOW THE SIGN IN BUTTON -->
+                <!-- REMEMBER ME - BELOW THE SIGN IN BUTTON (checked by default) -->
                 <div class="flex items-center justify-center px-1">
                     <label class="toggle-remember">
                         <input type="checkbox" id="rememberMe" checked>
@@ -559,8 +632,14 @@
             <h2 id="name-display" class="text-white text-3xl font-extrabold mb-1 rtl-text">...</h2>
             <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8 phone-display">-</p>
             <div class="flex flex-row gap-2 w-full">
-                <a href="#" id="call-link" class="embossed-btn flex-1 py-5 uppercase text-center text-xs sm:text-base">📞 SIM Call</a>
-                <a href="#" id="wa-link" onclick="openWhatsApp(event)" class="hidden embossed-btn wa-glow flex-1 py-5 font-extrabold text-center text-xs sm:text-base">💬 WhatsApp</a>
+                <a href="#" id="call-link" class="action-btn call">
+                    <span class="icon">📞</span>
+                    <span class="label">SIM Call</span>
+                </a>
+                <a href="#" id="wa-link" onclick="openWhatsApp(event)" class="action-btn wa hidden">
+                    <span class="icon">💬</span>
+                    <span class="label">WhatsApp</span>
+                </a>
             </div>
             <p id="time-stamp" class="text-[0.65rem] text-slate-500 mt-10 font-bold tracking-wider uppercase"></p>
             <div class="mt-4">
@@ -948,9 +1027,11 @@
             }
         }
 
+        // Ensure the checkbox is always checked by default
         const rememberCheck = document.getElementById('rememberMe');
         if (rememberCheck) {
-            rememberCheck.checked = checkSession();
+            // If session exists, keep it checked, otherwise set to checked
+            rememberCheck.checked = true;
         }
 
         resetPasswordInput();
@@ -1014,9 +1095,12 @@
             document.getElementById('name-display').innerText = todayResident.name;
             document.getElementById('phone-display').innerText = info ? info.phone : "No Number";
             if (info?.phone) {
-                document.getElementById('call-link').href = "tel:" + info.phone;
-                document.getElementById('call-link').classList.remove('hidden');
-                document.getElementById('wa-link').classList.remove('hidden');
+                const callLink = document.getElementById('call-link');
+                callLink.href = "tel:" + info.phone;
+                callLink.classList.remove('hidden');
+                const waLink = document.getElementById('wa-link');
+                waLink.classList.remove('hidden');
+                waLink.href = "whatsapp://send?phone=" + info.phone;
             }
         } else {
             document.getElementById('name-display').innerText = "No Duty Found";
