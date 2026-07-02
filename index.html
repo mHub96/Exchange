@@ -5,332 +5,315 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Duty Portal 🇮🇶</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #1a1c20;
+            --light: #2a2d34;
+            --shadow: #0d0e11;
+            --accent: #fbbf24;
+            --accent-dim: rgba(251, 191, 36, 0.15);
+            --crimson: #e11d48;
+            --emerald: #10b981;
+            --blue: #3b82f6;
+            --btn-grey: #33373e;
+            --text-primary: #e8e6e3;
+            --text-secondary: #94a3b8;
+        }
+        
         body {
-            font-family: 'Inter', sans-serif;
-            background: #0a0e12;
-            color: #e8e6e3;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-secondary);
+            margin: 0;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 1rem;
-            background-image: 
-                radial-gradient(ellipse at 20% 50%, rgba(26, 54, 93, 0.3) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 50%, rgba(26, 54, 93, 0.2) 0%, transparent 60%),
-                radial-gradient(ellipse at 50% 100%, rgba(212, 175, 55, 0.05) 0%, transparent 40%);
             position: relative;
         }
 
-        /* Royal decorative elements */
+        /* Ambient glow */
         body::before {
             content: '';
             position: fixed;
             inset: 0;
-            background-image: 
-                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(212, 175, 55, 0.01) 2px, rgba(212, 175, 55, 0.01) 4px),
-                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(212, 175, 55, 0.01) 2px, rgba(212, 175, 55, 0.01) 4px);
+            background: radial-gradient(ellipse at 50% 30%, rgba(251, 191, 36, 0.03) 0%, transparent 60%);
             pointer-events: none;
             z-index: 0;
         }
 
-        .royal-card {
+        .embossed-card {
             position: relative;
-            background: linear-gradient(145deg, rgba(18, 26, 35, 0.92), rgba(10, 15, 20, 0.95));
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 2rem;
-            border: 1px solid rgba(212, 175, 55, 0.15);
-            box-shadow: 
-                0 30px 80px -20px rgba(0, 0, 0, 0.8),
-                0 0 0 1px rgba(212, 175, 55, 0.05) inset,
-                0 0 40px rgba(212, 175, 55, 0.03);
+            background: var(--bg);
+            border-radius: 3rem;
+            box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light);
+            z-index: 10;
+            transition: all 0.7s ease;
             width: 100%;
             max-width: 420px;
             padding: 2.5rem 2rem;
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-            z-index: 1;
-            overflow: hidden;
         }
 
-        .royal-card::before {
-            content: '';
+        .breathing {
+            animation: frameBreath 3s infinite ease-in-out;
+        }
+        @keyframes frameBreath {
+            0%, 100% { box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light); }
+            50% { box-shadow: 15px 15px 45px var(--shadow), -8px -8px 30px var(--light), 0 0 50px rgba(251, 191, 36, 0.15); }
+        }
+
+        /* Tube loading animation */
+        .tube-container {
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 20%, rgba(212, 175, 55, 0.03) 0%, transparent 60%);
+            inset: 0;
             pointer-events: none;
+            z-index: 20;
+            width: 100%;
+            height: 100%;
+        }
+        #tube-bg {
+            fill: none;
+            stroke: rgba(251, 191, 36, 0.03);
+            stroke-width: 4;
+        }
+        #tube-fluid {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 5;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 12px var(--accent));
+            stroke-dasharray: 500 1200;
+            stroke-dashoffset: 1700;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .loading-active #tube-fluid {
+            opacity: 1;
+            animation: seamlessFlow 2s linear infinite;
+        }
+        @keyframes seamlessFlow {
+            from { stroke-dashoffset: 1700; }
+            to { stroke-dashoffset: 0; }
         }
 
-        .royal-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), rgba(212, 175, 55, 0.6), rgba(212, 175, 55, 0.3), transparent);
-            opacity: 0.5;
+        /* Recessed input - neumorphic */
+        .recessed-input {
+            background: var(--bg);
+            border-radius: 1.5rem;
+            box-shadow: inset 8px 8px 16px var(--shadow), inset -4px -4px 12px var(--light);
+            transition: all 0.3s ease;
+        }
+        .recessed-input:focus-within {
+            box-shadow: inset 8px 8px 16px var(--shadow), inset -4px -4px 12px var(--light), 0 0 20px rgba(251, 191, 36, 0.05);
         }
 
-        /* Royal glow border animation */
-        @keyframes royalGlow {
-            0%, 100% { border-color: rgba(212, 175, 55, 0.15); box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(212, 175, 55, 0.05) inset; }
-            50% { border-color: rgba(212, 175, 55, 0.3); box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(212, 175, 55, 0.1) inset, 0 0 30px rgba(212, 175, 55, 0.05); }
-        }
-        .royal-card.glow {
-            animation: royalGlow 4s ease-in-out infinite;
-        }
-
-        /* Elegant heading */
-        .royal-heading {
-            font-family: 'Playfair Display', serif;
+        /* Embossed button */
+        .embossed-btn {
+            background: var(--bg);
+            border-radius: 1.5rem;
+            box-shadow: 10px 10px 20px var(--shadow), -5px -5px 15px var(--light);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: var(--text-secondary);
             font-weight: 700;
-            background: linear-gradient(135deg, #f5e6c8, #d4af37, #b8941e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 0.02em;
+            border: none;
+            cursor: pointer;
+            padding: 1rem 1.5rem;
+            width: 100%;
+            text-align: center;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+        .embossed-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 12px 12px 24px var(--shadow), -6px -6px 18px var(--light);
+        }
+        .embossed-btn:active:not(:disabled) {
+            transform: scale(0.97);
+        }
+        .embossed-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
-        .royal-subheading {
-            font-family: 'Inter', sans-serif;
-            font-weight: 300;
-            letter-spacing: 0.15em;
-            color: rgba(212, 175, 55, 0.5);
-            text-transform: uppercase;
-            font-size: 0.6rem;
+        /* State variants */
+        .btn-fetched {
+            background: var(--accent) !important;
+            color: #1a1c20 !important;
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.3) !important;
+        }
+        .btn-fetched:hover {
+            box-shadow: 0 0 40px rgba(251, 191, 36, 0.5) !important;
         }
 
-        /* Input styling */
-        .royal-input {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(212, 175, 55, 0.12);
-            border-radius: 1rem;
-            transition: all 0.4s ease;
+        .btn-success {
+            background: var(--emerald) !important;
+            color: white !important;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3) !important;
         }
-        .royal-input:focus-within {
-            border-color: rgba(212, 175, 55, 0.4);
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.05), 0 0 20px rgba(212, 175, 55, 0.03);
-            background: rgba(255, 255, 255, 0.05);
+
+        .btn-call {
+            background: var(--bg) !important;
+            color: var(--blue) !important;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            box-shadow: 10px 10px 20px var(--shadow), -5px -5px 15px var(--light) !important;
         }
-        .royal-input input, .royal-input select {
+        .btn-call:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 12px 12px 24px var(--shadow), -6px -6px 18px var(--light), 0 0 20px rgba(59, 130, 246, 0.05) !important;
+        }
+
+        .btn-wa {
+            background: var(--bg) !important;
+            color: var(--emerald) !important;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            box-shadow: 10px 10px 20px var(--shadow), -5px -5px 15px var(--light) !important;
+        }
+        .btn-wa:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            box-shadow: 12px 12px 24px var(--shadow), -6px -6px 18px var(--light), 0 0 20px rgba(16, 185, 129, 0.05) !important;
+        }
+
+        .btn-danger {
+            background: var(--crimson) !important;
+            color: white !important;
+            animation: quickShake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes quickShake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            30%, 70% { transform: translate3d(4px, 0, 0); }
+            40%, 60% { transform: translate3d(-4px, 0, 0); }
+        }
+
+        /* Inputs */
+        .recessed-input input,
+        .recessed-input select {
             background: transparent;
-            color: #e8e6e3;
+            border: none;
             outline: none;
             width: 100%;
             padding: 1rem 1.25rem;
-            font-weight: 500;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1rem;
         }
-        .royal-input input::placeholder {
-            color: rgba(232, 230, 227, 0.25);
-            font-weight: 300;
+        .recessed-input input::placeholder {
+            color: rgba(148, 163, 184, 0.3);
+            font-weight: 400;
         }
-        .royal-input select {
+        .recessed-input select {
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23d4af37' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23fbbf24' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: left 1rem center;
             padding-right: 2.5rem;
             cursor: pointer;
+            text-align: center;
         }
-        .royal-input select option {
-            background: #0a0e12;
-            color: #e8e6e3;
+        .recessed-input select option {
+            background: var(--bg);
+            color: var(--text-primary);
         }
-
-        /* Royal button */
-        .royal-btn {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.05));
-            border: 1px solid rgba(212, 175, 55, 0.25);
-            border-radius: 1rem;
-            color: #d4af37;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            padding: 1rem 1.5rem;
-            width: 100%;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-        .royal-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), transparent);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        .royal-btn:hover:not(:disabled)::before {
-            opacity: 1;
-        }
-        .royal-btn:hover:not(:disabled) {
-            border-color: rgba(212, 175, 55, 0.5);
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.05), 0 4px 20px rgba(0, 0, 0, 0.3);
-            transform: translateY(-1px);
-        }
-        .royal-btn:active:not(:disabled) {
-            transform: scale(0.98);
-        }
-        .royal-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-        .royal-btn.success {
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.05));
-            border-color: rgba(34, 197, 94, 0.4);
-            color: #4ade80;
-        }
-
-        /* Status indicators */
-        .status-dot {
-            display: inline-block;
-            width: 0.5rem;
-            height: 0.5rem;
-            border-radius: 50%;
-            background: rgba(212, 175, 55, 0.3);
-            transition: all 0.4s ease;
-            margin-right: 0.5rem;
-        }
-        .status-dot.ready {
-            background: #4ade80;
-            animation: pulse-dot 2s infinite;
-        }
-        .status-dot.error {
-            background: #ef4444;
-            animation: pulse-dot 1.5s infinite;
-        }
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.8); }
-        }
-
-        .status-text {
-            font-size: 0.6rem;
-            font-weight: 500;
-            letter-spacing: 0.1em;
-            color: rgba(232, 230, 227, 0.3);
-            transition: all 0.4s ease;
-        }
-        .status-text.ready { color: rgba(74, 222, 128, 0.6); }
-        .status-text.error { color: rgba(239, 68, 68, 0.6); }
 
         /* Suggestions */
-        .suggestions-royal {
-            background: rgba(10, 14, 18, 0.95);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(212, 175, 55, 0.12);
-            border-radius: 1rem;
-            max-height: 200px;
+        .suggestions-box {
+            max-height: 180px;
             overflow-y: auto;
+            border-radius: 1.5rem;
+            margin-top: 0.5rem;
+            background: var(--bg);
+            box-shadow: 10px 10px 20px var(--shadow), -5px -5px 15px var(--light);
             direction: rtl;
-            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(251, 191, 36, 0.05);
         }
-        .suggestion-royal-item {
-            padding: 0.75rem 1.25rem;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.05);
+        .suggestion-item {
+            padding: 14px 20px;
             cursor: pointer;
-            color: rgba(232, 230, 227, 0.6);
-            font-weight: 500;
+            border-bottom: 1px solid rgba(42, 45, 52, 0.5);
+            text-align: right;
+            color: var(--text-secondary);
             transition: all 0.2s ease;
+            font-weight: 500;
         }
-        .suggestion-royal-item:hover {
-            background: rgba(212, 175, 55, 0.05);
-            color: #d4af37;
+        .suggestion-item:hover,
+        .suggestion-item.selected {
+            background: var(--light);
+            color: var(--accent);
         }
-        .suggestion-royal-item.selected {
-            background: rgba(212, 175, 55, 0.08);
-            color: #d4af37;
-            border-right: 2px solid #d4af37;
+        .suggestion-item:last-child {
+            border-bottom: none;
         }
 
-        /* Loading spinner */
-        .royal-spinner {
-            width: 2.5rem;
-            height: 2.5rem;
-            border: 2px solid rgba(212, 175, 55, 0.1);
-            border-top-color: #d4af37;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Shield / loading screen */
+        /* Shield / Loading */
         #shield {
             position: fixed;
             inset: 0;
-            background: #0a0e12;
+            background: var(--bg);
             z-index: 100;
+            transition: opacity 0.6s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 1.5rem;
-            transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1);
         }
-        #shield .royal-spinner {
+        #shield .shield-spinner {
             width: 3rem;
             height: 3rem;
-            border-width: 3px;
+            border: 3px solid rgba(251, 191, 36, 0.05);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
         #shield .shield-text {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-            color: rgba(212, 175, 55, 0.4);
+            color: rgba(251, 191, 36, 0.3);
+            font-size: 0.75rem;
+            font-weight: 600;
             letter-spacing: 0.2em;
+            text-transform: uppercase;
         }
 
-        /* View transitions */
-        .view-wrapper {
-            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
-            opacity: 1;
-            transform: translateY(0) scale(1);
+        /* Status */
+        .status-dot {
+            display: inline-block;
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background: rgba(148, 163, 184, 0.2);
+            transition: all 0.4s ease;
+            margin-right: 0.5rem;
         }
-        .view-wrapper.exit {
-            opacity: 0;
-            transform: translateY(-20px) scale(0.98);
+        .status-dot.ready {
+            background: var(--emerald);
+            animation: pulse-dot 2s infinite;
         }
-        .view-wrapper.enter {
-            opacity: 1;
-            transform: translateY(0) scale(1);
+        .status-dot.error {
+            background: var(--crimson);
+            animation: pulse-dot 1.5s infinite;
         }
-
-        .hidden-view {
-            display: none !important;
-        }
-
-        /* Toggle remember me */
-        .toggle-royal {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.7rem;
-            color: rgba(232, 230, 227, 0.4);
-            cursor: pointer;
-            user-select: none;
-            transition: color 0.3s ease;
-        }
-        .toggle-royal:hover {
-            color: rgba(232, 230, 227, 0.6);
-        }
-        .toggle-royal input[type="checkbox"] {
-            accent-color: #d4af37;
-            width: 1rem;
-            height: 1rem;
-            cursor: pointer;
-            border-radius: 0.25rem;
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.8); }
         }
 
+        .status-text {
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            color: rgba(148, 163, 184, 0.3);
+            transition: all 0.4s ease;
+            text-transform: uppercase;
+        }
+        .status-text.ready { color: rgba(16, 185, 129, 0.5); }
+        .status-text.error { color: rgba(225, 29, 72, 0.5); }
+
+        /* Toast error */
         .toast-error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            border-radius: 0.75rem;
+            background: rgba(225, 29, 72, 0.08);
+            border: 1px solid rgba(225, 29, 72, 0.15);
+            border-radius: 1rem;
             padding: 0.75rem 1rem;
             font-size: 0.7rem;
             color: #fca5a5;
@@ -342,188 +325,182 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Toggle remember me */
+        .toggle-remember {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+            color: rgba(148, 163, 184, 0.3);
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.3s ease;
+        }
+        .toggle-remember:hover {
+            color: rgba(148, 163, 184, 0.6);
+        }
+        .toggle-remember input[type="checkbox"] {
+            accent-color: var(--accent);
+            width: 1rem;
+            height: 1rem;
+            cursor: pointer;
+            border-radius: 0.25rem;
+        }
+
+        /* Utility */
         .hidden { display: none !important; }
+        .rtl-text { direction: rtl; text-align: center; }
         .rtl-input { direction: rtl; text-align: right; }
         .phone-display { direction: ltr; unicode-bidi: isolate; display: inline-block; }
 
-        /* Scrollbar styling */
-        .suggestions-royal::-webkit-scrollbar {
-            width: 4px;
+        /* View transitions */
+        .view-wrapper {
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
-        .suggestions-royal::-webkit-scrollbar-track {
-            background: transparent;
+        .view-wrapper.exit {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.97);
         }
-        .suggestions-royal::-webkit-scrollbar-thumb {
-            background: rgba(212, 175, 55, 0.2);
-            border-radius: 2px;
+        .view-wrapper.enter {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
+        .hidden-view { display: none !important; }
 
         /* Divider */
         .royal-divider {
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent);
+            background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.1), transparent);
             margin: 0.5rem 0;
         }
 
         /* Service badge */
         .service-badge {
-            background: rgba(212, 175, 55, 0.05);
-            border: 1px solid rgba(212, 175, 55, 0.1);
+            background: rgba(251, 191, 36, 0.05);
+            border: 1px solid rgba(251, 191, 36, 0.08);
             border-radius: 2rem;
             padding: 0.4rem 1.2rem;
             font-size: 0.7rem;
-            color: rgba(212, 175, 55, 0.6);
-            font-weight: 500;
+            color: rgba(251, 191, 36, 0.5);
+            font-weight: 600;
             letter-spacing: 0.05em;
         }
 
-        .call-btn {
-            background: rgba(34, 197, 94, 0.08);
-            border: 1px solid rgba(34, 197, 94, 0.15);
-            color: #4ade80;
-            border-radius: 1rem;
-            padding: 0.8rem;
-            font-weight: 600;
-            font-size: 0.7rem;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
+        /* Scrollbar */
+        .suggestions-box::-webkit-scrollbar {
+            width: 4px;
         }
-        .call-btn:hover {
-            background: rgba(34, 197, 94, 0.15);
-            border-color: rgba(34, 197, 94, 0.3);
-            transform: translateY(-1px);
+        .suggestions-box::-webkit-scrollbar-track {
+            background: transparent;
         }
-
-        .wa-btn {
-            background: rgba(37, 211, 102, 0.08);
-            border: 1px solid rgba(37, 211, 102, 0.15);
-            color: #25d366;
-            border-radius: 1rem;
-            padding: 0.8rem;
-            font-weight: 600;
-            font-size: 0.7rem;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-        }
-        .wa-btn:hover {
-            background: rgba(37, 211, 102, 0.15);
-            border-color: rgba(37, 211, 102, 0.3);
-            transform: translateY(-1px);
+        .suggestions-box::-webkit-scrollbar-thumb {
+            background: rgba(251, 191, 36, 0.15);
+            border-radius: 2px;
         }
     </style>
 </head>
 <body>
 
-<div id="shield">
-    <div class="royal-spinner"></div>
-    <span class="shield-text">Iraqi Hosp. On-Call Portal</span>
-</div>
-
-<div id="main-card" class="royal-card glow">
-
-    <!-- LOGIN VIEW -->
-    <div id="login-view" class="view-wrapper">
-        <div class="text-center mb-10">
-            <div class="flex items-center justify-center gap-3 mb-3">
-                <span class="text-3xl">🏥</span>
-                <span class="royal-subheading">Duty</span>
-            </div>
-            <h1 class="royal-heading text-3xl md:text-4xl">On‑Call Portal</h1>
-            <div class="royal-divider my-4"></div>
-            <div class="flex items-center justify-center gap-2 mt-3">
-                <span id="statusDot" class="status-dot"></span>
-                <span id="status-text" class="status-text">جاري التحميل...</span>
-            </div>
-        </div>
-        <div class="space-y-5">
-            <div class="royal-input">
-                <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" 
-                    onkeydown="if(event.key==='Enter') handleEntry()"
-                    class="text-center text-2xl tracking-[0.8rem] font-mono">
-            </div>
-            <div class="flex items-center justify-between px-1">
-                <label class="toggle-royal">
-                    <input type="checkbox" id="rememberMe" checked>
-                    <span>تذكرني</span>
-                </label>
-                <span class="text-[0.5rem] text-[rgba(212,175,55,0.2)] tracking-widest">✦ SECURE</span>
-            </div>
-            <button id="entry-btn" onclick="handleEntry()" class="royal-btn" disabled>جاري التحميل...</button>
-            <div id="login-error" class="hidden toast-error"></div>
-        </div>
-        <p class="text-[0.5rem] text-center mt-6 tracking-[0.15em] text-[rgba(232,230,227,0.1)]">ROYAL MEDICAL NETWORK v2.0</p>
+    <div id="shield">
+        <div class="shield-spinner"></div>
+        <span class="shield-text">Iraqi. Hosp. Duty Portal</span>
     </div>
 
-    <!-- REGISTER VIEW -->
-    <div id="register-view" class="hidden-view view-wrapper">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-bold text-[#d4af37] font-['Playfair_Display']">Update Duty</h2>
-            <span class="service-badge">🇮🇶</span>
-        </div>
-        <div class="royal-input">
-            <select id="spec-select" onchange="prepNameInput()">
-                <option value="">Specialty</option>
-                <option value="NS">جراحة الجملة العصبية</option>
-                <option value="CT">جراحة القلب والصدر</option>
-                <option value="GS">الجراحة العامة</option>
-                <option value="US">جراحة المسالك البولية</option>
-                <option value="ENT">الأنف والأذن والحنجرة</option>
-                <option value="H">أمراض القلب</option>
-                <option value="ICU">تخدير العناية المركزة</option>
-                <option value="OP">تخدير العمليات</option>
-                <option value="R">الأشعة و السونار</option>
-                <option value="ON">الأورام</option>
-                <option value="D">الوفيات</option>
-            </select>
-        </div>
+    <div id="main-card" class="embossed-card breathing">
+        <svg class="tube-container" viewBox="0 0 384 512" preserveAspectRatio="none">
+            <rect id="tube-bg" x="2" y="2" width="380" height="508" rx="48" />
+            <rect id="tube-fluid" x="2" y="2" width="380" height="508" rx="48" />
+        </svg>
 
-        <div id="name-section" class="hidden space-y-4 mt-4">
-            <div class="relative">
-                <div class="royal-input">
-                    <input type="text" id="name-input" autocomplete="off" placeholder="اسم المقيم..." 
-                        oninput="filterNames()" 
-                        onkeydown="handleNameKey(event)"
-                        onblur="setTimeout(() => document.getElementById('suggestions').classList.add('hidden'), 200)"
-                        class="rtl-input">
+        <!-- LOGIN VIEW -->
+        <div id="login-view" class="view-wrapper">
+            <div class="text-center mb-10">
+                <h1 class="text-white text-2xl font-extrabold tracking-tight">On-Call Portal</h1>
+                <div class="royal-divider my-4"></div>
+                <div class="flex items-center justify-center gap-2 mt-3">
+                    <span id="statusDot" class="status-dot"></span>
+                    <span id="status-text" class="status-text">جاري التحميل...</span>
                 </div>
-                <div id="suggestions" class="suggestions-royal hidden absolute w-full z-50 mt-2"></div>
             </div>
-            <button id="submit-btn" onclick="submitRegistration()" class="royal-btn">
-                Update Registry
-            </button>
+            <div class="space-y-5">
+                <div class="recessed-input">
+                    <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" 
+                        onkeydown="if(event.key==='Enter') handleEntry()"
+                        class="text-center text-3xl tracking-[0.8rem] font-mono">
+                </div>
+                <div class="flex items-center justify-between px-1">
+                    <label class="toggle-remember">
+                        <input type="checkbox" id="rememberMe" checked>
+                        <span>تذكرني</span>
+                    </label>
+                    <span class="text-[0.5rem] text-[rgba(251,191,36,0.15)] tracking-widest">✦ SECURE</span>
+                </div>
+                <button id="entry-btn" onclick="handleEntry()" class="embossed-btn" disabled>جاري التحميل...</button>
+                <div id="login-error" class="hidden toast-error"></div>
+            </div>
+            <p class="text-[0.5rem] text-center mt-6 tracking-[0.15em] text-[rgba(148,163,184,0.08)]">ROYAL MEDICAL NETWORK</p>
         </div>
-        <div class="text-center pt-4">
-            <button onclick="logout()" class="text-[0.6rem] text-[rgba(232,230,227,0.15)] hover:text-[rgba(232,230,227,0.3)] underline-offset-2 underline transition-colors">تسجيل الخروج</button>
-        </div>
-    </div>
 
-    <!-- LOOKUP VIEW -->
-    <div id="lookup-view" class="hidden-view view-wrapper text-center">
-        <div class="flex items-center justify-center gap-3 mb-6">
-            <span class="text-sm font-light text-[rgba(232,230,227,0.3)]">Service</span>
-            <span id="service-display" class="service-badge text-sm">—</span>
+        <!-- LOOKUP VIEW -->
+        <div id="lookup-view" class="hidden-view view-wrapper text-center">
+            <div class="recessed-input inline-block px-6 py-4 mb-6">
+                <span id="service-display" class="text-accent text-xl font-black uppercase" style="color: var(--accent);">...</span>
+            </div>
+            <h2 id="name-display" class="text-white text-3xl font-extrabold mb-1 rtl-text">...</h2>
+            <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8 phone-display">-</p>
+            
+            <div class="flex flex-row gap-3 w-full">
+                <a href="#" id="call-link" class="embossed-btn btn-call flex-1 py-4 text-xs uppercase text-center" style="text-decoration: none;">📞 Call</a>
+                <a href="#" id="wa-link" onclick="openWhatsApp(event)" class="hidden embossed-btn btn-wa flex-1 py-4 text-xs font-bold text-center" style="text-decoration: none;">💬 WhatsApp</a>
+            </div>
+            <p id="time-stamp" class="text-[0.6rem] text-slate-500 mt-8 font-bold tracking-wider uppercase"></p>
+            <div class="mt-4">
+                <button onclick="logout()" class="text-[0.6rem] text-[rgba(148,163,184,0.15)] hover:text-[rgba(148,163,184,0.3)] underline-offset-2 underline transition-colors">تسجيل الخروج</button>
+            </div>
         </div>
-        <h2 id="name-display" class="text-3xl font-bold text-[#e8e6e3] font-['Playfair_Display'] mb-1">...</h2>
-        <p id="phone-display" class="text-[rgba(232,230,227,0.3)] font-mono text-lg mb-6 phone-display">-</p>
-        
-        <div class="flex flex-row gap-3 w-full">
-            <a href="#" id="call-link" class="call-btn flex-1">📞 Call</a>
-            <a href="#" id="wa-link" onclick="openWhatsApp(event)" class="wa-btn hidden flex-1">💬 WhatsApp</a>
-        </div>
-        <p id="time-stamp" class="text-[0.5rem] text-[rgba(232,230,227,0.1)] mt-8 font-mono tracking-wider uppercase"></p>
-        <div class="mt-4">
-            <button onclick="logout()" class="text-[0.6rem] text-[rgba(232,230,227,0.15)] hover:text-[rgba(232,230,227,0.3)] underline-offset-2 underline transition-colors">تسجيل الخروج</button>
+
+        <!-- REGISTER VIEW -->
+        <div id="register-view" class="hidden-view view-wrapper space-y-6">
+            <h2 class="text-white text-xl font-extrabold text-center mb-2">Duty Update 🇮🇶</h2>
+            <div class="recessed-input">
+                <select id="spec-select" onchange="prepNameInput()">
+                    <option value="">SELECT SPECIALTY</option>
+                    <option value="NS">جراحة الجملة العصبية</option>
+                    <option value="CT">جراحة الصدر و الاوعية الدموية</option>
+                    <option value="GS">الجراحة العامة</option>
+                    <option value="US">جراحة المسالك البولية</option>
+                    <option value="ENT">الأذن و الأنف و الحنجرة</option>
+                    <option value="H">أمراض القلب</option>
+                    <option value="ICU">تخدير العناية المركزة</option>
+                    <option value="OP">تخدير العمليات</option>
+                    <option value="R">الأشعة و السونار</option>
+                    <option value="ON">الأورام</option>
+                    <option value="D">الوفيات</option>
+                </select>
+            </div>
+            <div id="name-section" class="hidden space-y-4">
+                <div class="relative">
+                    <div class="recessed-input">
+                        <input type="text" id="name-input" autocomplete="off" placeholder="اسم المقيم..." 
+                            oninput="filterNames()" onkeydown="handleNameKey(event)"
+                            onblur="setTimeout(() => document.getElementById('suggestions').classList.add('hidden'), 200)"
+                            class="rtl-input">
+                    </div>
+                    <div id="suggestions" class="suggestions-box hidden absolute w-full z-50"></div>
+                </div>
+                <button id="submit-btn" onclick="submitRegistration()" class="embossed-btn btn-fetched py-6 uppercase tracking-widest">UPDATE</button>
+            </div>
+            <div class="text-center pt-2">
+                <button onclick="logout()" class="text-[0.6rem] text-[rgba(148,163,184,0.15)] hover:text-[rgba(148,163,184,0.3)] underline-offset-2 underline transition-colors">تسجيل الخروج</button>
+            </div>
         </div>
     </div>
-</div>
 
 <script>
     // ############################################################
-    // ALL ORIGINAL FUNCTIONS PRESERVED + FIXED REMEMBER ME + ROYAL THEME
+    // ALL ORIGINAL FUNCTIONS PRESERVED + FIXED REMEMBER ME
     // ############################################################
 
     const CONFIG = { user: "mHub96", repo: "s", path: "data.json" };
@@ -534,10 +511,11 @@
     const GH_TOKEN = (_pt1 + _pt2 + _pt3 + _pt4).replace(/\s/g, '');
 
     const arabicSpecs = {
-        "NS": "جراحة الجملة العصبية", "CT": "جراحة القلب والصدر", "GS": "الجراحة العامة",
-        "US": "جراحة المسالك البولية", "ENT": "الأنف والأذن والحنجرة", "H": "أمراض القلب",
-        "ICU": "تخدير العناية المركزة", "OP": "تخدير العمليات", "R": "الأشعة و السونار",
-        "ON": "الأورام", "D": "الوفيات"
+        "NS": "جراحة الجملة العصبية", "CT": "جراحة الصدر و الاوعية الدموية",
+        "GS": "الجراحة العامة", "US": "جراحة المسالك البولية",
+        "ENT": "الأذن و الأنف و الحنجرة", "H": "أمراض القلب",
+        "ICU": "تخدير العناية المركزة", "OP": "تخدير العمليات",
+        "R": "الأشعة و السونار", "ON": "الأورام", "D": "الوفيات"
     };
 
     let db = { names: [], schedule: [] };
@@ -550,12 +528,12 @@
 
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
-    const service = urlParams.get('service'); 
+    const service = urlParams.get('service');
 
     const STORAGE_KEY = 'duty_portal_session';
     const SESSION_PIN = '1234';
 
-    // ---------- REMEMBER ME LOGIC (FIXED) ----------
+    // ---------- REMEMBER ME LOGIC ----------
     function saveSession() {
         const remember = document.getElementById('rememberMe');
         if (remember && remember.checked) {
@@ -570,7 +548,6 @@
     function checkSession() {
         const session = localStorage.getItem(STORAGE_KEY);
         if (!session) return false;
-        // Optional: expire after 7 days
         const timestamp = localStorage.getItem(STORAGE_KEY + '_timestamp');
         if (timestamp) {
             const days = (Date.now() - parseInt(timestamp)) / (1000 * 60 * 60 * 24);
@@ -589,12 +566,10 @@
 
     function logout() {
         clearSession();
-        // Animated transition
         const loginView = document.getElementById('login-view');
         const registerView = document.getElementById('register-view');
         const lookupView = document.getElementById('lookup-view');
         
-        // Exit animation
         if (!registerView.classList.contains('hidden-view')) {
             registerView.classList.add('exit');
             setTimeout(() => {
@@ -619,15 +594,16 @@
             if (dataLoaded) {
                 entryBtn.disabled = false;
                 entryBtn.innerText = 'Authorize Access';
-                entryBtn.classList.remove('success');
+                entryBtn.className = 'embossed-btn btn-fetched';
             } else {
                 entryBtn.disabled = true;
                 entryBtn.innerText = 'جاري التحميل...';
+                entryBtn.className = 'embossed-btn';
             }
         }, 300);
     }
 
-    // ---------- ENTRY HANDLER (with session save) ----------
+    // ---------- ENTRY HANDLER ----------
     window.handleEntry = function() {
         if (!dataLoaded) {
             showLoginError('البيانات لم تكتمل، حاول مرة أخرى');
@@ -642,6 +618,14 @@
             input.classList.add('border-red-400', 'ring-2', 'ring-red-400/20');
             setTimeout(() => input.classList.remove('border-red-400', 'ring-2', 'ring-red-400/20'), 600);
             showLoginError('الرمز غير صحيح');
+            const btn = document.getElementById('entry-btn');
+            btn.classList.add('btn-danger');
+            const original = btn.innerText;
+            btn.innerText = "INCORRECT!";
+            setTimeout(() => {
+                btn.classList.remove('btn-danger');
+                btn.innerText = original;
+            }, 1000);
         }
     };
 
@@ -650,13 +634,11 @@
         const registerView = document.getElementById('register-view');
         const lookupView = document.getElementById('lookup-view');
         
-        // Exit login
         loginView.classList.add('exit');
         setTimeout(() => {
             loginView.classList.add('hidden-view');
             loginView.classList.remove('exit');
             
-            // Enter target view
             if (mode === 'register') {
                 registerView.classList.remove('hidden-view');
                 registerView.classList.add('enter');
@@ -705,7 +687,6 @@
         const s = document.getElementById('shield');
         if (s) { s.style.opacity = '0'; setTimeout(() => s.remove(), 500); }
 
-        // Update UI
         const entryBtn = document.getElementById('entry-btn');
         const statusText = document.getElementById('status-text');
         const statusDot = document.getElementById('statusDot');
@@ -716,14 +697,12 @@
             statusDot.className = 'status-dot ready';
             entryBtn.disabled = false;
             entryBtn.innerText = 'Authorize Access';
-            entryBtn.classList.remove('success');
+            entryBtn.className = 'embossed-btn btn-fetched';
             
-            // Auto-login if session exists
             if (checkSession()) {
-                // Small delay to let the UI settle
                 setTimeout(() => {
                     proceedAfterAuth();
-                }, 300);
+                }, 400);
             }
         } else if (loadError) {
             statusText.innerText = '⚠️ غير متصل';
@@ -731,10 +710,10 @@
             statusDot.className = 'status-dot error';
             entryBtn.disabled = true;
             entryBtn.innerText = '⚠️ خطأ في الاتصال';
+            entryBtn.className = 'embossed-btn';
             showLoginError('تعذر الاتصال بقاعدة البيانات. يرجى تحديث الصفحة.');
         }
 
-        // Sync remember me checkbox
         const rememberCheck = document.getElementById('rememberMe');
         if (rememberCheck) {
             rememberCheck.checked = checkSession();
@@ -762,7 +741,7 @@
                 loadError = false;
 
                 if (service) {
-                    const todayStr = getTodayStr();
+                    const todayStr = getMedicalDate();
                     todayResident = db.schedule.find(s => s.specCode === service && s.date === todayStr);
                 }
                 return true;
@@ -775,12 +754,42 @@
         }
     }
 
-    function getTodayStr() {
+    function getMedicalDate() {
         const now = new Date();
-        return `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+        if (now.getHours() < 8) now.setDate(now.getDate() - 1);
+        const d = String(now.getDate()).padStart(2, '0');
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        return `${d}/${m}/${now.getFullYear()}`;
     }
 
-    // ---------- ORIGINAL FUNCTIONS (unchanged) ----------
+    // ---------- ORIGINAL FUNCTIONS ----------
+    function showLookupUI() {
+        const targetDate = getMedicalDate();
+        const now = new Date();
+        const timestamp = `${String(now.getDate()).padStart(2, '0')}-${now.toLocaleString('en-GB', {month:'short'})}-${now.getFullYear()} | ${now.toLocaleString('en-GB', {hour:'2-digit', minute:'2-digit', hour12:true}).toUpperCase()}`;
+        
+        document.getElementById('service-display').innerText = arabicSpecs[service] || service || "SERVICE";
+        document.getElementById('time-stamp').innerText = timestamp;
+
+        todayResident = db.schedule.find(s => s.specCode === service && s.date === targetDate);
+
+        if (todayResident) {
+            const info = db.names.find(n => n.name === todayResident.name);
+            document.getElementById('name-display').innerText = todayResident.name;
+            document.getElementById('phone-display').innerText = info ? info.phone : "No Number";
+            if (info?.phone) {
+                document.getElementById('call-link').href = "tel:" + info.phone;
+                document.getElementById('call-link').classList.remove('hidden');
+                document.getElementById('wa-link').classList.remove('hidden');
+            }
+        } else {
+            document.getElementById('name-display').innerText = "No Duty Found";
+            document.getElementById('phone-display').innerText = "Date: " + targetDate;
+            document.getElementById('call-link').classList.add('hidden');
+            document.getElementById('wa-link').classList.add('hidden');
+        }
+    }
+
     function prepNameInput() {
         if (!dataLoaded) return;
         const spec = document.getElementById('spec-select').value;
@@ -788,42 +797,41 @@
         if (!spec) { section.classList.add('hidden'); return; }
         document.getElementById('name-input').value = "";
         section.classList.remove('hidden');
-        
-        if (spec === "ICU" || spec === "OP") currentPool = db.names.filter(n => n.spec === "A" && n.spec !== "RESERVE");
-        else if (spec === "D") currentPool = db.names.filter(n => n.spec !== "RESERVE");
-        else currentPool = db.names.filter(n => n.spec === spec && n.spec !== "RESERVE");
+        if (spec === "ICU" || spec === "OP") currentPool = db.names.filter(n => n.spec === "A");
+        else if (spec === "D") currentPool = db.names;
+        else currentPool = db.names.filter(n => n.spec === spec);
     }
 
     function filterNames() {
         if (!dataLoaded) return;
-        const nameInput = document.getElementById('name-input');
-        const val = nameInput.value.trim().toLowerCase().replace(/^د\.?\s*/, '');
+        const val = document.getElementById('name-input').value.trim().toLowerCase().replace(/^د\.?\s*/, '');
         const box = document.getElementById('suggestions');
-        
         if (!val) { box.classList.add('hidden'); return; }
-
-        const matches = currentPool.filter(n => n.name.toLowerCase().replace(/^د\.?\s*/, '').includes(val))
-            .sort((a, b) => {
-                const aC = a.name.toLowerCase().replace(/^د\.?\s*/, '');
-                const bC = b.name.toLowerCase().replace(/^د\.?\s*/, '');
-                return aC.startsWith(val) && !bC.startsWith(val) ? -1 : 1;
-            });
+        
+        const matches = currentPool.filter(n => n.name.toLowerCase().replace(/^د\.?\s*/, '').includes(val));
+        matches.sort((a, b) => {
+            const aClean = a.name.toLowerCase().replace(/^د\.?\s*/, '');
+            const bClean = b.name.toLowerCase().replace(/^د\.?\s*/, '');
+            const aStarts = aClean.startsWith(val);
+            const bStarts = bClean.startsWith(val);
+            if (aStarts && !bStarts) return -1;
+            if (!aStarts && bStarts) return 1;
+            return aClean.localeCompare(bClean);
+        });
 
         if (matches.length > 0) {
-            box.innerHTML = matches.map(m => `<div class="suggestion-royal-item" onclick="selectSuggestion('${m.name}')">${m.name}</div>`).join('');
+            box.innerHTML = matches.map(m => `<div class="suggestion-item" onclick="selectSuggestion('${m.name}')">${m.name}</div>`).join('');
             box.classList.remove('hidden');
             selectedIndex = -1;
         } else box.classList.add('hidden');
     }
 
     function handleNameKey(e) {
-        const box = document.getElementById('suggestions');
-        const items = box.querySelectorAll('.suggestion-royal-item');
+        const items = document.querySelectorAll('.suggestion-item');
         if (e.key === "ArrowDown") selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
         else if (e.key === "ArrowUp") selectedIndex = Math.max(selectedIndex - 1, 0);
         else if (e.key === "Enter") {
             if (selectedIndex > -1) selectSuggestion(items[selectedIndex].innerText);
-            else if (items.length > 0) selectSuggestion(items[0].innerText);
             else submitRegistration();
         }
         items.forEach((item, i) => item.classList.toggle('selected', i === selectedIndex));
@@ -840,70 +848,57 @@
             return;
         }
         const btn = document.getElementById('submit-btn');
-        const nameInput = document.getElementById('name-input');
-        const specSelect = document.getElementById('spec-select');
-        if (!nameInput.value || !specSelect.value) return;
+        const name = document.getElementById('name-input').value;
+        const spec = document.getElementById('spec-select').value;
+        const card = document.getElementById('main-card');
+        
+        if (!name || !spec) return;
 
-        const originalText = btn.innerText;
-        btn.innerText = "جاري التحديث...";
-        btn.disabled = true;
-        btn.classList.add('opacity-50');
-
-        const entry = {
-            date: getTodayStr(), specCode: specSelect.value, name: nameInput.value,
-            timestamp: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+        card.classList.add('loading-active');
+        const dutyDate = getMedicalDate(); 
+        const entry = { 
+            date: dutyDate, specCode: spec, name: name, 
+            timestamp: new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'}) 
         };
 
         db.schedule = db.schedule.filter(s => !(s.date === entry.date && s.specCode === entry.specCode));
         db.schedule.push(entry);
 
         try {
-            const body = { message: `Update: ${entry.name}`, content: btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2)))), sha: fileSha };
+            const body = { 
+                message: `Update: ${name}`, 
+                content: btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2)))), 
+                sha: fileSha 
+            };
             const res = await fetch(`https://api.github.com/repos/${CONFIG.user}/${CONFIG.repo}/contents/${CONFIG.path}`, {
                 method: "PUT", headers: { "Authorization": `token ${GH_TOKEN}` }, body: JSON.stringify(body)
             });
-
+            
             if (res.ok) {
-                const result = await res.json();
-                fileSha = result.content.sha;
+                const r = await res.json(); 
+                fileSha = r.content.sha;
                 localStorage.setItem('duty_db_cache', JSON.stringify(db));
-                btn.classList.remove('opacity-50');
-                btn.innerText = "✅ تم التحديث";
-                btn.classList.add('success');
+                
+                card.classList.remove('loading-active');
+                btn.className = 'embossed-btn btn-success';
+                const originalText = btn.innerText;
+                btn.innerText = "SUCCESS ✅";
 
                 setTimeout(() => {
-                    specSelect.value = "";
-                    nameInput.value = "";
-                    document.getElementById('name-section').classList.add('hidden');
-                    btn.classList.remove('success');
+                    btn.className = 'embossed-btn btn-fetched';
                     btn.innerText = originalText;
-                    btn.disabled = false;
-                }, 2000);
-            } else throw new Error();
-        } catch (e) {
-            btn.classList.remove('opacity-50');
-            btn.innerText = "❌ خطأ";
-            btn.disabled = false;
-            setTimeout(() => { btn.innerText = originalText; }, 2500);
-        }
-    }
-
-    function showLookupUI() {
-        const now = new Date();
-        const timestamp = `${String(now.getDate()).padStart(2, '0')}-${now.toLocaleString('en-GB', { month: 'short' })}-${now.getFullYear()} | ${now.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase()}`;
-        
-        document.getElementById('service-display').innerText = arabicSpecs[service] || service;
-        document.getElementById('time-stamp').innerText = timestamp;
-
-        if (todayResident) {
-            const info = db.names.find(n => n.name === todayResident.name);
-            document.getElementById('name-display').innerText = todayResident.name;
-            document.getElementById('phone-display').innerText = info ? info.phone : "No Number";
-            if (info?.phone) {
-                document.getElementById('call-link').href = "tel:" + info.phone;
-                document.getElementById('wa-link').classList.remove('hidden');
+                    document.getElementById('name-input').value = "";
+                    document.getElementById('spec-select').value = "";
+                    document.getElementById('name-section').classList.add('hidden');
+                }, 1500);
             }
-        } else document.getElementById('name-display').innerText = "No Duty Found";
+        } catch (e) { 
+            card.classList.remove('loading-active');
+            btn.innerText = "RETRY ❌"; 
+            setTimeout(() => {
+                btn.innerText = "UPDATE";
+            }, 2000);
+        }
     }
 
     function openWhatsApp(e) {
