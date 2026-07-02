@@ -8,12 +8,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Darker professional theme */
-            --bg: #080b0f;
-            --bg-card: #0e141a;
-            --light: #18222c;
-            --shadow: #040608;
-            --shadow-dark: #020405;
+            /* Brownish-chocolate theme */
+            --bg: #1a0f0a;
+            --bg-card: #2a1810;
+            --light: #3d2418;
+            --shadow: #0d0704;
+            --shadow-dark: #080503;
             
             /* Rich gold accent */
             --accent: #d4a853;
@@ -42,10 +42,10 @@
             --danger-hover: #c0392b;
             --danger-bg: rgba(231, 76, 60, 0.15);
             
-            /* Text colors - high contrast */
-            --text-primary: #f0ece4;
-            --text-secondary: #c9b89a;
-            --text-muted: #6a7a7a;
+            /* Text colors - warm cream */
+            --text-primary: #f5ede3;
+            --text-secondary: #d4b89a;
+            --text-muted: #8a6a5a;
             --card-border: rgba(212, 168, 83, 0.06);
         }
         
@@ -362,7 +362,7 @@
 
         .btn-auth {
             background: linear-gradient(145deg, var(--accent), var(--accent-hover));
-            color: #0c0f14 !important;
+            color: #1a0f0a !important;
             box-shadow: 
                 10px 10px 25px rgba(212, 168, 83, 0.3),
                 -5px -5px 15px var(--light),
@@ -433,7 +433,7 @@
 
         .btn-update {
             background: linear-gradient(145deg, var(--update-color), var(--update-hover));
-            color: #0c0f14 !important;
+            color: #1a0f0a !important;
             box-shadow: 
                 10px 10px 25px rgba(212, 168, 83, 0.3),
                 -5px -5px 15px var(--light),
@@ -515,7 +515,7 @@
             font-size: 1rem;
         }
         .recessed-input input::placeholder {
-            color: rgba(201, 184, 154, 0.2);
+            color: rgba(212, 184, 154, 0.2);
             font-weight: 400;
         }
         .recessed-input select {
@@ -544,7 +544,7 @@
         .suggestion-item {
             padding: 14px 20px;
             cursor: pointer;
-            border-bottom: 1px solid rgba(24, 34, 44, 0.3);
+            border-bottom: 1px solid rgba(61, 36, 24, 0.3);
             text-align: right;
             color: var(--text-secondary);
             transition: all 0.2s ease;
@@ -593,7 +593,7 @@
             width: 0.5rem;
             height: 0.5rem;
             border-radius: 50%;
-            background: rgba(201, 184, 154, 0.15);
+            background: rgba(212, 184, 154, 0.15);
             transition: all 0.4s ease;
             margin-right: 0.5rem;
         }
@@ -616,7 +616,7 @@
             font-size: 0.6rem;
             font-weight: 600;
             letter-spacing: 0.15em;
-            color: rgba(201, 184, 154, 0.3);
+            color: rgba(212, 184, 154, 0.3);
             transition: all 0.4s ease;
             text-transform: uppercase;
         }
@@ -643,13 +643,13 @@
             align-items: center;
             gap: 0.5rem;
             font-size: 0.7rem;
-            color: rgba(201, 184, 154, 0.3);
+            color: rgba(212, 184, 154, 0.3);
             cursor: pointer;
             user-select: none;
             transition: color 0.3s ease;
         }
         .toggle-remember:hover {
-            color: rgba(201, 184, 154, 0.6);
+            color: rgba(212, 184, 154, 0.6);
         }
         .toggle-remember input[type="checkbox"] {
             accent-color: var(--accent);
@@ -705,15 +705,15 @@
         }
 
         /* ============================================================
-           BOLD 3D TEXT - Fixed cutoff with proper spacing
+           BOLD 3D TEXT - Brownish-chocolate theme
            ============================================================ */
         
-        /* Doctor name - BOLD, protruded, with dark edge shadow - FIXED CUTOFF */
+        /* Doctor name - BOLD, protruded, with dark edge shadow */
         .text-doctor-name {
             font-family: 'Playfair Display', serif;
             font-weight: 900;
             color: var(--text-primary);
-            /* Dark uniform shadow around the edges - creates the outline effect */
+            /* Dark uniform shadow around the edges */
             text-shadow: 
                 0 0 8px rgba(0, 0, 0, 0.6),
                 0 0 15px rgba(0, 0, 0, 0.4),
@@ -723,18 +723,15 @@
                 0 2px 0 rgba(212, 168, 83, 0.04),
                 0 3px 0 rgba(212, 168, 83, 0.02);
             letter-spacing: 0.04em;
-            /* CRITICAL FIX: Increased line-height to prevent cutoff of descenders (ي، و، etc.) */
             line-height: 1.6;
-            /* Added padding to prevent cutoff */
             padding: 0.5rem 0.25rem;
             margin: 0;
-            /* Ensure text has enough vertical space */
             min-height: 4.5rem;
             display: inline-block;
             width: 100%;
             background: linear-gradient(180deg, 
-                #f0ece4 0%,
-                #e8e0d0 25%,
+                #f5ede3 0%,
+                #e8dcc8 25%,
                 #d4c4a8 50%,
                 #c9b89a 75%,
                 #d4a853 100%
@@ -745,7 +742,6 @@
             transition: all 0.4s ease;
             transform: perspective(600px) rotateX(2deg) translateZ(0);
             font-size: 2.5rem;
-            /* Prevent text from overflowing */
             overflow: visible;
         }
         .text-doctor-name:hover {
@@ -780,8 +776,8 @@
             letter-spacing: 0.02em;
             padding: 0.25rem 0;
             background: linear-gradient(180deg, 
-                #f0ece4 0%,
-                #e8e0d0 50%,
+                #f5ede3 0%,
+                #e8dcc8 50%,
                 #c9b89a 100%
             );
             -webkit-background-clip: text;
@@ -894,7 +890,7 @@
                 <button id="entry-btn" onclick="handleEntry()" class="embossed-btn btn-auth" disabled>جاري التحميل...</button>
                 <div id="login-error" class="hidden toast-error"></div>
             </div>
-            <p class="text-[0.5rem] text-center mt-6 tracking-[0.15em]" style="color: rgba(106, 122, 122, 0.08);">ROYAL MEDICAL NETWORK</p>
+            <p class="text-[0.5rem] text-center mt-6 tracking-[0.15em]" style="color: rgba(138, 106, 90, 0.08);">ROYAL MEDICAL NETWORK</p>
         </div>
 
         <!-- LOOKUP VIEW -->
