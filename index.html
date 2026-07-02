@@ -576,6 +576,43 @@
                 font-size: 0.75rem;
             }
         }
+
+        /* ============================================================
+           ENGRAVED TEXT - 3D engraved effect into the card
+           ============================================================ */
+        .engraved-text {
+            font-size: 0.55rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(148, 163, 184, 0.15);
+            text-shadow: 
+                0 1px 0 rgba(255, 255, 255, 0.02),
+                0 -1px 0 rgba(0, 0, 0, 0.3);
+            background: transparent;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: all 0.3s ease;
+        }
+        .engraved-text:hover {
+            color: rgba(148, 163, 184, 0.25);
+            text-shadow: 
+                0 1px 0 rgba(255, 255, 255, 0.03),
+                0 -1px 0 rgba(0, 0, 0, 0.35);
+        }
+        /* Alternative deeper engraving effect */
+        .engraved-text-deep {
+            font-size: 0.55rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(148, 163, 184, 0.12);
+            text-shadow: 
+                0 1px 0 rgba(42, 45, 52, 0.5),
+                0 2px 0 rgba(0, 0, 0, 0.2),
+                0 -1px 0 rgba(255, 255, 255, 0.02);
+            background: transparent;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
     </style>
 </head>
 <body class="p-4">
@@ -637,7 +674,9 @@
                 
                 <div id="login-error" class="hidden toast-error"></div>
             </div>
-            <p class="text-[0.5rem] text-center mt-6 tracking-[0.15em]" style="color: rgba(148, 163, 184, 0.08);">By Dr. MOHAMMED RIYADH</p>
+            
+            <!-- ENGRAVED TEXT - 3D engraved effect -->
+            <p class="engraved-text text-center mt-6 tracking-[0.15em]">By Dr. MOHAMMED RIYADH</p>
         </div>
 
         <!-- LOOKUP VIEW -->
