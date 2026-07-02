@@ -516,6 +516,11 @@
             background: rgba(251, 191, 36, 0.15);
             border-radius: 2px;
         }
+
+        /* Hide login view initially if session exists - prevents flash */
+        .login-hidden-initially {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -549,10 +554,14 @@
                         <div class="password-dot empty" id="dot1"></div>
                         <div class="password-dot empty" id="dot2"></div>
                         <div class="password-dot empty" id="dot3"></div>
+                        <div class="password-dot empty" id="dot4"></div>
+                        <div class="password-dot empty" id="dot5"></div>
+                        <div class="password-dot empty" id="dot6"></div>
+                        <div class="password-dot empty" id="dot7"></div>
                         <div class="cursor-indicator" id="cursorIndicator"></div>
                     </div>
                     <div class="password-input-overlay">
-                        <input type="password" id="pw" inputmode="numeric" maxlength="4" 
+                        <input type="password" id="pw" inputmode="numeric" maxlength="8" 
                                autofocus
                                onkeydown="handlePasswordKey(event)"
                                oninput="handlePasswordInput()"
@@ -656,6 +665,7 @@
     let selectedIndex = -1;
     let dataLoaded = false;
     let loadError = false;
+    let isSessionRestored = false;
 
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
@@ -672,28 +682,23 @@
         const len = value.length;
         
         dots.forEach((dot, index) => {
-            // Remove all classes
             dot.className = 'password-dot';
             
             if (index < len) {
-                // Filled dot with animation
                 dot.classList.add('filled');
-                // Trigger entrance animation if it was empty
                 if (dot.dataset.wasEmpty === 'true') {
                     dot.classList.add('active');
                     setTimeout(() => dot.classList.remove('active'), 400);
                 }
                 dot.dataset.wasEmpty = 'false';
             } else {
-                // Empty dot
                 dot.classList.add('empty');
                 dot.dataset.wasEmpty = 'true';
             }
         });
 
-        // Update cursor visibility
         const cursor = document.getElementById('cursorIndicator');
-        if (len < 4) {
+        if (len < 8) {
             cursor.classList.add('visible');
         } else {
             cursor.classList.remove('visible');
@@ -705,19 +710,15 @@
         const value = input.value;
         passwordValue = value;
         updateDots(value);
-        
-        // Auto-submit if 4 digits entered
-        if (value.length === 4) {
-            setTimeout(() => handleEntry(), 200);
-        }
+        // NO AUTO-SUBMIT - user must press Enter or click button
     }
 
     function handlePasswordKey(e) {
         if (e.key === 'Enter') {
+            e.preventDefault();
             handleEntry();
         }
         if (e.key === 'Backspace') {
-            // Allow backspace to work normally
             setTimeout(() => {
                 const input = document.getElementById('pw');
                 updateDots(input.value);
@@ -727,7 +728,7 @@
 
     function showCursor() {
         const cursor = document.getElementById('cursorIndicator');
-        if (passwordValue.length < 4) {
+        if (passwordValue.length < 8) {
             cursor.classList.add('visible');
         }
     }
@@ -792,6 +793,7 @@
 
     function logout() {
         clearSession();
+        isSessionRestored = false;
         const loginView = document.getElementById('login-view');
         const registerView = document.getElementById('register-view');
         const lookupView = document.getElementById('lookup-view');
@@ -891,6 +893,16 @@
 
     // ---------- LOADING & INIT ----------
     window.onload = async function() {
+        // Check session FIRST - if exists, hide login view immediately to prevent flash
+        const hasSession = checkSession();
+        const loginView = document.getElementById('login-view');
+        
+        if (hasSession) {
+            // Immediately hide login view to prevent flash
+            loginView.classList.add('hidden-view');
+            isSessionRestored = true;
+        }
+
         const shieldTimeout = setTimeout(() => {
             const s = document.getElementById('shield');
             if (s && s.style.opacity !== '0') {
@@ -929,15 +941,36 @@
             entryBtn.innerText = 'Authorize Access';
             entryBtn.className = 'embossed-btn btn-fetched';
             
-            if (checkSession()) {
+            if (hasSession) {
+                // Session exists - go directly to main view (no flash)
                 setTimeout(() => {
-                    proceedAfterAuth();
-                }, 400);
+                    if (mode === 'register') {
+                        document.getElementById('register-view').classList.remove('hidden-view');
+                        document.getElementById('register-view').classList.add('enter');
+                        setTimeout(() => document.getElementById('register-view').classList.remove('enter'), 500);
+                    } else {
+                        showLookupUI();
+                        document.getElementById('lookup-view').classList.remove('hidden-view');
+                        document.getElementById('lookup-view').classList.add('enter');
+                        setTimeout(() => document.getElementById('lookup-view').classList.remove('enter'), 500);
+                    }
+                }, 200);
             } else {
-                // Focus the password input
-                setTimeout(() => {
-                    document.getElementById('pw').focus();
-                }, 300);
+                // Show login view (it was hidden if session existed, now show it)
+                if (!loginView.classList.contains('hidden-view')) {
+                    // Already visible, just focus
+                    setTimeout(() => {
+                        document.getElementById('pw').focus();
+                    }, 300);
+                } else {
+                    // Was hidden due to session check, show it
+                    loginView.classList.remove('hidden-view');
+                    loginView.classList.add('enter');
+                    setTimeout(() => {
+                        loginView.classList.remove('enter');
+                        document.getElementById('pw').focus();
+                    }, 300);
+                }
             }
         } else if (loadError) {
             statusText.innerText = '⚠️ غير متصل';
@@ -947,6 +980,13 @@
             entryBtn.innerText = '⚠️ خطأ في الاتصال';
             entryBtn.className = 'embossed-btn';
             showLoginError('تعذر الاتصال بقاعدة البيانات. يرجى تحديث الصفحة.');
+            
+            // Show login view if it was hidden
+            if (loginView.classList.contains('hidden-view')) {
+                loginView.classList.remove('hidden-view');
+                loginView.classList.add('enter');
+                setTimeout(() => loginView.classList.remove('enter'), 300);
+            }
         }
 
         const rememberCheck = document.getElementById('rememberMe');
