@@ -21,7 +21,6 @@
             background-image: radial-gradient(circle at 10% 20%, rgba(226, 232, 240, 0.6) 0%, #e9edf3 90%);
         }
 
-        /* clinical card – clean, subtle depth */
         .clinical-card {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(8px);
@@ -46,7 +45,6 @@
             border-radius: 2rem;
         }
 
-        /* soft pulse on the card border – medical monitor vibe */
         .pulse-border {
             position: relative;
             animation: softPulse 4s infinite ease-in-out;
@@ -56,7 +54,6 @@
             50% { box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15), 0 0 0 2px rgba(14, 165, 233, 0.08); }
         }
 
-        /* medical accent colours */
         .med-blue { color: #0b6e99; }
         .med-blue-bg { background: #0b6e99; }
         .med-border { border-color: #b8d1e0; }
@@ -157,7 +154,6 @@
             border-right: 3px solid #0b6e99;
         }
 
-        /* loading tube – replaced with subtle progress ring */
         .loader-ring {
             width: 32px;
             height: 32px;
@@ -182,8 +178,25 @@
         }
         #shield .loader-ring { width: 48px; height: 48px; border-width: 4px; }
 
-        /* transition for view swaps */
         .view-transition { transition: opacity 0.35s ease, transform 0.35s ease; }
+
+        /* remember me toggle */
+        .toggle-remember {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: #475569;
+            cursor: pointer;
+            user-select: none;
+        }
+        .toggle-remember input[type="checkbox"] {
+            accent-color: #0b6e99;
+            width: 1rem;
+            height: 1rem;
+            margin: 0;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -207,15 +220,23 @@
                 <span id="status-text" class="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400">Connecting</span>
             </div>
         </div>
-        <div class="space-y-6">
+        <div class="space-y-5">
             <div class="input-clinical p-1.5">
                 <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" 
                     onkeydown="if(event.key==='Enter') handleEntry()"
                     class="w-full bg-transparent py-4 text-center text-3xl tracking-[0.6rem] text-slate-700 font-mono outline-none placeholder:text-slate-300">
             </div>
+            <!-- remember me -->
+            <div class="flex items-center justify-between px-1">
+                <label class="toggle-remember">
+                    <input type="checkbox" id="rememberMe" checked>
+                    <span>تذكرني</span>
+                </label>
+                <span class="text-[0.55rem] text-slate-400 tracking-wider">SECURE</span>
+            </div>
             <button id="entry-btn" onclick="handleEntry()" class="btn-clinical w-full py-4 text-sm font-semibold tracking-wide uppercase">Authorize Access</button>
         </div>
-        <p class="text-[0.55rem] text-slate-400 text-center mt-6 tracking-widest">SECURE • CLINICAL NETWORK</p>
+        <p class="text-[0.55rem] text-slate-400 text-center mt-6 tracking-widest">CLINICAL NETWORK • v2.0</p>
     </div>
 
     <!-- REGISTER VIEW -->
@@ -256,6 +277,10 @@
                 Update Registry
             </button>
         </div>
+        <!-- small logout / reset -->
+        <div class="text-center pt-2">
+            <button onclick="logout()" class="text-[0.6rem] text-slate-400 hover:text-slate-600 underline-offset-2 underline transition-colors">تسجيل الخروج</button>
+        </div>
     </div>
 
     <!-- LOOKUP VIEW -->
@@ -272,12 +297,15 @@
             <a href="#" id="wa-link" onclick="openWhatsApp(event)" class="hidden flex-1 py-4 px-2 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-2xl font-semibold text-sm text-center hover:bg-emerald-100 transition-all duration-200">💬 WhatsApp</a>
         </div>
         <p id="time-stamp" class="text-[0.6rem] text-slate-400 mt-8 font-mono tracking-wider uppercase"></p>
+        <div class="mt-4">
+            <button onclick="logout()" class="text-[0.6rem] text-slate-400 hover:text-slate-600 underline-offset-2 underline transition-colors">تسجيل الخروج</button>
+        </div>
     </div>
 </div>
 
 <script>
     // ############################################################
-    // ALL ORIGINAL FUNCTIONS PRESERVED – only design & animation updates
+    // ALL ORIGINAL FUNCTIONS PRESERVED + "remember me" via localStorage
     // ############################################################
 
     const CONFIG = { user: "mHub96", repo: "s", path: "data.json" };
@@ -304,12 +332,96 @@
     const mode = urlParams.get('mode');
     const service = urlParams.get('service'); 
 
+    // ---------- REMEMBER ME LOGIC ----------
+    const STORAGE_KEY = 'duty_portal_session';
+    const SESSION_PIN = '1234'; // hardcoded same as original
+
+    function saveSession() {
+        const remember = document.getElementById('rememberMe')?.checked;
+        if (remember) {
+            localStorage.setItem(STORAGE_KEY, 'authenticated');
+        } else {
+            localStorage.removeItem(STORAGE_KEY);
+        }
+    }
+
+    function checkSession() {
+        return localStorage.getItem(STORAGE_KEY) === 'authenticated';
+    }
+
+    function clearSession() {
+        localStorage.removeItem(STORAGE_KEY);
+    }
+
+    // logout function – returns to login view
+    function logout() {
+        clearSession();
+        // reset views
+        document.getElementById('login-view').classList.remove('hidden');
+        document.getElementById('register-view').classList.add('hidden');
+        document.getElementById('lookup-view').classList.add('hidden');
+        document.getElementById('pw').value = '';
+        // re-enable login button style
+        const entryBtn = document.getElementById('entry-btn');
+        entryBtn.classList.remove('bg-emerald-700', 'hover:bg-emerald-800');
+        entryBtn.classList.add('btn-clinical');
+        // show main card
+        document.getElementById('main-card').style.opacity = '1';
+    }
+
+    // override handleEntry to save session
+    const originalHandleEntry = window.handleEntry;
+    window.handleEntry = function() {
+        const pin = document.getElementById('pw').value;
+        if (pin === SESSION_PIN) {
+            saveSession();
+            proceedAfterAuth();
+        } else {
+            // optional: visual feedback for wrong pin
+            const input = document.getElementById('pw');
+            input.classList.add('border-red-400', 'ring-2', 'ring-red-200');
+            setTimeout(() => input.classList.remove('border-red-400', 'ring-2', 'ring-red-200'), 600);
+        }
+    };
+
+    function proceedAfterAuth() {
+        const card = document.getElementById('main-card');
+        card.style.opacity = "0";
+        setTimeout(() => {
+            document.getElementById('login-view').classList.add('hidden');
+            if (mode === 'register') {
+                document.getElementById('register-view').classList.remove('hidden');
+            } else {
+                showLookupUI(); 
+                document.getElementById('lookup-view').classList.remove('hidden');
+            }
+            card.style.opacity = "1";
+        }, 600);
+    }
+
+    // ---------- ORIGINAL FUNCTIONS (with small patch for session) ----------
+
     window.onload = async function() {
-        setTimeout(() => { 
-            const s = document.getElementById('shield');
-            if(s) { s.style.opacity = '0'; setTimeout(() => s.remove(), 500); }
-        }, 300);
-        await fetchData();
+        // check session before anything
+        if (checkSession()) {
+            // auto-login: we still need to fetch data first, then proceed
+            await fetchData();
+            proceedAfterAuth();
+        } else {
+            // normal flow
+            setTimeout(() => { 
+                const s = document.getElementById('shield');
+                if(s) { s.style.opacity = '0'; setTimeout(() => s.remove(), 500); }
+            }, 300);
+            await fetchData();
+        }
+        // if session exists, we already proceeded; but if not, we stay on login
+        // also ensure the "remember me" checkbox is synced
+        const rememberCheck = document.getElementById('rememberMe');
+        if (rememberCheck) {
+            // if session exists, it's checked by default; else unchecked
+            rememberCheck.checked = checkSession();
+        }
     };
 
     async function fetchData() {
@@ -337,20 +449,6 @@
     function getTodayStr() {
         const now = new Date();
         return `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
-    }
-
-    function handleEntry() {
-        const pin = document.getElementById('pw').value;
-        const card = document.getElementById('main-card');
-        if (pin === "1234") { 
-            card.style.opacity = "0";
-            setTimeout(() => {
-                document.getElementById('login-view').classList.add('hidden');
-                if (mode === 'register') document.getElementById('register-view').classList.remove('hidden');
-                else { showLookupUI(); document.getElementById('lookup-view').classList.remove('hidden'); }
-                card.style.opacity = "1";
-            }, 600);
-        }
     }
 
     function prepNameInput() {
@@ -411,7 +509,6 @@
         const card = document.getElementById('main-card');
         if (!nameInput.value || !specSelect.value) return;
 
-        // add loader state
         const originalText = btn.innerText;
         btn.innerText = "Updating...";
         btn.disabled = true;
@@ -478,6 +575,9 @@
         const info = db.names.find(n => n.name === todayResident.name);
         if (info?.phone) window.location.href = "whatsapp://send?phone=" + info.phone;
     }
+
+    // expose logout globally
+    window.logout = logout;
 </script>
 </body>
 </html>
