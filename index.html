@@ -313,22 +313,36 @@
             transform: translateY(6px);
         }
 
-        .wa-glow {
-            background: rgba(16, 185, 129, 0.1) !important;
-            border: 1px solid var(--emerald);
-            color: var(--emerald) !important;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
-        }
-
+        /* CRIMSON WARNING - Fixed: Preserves 3D shadow */
         .crimson-warning {
             background: var(--crimson) !important;
             color: white !important;
+            box-shadow: 
+                0 8px 0 #8a1428,
+                12px 12px 24px var(--shadow), 
+                -8px -8px 20px var(--light),
+                0 0 30px rgba(225, 29, 72, 0.4) !important;
             animation: quickShake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        .crimson-warning:active {
+            box-shadow: 
+                0 2px 0 #8a1428,
+                6px 6px 12px var(--shadow), 
+                -4px -4px 10px var(--light),
+                0 0 30px rgba(225, 29, 72, 0.3) !important;
+            transform: translateY(6px);
         }
         @keyframes quickShake {
             10%, 90% { transform: translate3d(-2px, 0, 0); }
             30%, 70% { transform: translate3d(4px, 0, 0); }
             40%, 60% { transform: translate3d(-4px, 0, 0); }
+        }
+
+        .wa-glow {
+            background: rgba(16, 185, 129, 0.1) !important;
+            border: 1px solid var(--emerald);
+            color: var(--emerald) !important;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
         }
 
         .suggestions-box {
@@ -894,12 +908,19 @@
             shakeDots();
             showLoginError('الرمز غير صحيح');
             const btn = document.getElementById('entry-btn');
-            btn.classList.add('crimson-warning');
+            // Apply crimson-warning class - preserves 3D shadow
+            btn.className = 'embossed-btn crimson-warning w-full py-6 tracking-widest uppercase';
             const original = btn.innerText;
             btn.innerText = "INCORRECT!";
             setTimeout(() => {
-                btn.classList.remove('crimson-warning');
-                btn.innerText = original;
+                // Restore fetched-active state
+                if (dataLoaded) {
+                    btn.className = 'embossed-btn fetched-active w-full py-6 tracking-widest uppercase';
+                    btn.innerText = 'SIGN IN';
+                } else {
+                    btn.className = 'embossed-btn w-full py-6 tracking-widest uppercase';
+                    btn.innerText = 'جاري التحميل...';
+                }
             }, 1000);
             setTimeout(() => {
                 resetPasswordInput();
