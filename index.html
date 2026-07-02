@@ -16,7 +16,6 @@
             --crimson: #e11d48;
             --emerald: #10b981;
             --blue: #3b82f6;
-            --btn-grey: #33373e;
             --text-primary: #e8e6e3;
             --text-secondary: #94a3b8;
         }
@@ -34,7 +33,6 @@
             position: relative;
         }
 
-        /* Ambient glow */
         body::before {
             content: '';
             position: fixed;
@@ -64,7 +62,6 @@
             50% { box-shadow: 15px 15px 45px var(--shadow), -8px -8px 30px var(--light), 0 0 50px rgba(251, 191, 36, 0.15); }
         }
 
-        /* Tube loading animation */
         .tube-container {
             position: absolute;
             inset: 0;
@@ -98,18 +95,150 @@
             to { stroke-dashoffset: 0; }
         }
 
-        /* Recessed input - neumorphic */
         .recessed-input {
             background: var(--bg);
             border-radius: 1.5rem;
             box-shadow: inset 8px 8px 16px var(--shadow), inset -4px -4px 12px var(--light);
             transition: all 0.3s ease;
+            position: relative;
         }
         .recessed-input:focus-within {
             box-shadow: inset 8px 8px 16px var(--shadow), inset -4px -4px 12px var(--light), 0 0 20px rgba(251, 191, 36, 0.05);
         }
 
-        /* Embossed button */
+        /* Password dot animation container */
+        .password-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            padding: 0.5rem 1.25rem;
+            min-height: 4rem;
+            direction: ltr;
+        }
+
+        .password-dot {
+            width: 1.2rem;
+            height: 1.2rem;
+            border-radius: 50%;
+            background: rgba(251, 191, 36, 0.15);
+            border: 2px solid rgba(251, 191, 36, 0.1);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: scale(0.5);
+            opacity: 0;
+            position: relative;
+        }
+
+        .password-dot.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: scale(1);
+            opacity: 1;
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+        }
+
+        .password-dot.active::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid rgba(251, 191, 36, 0.2);
+            animation: rippleDot 0.6s ease-out;
+        }
+
+        @keyframes rippleDot {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(1.6); opacity: 0; }
+        }
+
+        .password-dot.filled {
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: scale(1);
+            opacity: 1;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+        }
+
+        .password-dot.filled::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            border: 2px solid rgba(251, 191, 36, 0.15);
+            animation: pulseFilled 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseFilled {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+        }
+
+        .password-dot.empty {
+            transform: scale(0.5);
+            opacity: 0;
+        }
+
+        .password-dot.error-shake {
+            animation: shakeError 0.4s ease;
+            border-color: var(--crimson);
+            background: var(--crimson);
+            box-shadow: 0 0 20px rgba(225, 29, 72, 0.3);
+        }
+
+        @keyframes shakeError {
+            0%, 100% { transform: translateX(0) scale(1); }
+            25% { transform: translateX(-8px) scale(1.05); }
+            75% { transform: translateX(8px) scale(1.05); }
+        }
+
+        /* Hidden input overlay */
+        .password-input-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: text;
+            z-index: 5;
+        }
+        .password-input-overlay input {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: transparent;
+            caret-color: var(--accent);
+            font-size: 1px;
+            letter-spacing: 1px;
+            padding: 0;
+            margin: 0;
+            cursor: text;
+        }
+        .password-input-overlay input::selection {
+            background: transparent;
+        }
+
+        /* Cursor blinking indicator */
+        .cursor-indicator {
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 2px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: cursorPulse 1.2s ease-in-out infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .cursor-indicator.visible {
+            opacity: 1;
+        }
+        @keyframes cursorPulse {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.3; }
+            50% { transform: translateX(-50%) scale(2.5); opacity: 1; }
+        }
+
         .embossed-btn {
             background: var(--bg);
             border-radius: 1.5rem;
@@ -137,7 +266,6 @@
             cursor: not-allowed;
         }
 
-        /* State variants */
         .btn-fetched {
             background: var(--accent) !important;
             color: #1a1c20 !important;
@@ -186,7 +314,6 @@
             40%, 60% { transform: translate3d(-4px, 0, 0); }
         }
 
-        /* Inputs */
         .recessed-input input,
         .recessed-input select {
             background: transparent;
@@ -216,7 +343,6 @@
             color: var(--text-primary);
         }
 
-        /* Suggestions */
         .suggestions-box {
             max-height: 180px;
             overflow-y: auto;
@@ -245,7 +371,6 @@
             border-bottom: none;
         }
 
-        /* Shield / Loading */
         #shield {
             position: fixed;
             inset: 0;
@@ -275,7 +400,6 @@
             text-transform: uppercase;
         }
 
-        /* Status */
         .status-dot {
             display: inline-block;
             width: 0.5rem;
@@ -309,7 +433,6 @@
         .status-text.ready { color: rgba(16, 185, 129, 0.5); }
         .status-text.error { color: rgba(225, 29, 72, 0.5); }
 
-        /* Toast error */
         .toast-error {
             background: rgba(225, 29, 72, 0.08);
             border: 1px solid rgba(225, 29, 72, 0.15);
@@ -325,7 +448,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Toggle remember me */
         .toggle-remember {
             display: flex;
             align-items: center;
@@ -347,13 +469,11 @@
             border-radius: 0.25rem;
         }
 
-        /* Utility */
         .hidden { display: none !important; }
         .rtl-text { direction: rtl; text-align: center; }
         .rtl-input { direction: rtl; text-align: right; }
         .phone-display { direction: ltr; unicode-bidi: isolate; display: inline-block; }
 
-        /* View transitions */
         .view-wrapper {
             transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             opacity: 1;
@@ -369,14 +489,12 @@
         }
         .hidden-view { display: none !important; }
 
-        /* Divider */
         .royal-divider {
             height: 1px;
             background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.1), transparent);
             margin: 0.5rem 0;
         }
 
-        /* Service badge */
         .service-badge {
             background: rgba(251, 191, 36, 0.05);
             border: 1px solid rgba(251, 191, 36, 0.08);
@@ -388,7 +506,6 @@
             letter-spacing: 0.05em;
         }
 
-        /* Scrollbar */
         .suggestions-box::-webkit-scrollbar {
             width: 4px;
         }
@@ -405,7 +522,7 @@
 
     <div id="shield">
         <div class="shield-spinner"></div>
-        <span class="shield-text">Iraqi. Hosp. Duty Portal</span>
+        <span class="shield-text">Iraqi Hosp. Duty Portal</span>
     </div>
 
     <div id="main-card" class="embossed-card breathing">
@@ -416,7 +533,7 @@
 
         <!-- LOGIN VIEW -->
         <div id="login-view" class="view-wrapper">
-            <div class="text-center mb-10">
+            <div class="text-center mb-8">
                 <h1 class="text-white text-2xl font-extrabold tracking-tight">On-Call Portal</h1>
                 <div class="royal-divider my-4"></div>
                 <div class="flex items-center justify-center gap-2 mt-3">
@@ -425,11 +542,25 @@
                 </div>
             </div>
             <div class="space-y-5">
-                <div class="recessed-input">
-                    <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" 
-                        onkeydown="if(event.key==='Enter') handleEntry()"
-                        class="text-center text-3xl tracking-[0.8rem] font-mono">
+                <!-- Password input with animated dots -->
+                <div class="recessed-input" id="passwordContainer">
+                    <div class="password-container" id="dotContainer">
+                        <div class="password-dot empty" id="dot0"></div>
+                        <div class="password-dot empty" id="dot1"></div>
+                        <div class="password-dot empty" id="dot2"></div>
+                        <div class="password-dot empty" id="dot3"></div>
+                        <div class="cursor-indicator" id="cursorIndicator"></div>
+                    </div>
+                    <div class="password-input-overlay">
+                        <input type="password" id="pw" inputmode="numeric" maxlength="4" 
+                               autofocus
+                               onkeydown="handlePasswordKey(event)"
+                               oninput="handlePasswordInput()"
+                               onfocus="showCursor()"
+                               onblur="hideCursor()">
+                    </div>
                 </div>
+
                 <div class="flex items-center justify-between px-1">
                     <label class="toggle-remember">
                         <input type="checkbox" id="rememberMe" checked>
@@ -446,7 +577,7 @@
         <!-- LOOKUP VIEW -->
         <div id="lookup-view" class="hidden-view view-wrapper text-center">
             <div class="recessed-input inline-block px-6 py-4 mb-6">
-                <span id="service-display" class="text-accent text-xl font-black uppercase" style="color: var(--accent);">...</span>
+                <span id="service-display" class="text-xl font-black uppercase" style="color: var(--accent);">...</span>
             </div>
             <h2 id="name-display" class="text-white text-3xl font-extrabold mb-1 rtl-text">...</h2>
             <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8 phone-display">-</p>
@@ -500,7 +631,7 @@
 
 <script>
     // ############################################################
-    // ALL ORIGINAL FUNCTIONS PRESERVED + FIXED REMEMBER ME
+    // PASSWORD ANIMATION + ALL ORIGINAL FUNCTIONS
     // ############################################################
 
     const CONFIG = { user: "mHub96", repo: "s", path: "data.json" };
@@ -533,7 +664,102 @@
     const STORAGE_KEY = 'duty_portal_session';
     const SESSION_PIN = '1234';
 
-    // ---------- REMEMBER ME LOGIC ----------
+    // ---------- PASSWORD ANIMATION ----------
+    let passwordValue = '';
+
+    function updateDots(value) {
+        const dots = document.querySelectorAll('.password-dot');
+        const len = value.length;
+        
+        dots.forEach((dot, index) => {
+            // Remove all classes
+            dot.className = 'password-dot';
+            
+            if (index < len) {
+                // Filled dot with animation
+                dot.classList.add('filled');
+                // Trigger entrance animation if it was empty
+                if (dot.dataset.wasEmpty === 'true') {
+                    dot.classList.add('active');
+                    setTimeout(() => dot.classList.remove('active'), 400);
+                }
+                dot.dataset.wasEmpty = 'false';
+            } else {
+                // Empty dot
+                dot.classList.add('empty');
+                dot.dataset.wasEmpty = 'true';
+            }
+        });
+
+        // Update cursor visibility
+        const cursor = document.getElementById('cursorIndicator');
+        if (len < 4) {
+            cursor.classList.add('visible');
+        } else {
+            cursor.classList.remove('visible');
+        }
+    }
+
+    function handlePasswordInput() {
+        const input = document.getElementById('pw');
+        const value = input.value;
+        passwordValue = value;
+        updateDots(value);
+        
+        // Auto-submit if 4 digits entered
+        if (value.length === 4) {
+            setTimeout(() => handleEntry(), 200);
+        }
+    }
+
+    function handlePasswordKey(e) {
+        if (e.key === 'Enter') {
+            handleEntry();
+        }
+        if (e.key === 'Backspace') {
+            // Allow backspace to work normally
+            setTimeout(() => {
+                const input = document.getElementById('pw');
+                updateDots(input.value);
+            }, 10);
+        }
+    }
+
+    function showCursor() {
+        const cursor = document.getElementById('cursorIndicator');
+        if (passwordValue.length < 4) {
+            cursor.classList.add('visible');
+        }
+    }
+
+    function hideCursor() {
+        const cursor = document.getElementById('cursorIndicator');
+        cursor.classList.remove('visible');
+    }
+
+    function shakeDots() {
+        const dots = document.querySelectorAll('.password-dot');
+        dots.forEach(dot => {
+            if (dot.classList.contains('filled')) {
+                dot.classList.add('error-shake');
+                setTimeout(() => dot.classList.remove('error-shake'), 400);
+            }
+        });
+    }
+
+    function resetPasswordInput() {
+        const input = document.getElementById('pw');
+        input.value = '';
+        passwordValue = '';
+        updateDots('');
+        const dots = document.querySelectorAll('.password-dot');
+        dots.forEach(dot => {
+            dot.className = 'password-dot empty';
+            dot.dataset.wasEmpty = 'true';
+        });
+    }
+
+    // ---------- REMEMBER ME ----------
     function saveSession() {
         const remember = document.getElementById('rememberMe');
         if (remember && remember.checked) {
@@ -589,7 +815,7 @@
             loginView.classList.remove('hidden-view');
             loginView.classList.add('enter');
             setTimeout(() => loginView.classList.remove('enter'), 500);
-            document.getElementById('pw').value = '';
+            resetPasswordInput();
             const entryBtn = document.getElementById('entry-btn');
             if (dataLoaded) {
                 entryBtn.disabled = false;
@@ -609,14 +835,14 @@
             showLoginError('البيانات لم تكتمل، حاول مرة أخرى');
             return;
         }
-        const pin = document.getElementById('pw').value;
+        const input = document.getElementById('pw');
+        const pin = input.value;
+        
         if (pin === SESSION_PIN) {
             saveSession();
             proceedAfterAuth();
         } else {
-            const input = document.getElementById('pw');
-            input.classList.add('border-red-400', 'ring-2', 'ring-red-400/20');
-            setTimeout(() => input.classList.remove('border-red-400', 'ring-2', 'ring-red-400/20'), 600);
+            shakeDots();
             showLoginError('الرمز غير صحيح');
             const btn = document.getElementById('entry-btn');
             btn.classList.add('btn-danger');
@@ -626,6 +852,10 @@
                 btn.classList.remove('btn-danger');
                 btn.innerText = original;
             }, 1000);
+            setTimeout(() => {
+                resetPasswordInput();
+                input.focus();
+            }, 400);
         }
     };
 
@@ -703,6 +933,11 @@
                 setTimeout(() => {
                     proceedAfterAuth();
                 }, 400);
+            } else {
+                // Focus the password input
+                setTimeout(() => {
+                    document.getElementById('pw').focus();
+                }, 300);
             }
         } else if (loadError) {
             statusText.innerText = '⚠️ غير متصل';
@@ -718,6 +953,9 @@
         if (rememberCheck) {
             rememberCheck.checked = checkSession();
         }
+
+        // Initialize dots
+        resetPasswordInput();
     };
 
     async function fetchDataWithTimeout(timeoutMs) {
@@ -908,6 +1146,14 @@
     }
 
     window.logout = logout;
+
+    // Focus password input when clicking on the dot container
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('passwordContainer');
+        container.addEventListener('click', function() {
+            document.getElementById('pw').focus();
+        });
+    });
 </script>
 </body>
 </html>
