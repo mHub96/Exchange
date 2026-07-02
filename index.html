@@ -239,17 +239,17 @@
         }
 
         /* ============================================================
-           3D BLOCK BUTTON - Extruded from the card
+           3D BLOCK BUTTON - Stronger extrusion effect
            ============================================================ */
         .embossed-btn {
-            background: var(--bg);
+            background: #2a2d34;
             border-radius: 1.5rem;
             box-shadow: 
+                0 8px 0 #0d0e11,
                 12px 12px 24px var(--shadow), 
-                -8px -8px 20px var(--light),
-                0 4px 0 rgba(0,0,0,0.3);
-            transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            color: #64748b;
+                -8px -8px 20px var(--light);
+            transition: all 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: #94a3b8;
             font-weight: 800;
             border: none;
             cursor: pointer;
@@ -263,52 +263,54 @@
         }
         .embossed-btn:active {
             box-shadow: 
+                0 2px 0 #0d0e11,
                 6px 6px 12px var(--shadow), 
-                -4px -4px 10px var(--light),
-                0 2px 0 rgba(0,0,0,0.3);
-            transform: translateY(2px);
+                -4px -4px 10px var(--light);
+            transform: translateY(6px);
         }
         .embossed-btn:disabled {
             opacity: 0.4;
             cursor: not-allowed;
             transform: none;
             box-shadow: 
+                0 6px 0 #0d0e11,
                 12px 12px 24px var(--shadow), 
-                -8px -8px 20px var(--light),
-                0 4px 0 rgba(0,0,0,0.2);
+                -8px -8px 20px var(--light);
         }
 
         .fetched-active {
             background: var(--accent) !important;
             color: #1a1c20 !important;
             box-shadow: 
+                0 8px 0 #b08830,
                 12px 12px 24px var(--shadow), 
                 -8px -8px 20px var(--light),
-                0 4px 0 rgba(0,0,0,0.3),
-                0 0 25px rgba(251, 191, 36, 0.5) !important;
+                0 0 30px rgba(251, 191, 36, 0.4) !important;
         }
         .fetched-active:active {
             box-shadow: 
+                0 2px 0 #b08830,
                 6px 6px 12px var(--shadow), 
                 -4px -4px 10px var(--light),
-                0 2px 0 rgba(0,0,0,0.3),
-                0 0 25px rgba(251, 191, 36, 0.4) !important;
+                0 0 30px rgba(251, 191, 36, 0.3) !important;
+            transform: translateY(6px);
         }
         .success-state {
             background: var(--emerald) !important;
             color: white !important;
             box-shadow: 
+                0 8px 0 #0a7a4a,
                 12px 12px 24px var(--shadow), 
                 -8px -8px 20px var(--light),
-                0 4px 0 rgba(0,0,0,0.3),
-                0 0 25px rgba(16, 185, 129, 0.5) !important;
+                0 0 30px rgba(16, 185, 129, 0.4) !important;
         }
         .success-state:active {
             box-shadow: 
+                0 2px 0 #0a7a4a,
                 6px 6px 12px var(--shadow), 
                 -4px -4px 10px var(--light),
-                0 2px 0 rgba(0,0,0,0.3),
-                0 0 25px rgba(16, 185, 129, 0.4) !important;
+                0 0 30px rgba(16, 185, 129, 0.3) !important;
+            transform: translateY(6px);
         }
 
         .wa-glow {
@@ -490,7 +492,7 @@
         }
 
         /* ============================================================
-           ACTION BUTTONS - Full label in one line
+           ACTION BUTTONS - Full label in one line with 3D effect
            ============================================================ */
         .action-btn {
             display: flex;
@@ -506,23 +508,23 @@
             white-space: nowrap;
             min-width: 0;
             flex: 1;
-            background: var(--bg);
+            background: #2a2d34;
             box-shadow: 
-                12px 12px 24px var(--shadow), 
-                -8px -8px 20px var(--light),
-                0 4px 0 rgba(0,0,0,0.3);
-            color: #64748b;
-            transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                0 6px 0 #0d0e11,
+                8px 8px 16px var(--shadow), 
+                -6px -6px 14px var(--light);
+            color: #94a3b8;
+            transition: all 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transform: translateY(0);
             border: none;
             cursor: pointer;
         }
         .action-btn:active {
             box-shadow: 
-                6px 6px 12px var(--shadow), 
-                -4px -4px 10px var(--light),
-                0 2px 0 rgba(0,0,0,0.3);
-            transform: translateY(2px);
+                0 2px 0 #0d0e11,
+                4px 4px 8px var(--shadow), 
+                -3px -3px 8px var(--light);
+            transform: translateY(4px);
         }
         .action-btn.wa {
             color: var(--emerald);
@@ -1030,7 +1032,6 @@
         // Ensure the checkbox is always checked by default
         const rememberCheck = document.getElementById('rememberMe');
         if (rememberCheck) {
-            // If session exists, keep it checked, otherwise set to checked
             rememberCheck.checked = true;
         }
 
