@@ -61,7 +61,6 @@
             position: relative;
         }
 
-        /* Subtle warm ambient glow */
         body::before {
             content: '';
             position: fixed;
@@ -86,7 +85,6 @@
             border: 1px solid rgba(139, 107, 74, 0.04);
         }
 
-        /* BREATHING EFFECT - from the reference code */
         .breathing { 
             animation: frameBreath 3s infinite ease-in-out; 
         }
@@ -290,7 +288,7 @@
         }
 
         /* ============================================================
-           3D BUTTONS - All with 3D embossed effect
+           3D BUTTONS
            ============================================================ */
 
         .embossed-btn {
@@ -314,7 +312,6 @@
             cursor: not-allowed;
         }
 
-        /* --- AUTH / LOGIN BUTTON - Brown --- */
         .btn-auth {
             background: linear-gradient(145deg, var(--accent), var(--accent-hover));
             color: #f5efe8 !important;
@@ -346,7 +343,6 @@
             50% { box-shadow: 10px 10px 35px rgba(139, 107, 74, 0.4), -5px -5px 15px var(--light), 0 0 50px rgba(139, 107, 74, 0.08); }
         }
 
-        /* --- CALL BUTTON - Blue with 3D --- */
         .btn-call {
             background: linear-gradient(145deg, var(--call-color), var(--call-hover));
             color: #ffffff !important;
@@ -368,7 +364,6 @@
             transform: scale(0.97);
         }
 
-        /* --- WHATSAPP BUTTON - Green with 3D --- */
         .btn-wa {
             background: linear-gradient(145deg, var(--wa-color), var(--wa-hover));
             color: #ffffff !important;
@@ -390,7 +385,6 @@
             transform: scale(0.97);
         }
 
-        /* --- UPDATE / SUBMIT BUTTON - Brown with 3D --- */
         .btn-update {
             background: linear-gradient(145deg, var(--update-color), var(--update-hover));
             color: #f5efe8 !important;
@@ -414,7 +408,6 @@
             transform: scale(0.97);
         }
 
-        /* --- SUCCESS BUTTON --- */
         .btn-success {
             background: linear-gradient(145deg, var(--success-color), var(--success-hover)) !important;
             color: #ffffff !important;
@@ -432,7 +425,6 @@
                 -8px -8px 20px var(--light) !important;
         }
 
-        /* --- DANGER / ERROR BUTTON --- */
         .btn-danger {
             background: linear-gradient(145deg, var(--danger-color), var(--danger-hover)) !important;
             color: #ffffff !important;
@@ -449,7 +441,6 @@
             40%, 60% { transform: translate3d(-4px, 0, 0); }
         }
 
-        /* --- LOGOUT BUTTON --- */
         .btn-logout {
             background: transparent !important;
             color: var(--text-muted) !important;
@@ -669,7 +660,7 @@
         }
 
         /* ============================================================
-           3D TEXT - Clean embossed without shadow distortion
+           3D TEXT - Clean embossed with proper spacing
            ============================================================ */
         .text-embossed {
             font-family: 'Playfair Display', serif;
@@ -700,7 +691,6 @@
                 0 4px 0 rgba(139, 107, 74, 0.02);
         }
 
-        /* 3D Embossed - smaller headings */
         .text-embossed-sm {
             font-family: 'Playfair Display', serif;
             font-weight: 700;
@@ -719,7 +709,6 @@
             background-clip: text;
         }
 
-        /* 3D Embossed - Gold accent text */
         .text-embossed-gold {
             font-family: 'Playfair Display', serif;
             font-weight: 800;
@@ -739,7 +728,20 @@
             background-clip: text;
         }
 
-        /* 3D Embossed - Doctor name - CLEAN without shadow below */
+        /* ============================================================
+           DOCTOR NAME - Fixed: Single line, no cut-off
+           ============================================================ */
+        .doctor-name-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 4.5rem;
+            padding: 0.25rem 0.5rem;
+            margin-bottom: 0.5rem;
+            width: 100%;
+            overflow: visible;
+        }
+
         .text-doctor-name {
             font-family: 'Playfair Display', serif;
             font-weight: 900;
@@ -747,9 +749,8 @@
             text-shadow: 
                 0 1px 0 rgba(139, 107, 74, 0.04),
                 0 2px 0 rgba(139, 107, 74, 0.03),
-                0 3px 0 rgba(139, 107, 74, 0.02),
-                0 4px 0 rgba(139, 107, 74, 0.01);
-            letter-spacing: 0.04em;
+                0 3px 0 rgba(139, 107, 74, 0.02);
+            letter-spacing: 0.03em;
             line-height: 1.2;
             background: linear-gradient(180deg, 
                 rgba(61, 46, 30, 0.95) 0%,
@@ -762,17 +763,37 @@
             background-clip: text;
             transition: all 0.3s ease;
             transform: perspective(400px) rotateX(2deg);
+            display: inline-block;
+            max-width: 100%;
+            white-space: nowrap;
+            overflow: visible;
+            padding: 0.1rem 0;
+            font-size: clamp(1.6rem, 5vw, 2.8rem);
+            /* Fallback for browsers that don't support clamp */
+            font-size: 2.2rem;
         }
+
+        /* Responsive font size for doctor name */
+        @media (max-width: 420px) {
+            .text-doctor-name {
+                font-size: clamp(1.3rem, 4.5vw, 1.8rem);
+            }
+        }
+
+        @media (min-width: 421px) and (max-width: 480px) {
+            .text-doctor-name {
+                font-size: clamp(1.6rem, 5vw, 2.2rem);
+            }
+        }
+
         .text-doctor-name:hover {
             transform: perspective(400px) rotateX(2deg) scale(1.02);
             text-shadow: 
                 0 1px 0 rgba(139, 107, 74, 0.06),
                 0 2px 0 rgba(139, 107, 74, 0.04),
-                0 3px 0 rgba(139, 107, 74, 0.03),
-                0 4px 0 rgba(139, 107, 74, 0.02);
+                0 3px 0 rgba(139, 107, 74, 0.03);
         }
 
-        /* 3D effect for service display */
         .service-display-text {
             font-family: 'Playfair Display', serif;
             font-weight: 800;
@@ -855,8 +876,12 @@
             <div class="service-display-3d mb-6">
                 <span id="service-display" class="service-display-text text-xl font-black uppercase">...</span>
             </div>
-            <!-- DOCTOR NAME - CLEAN 3D WITHOUT SHADOW DISTORTION -->
-            <h2 id="name-display" class="text-doctor-name text-4xl md:text-5xl mb-1 rtl-text">...</h2>
+            
+            <!-- DOCTOR NAME - FIXED: Single line, no cut-off -->
+            <div class="doctor-name-wrapper">
+                <h2 id="name-display" class="text-doctor-name rtl-text">...</h2>
+            </div>
+            
             <p id="phone-display" class="font-bold text-lg mb-8 phone-display" style="color: var(--text-secondary);">-</p>
             
             <div class="flex flex-row gap-3 w-full">
