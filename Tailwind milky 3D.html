@@ -34,17 +34,6 @@
             box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light);
             z-index: 10;
             transition: all 0.7s ease;
-            outline: 1px solid rgba(148, 163, 184, 0.06);
-            outline-offset: 0px;
-        }
-        .embossed-card::before {
-            content: '';
-            position: absolute;
-            inset: -1px;
-            border-radius: 3rem;
-            border: 1px solid rgba(148, 163, 184, 0.04);
-            pointer-events: none;
-            z-index: 5;
         }
         .breathing {
             animation: frameBreath 3s infinite ease-in-out;
@@ -392,11 +381,6 @@
         }
         .hidden-view { display: none !important; }
 
-        /* Status dot - hidden, only text blinks */
-        .status-dot {
-            display: none;
-        }
-
         .status-text {
             font-size: 0.6rem;
             font-weight: 600;
@@ -415,6 +399,26 @@
         @keyframes blinkReady {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.3; }
+        }
+
+        /* Faint dark grey outline - slightly lighter than the box itself */
+        .embossed-card {
+            outline: 1px solid rgba(148, 163, 184, 0.06);
+            outline-offset: 0px;
+        }
+        .embossed-card::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 3rem;
+            border: 1px solid rgba(148, 163, 184, 0.04);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* Status dot - hidden, only text blinks */
+        .status-dot {
+            display: none;
         }
     </style>
 </head>
@@ -437,7 +441,7 @@
                 <h1 class="text-white text-2xl font-extrabold tracking-tight">On-Call Portal</h1>
                 <div class="flex items-center justify-center gap-2 mt-3">
                     <span id="statusDot" class="status-dot"></span>
-                    <span id="status-text" class="status-text">جاري التحميل...</span>
+                    <span id="status-text" class="status-text">Connecting Database...</span>
                 </div>
             </div>
             <div class="space-y-8">
@@ -712,7 +716,7 @@
             const entryBtn = document.getElementById('entry-btn');
             if (dataLoaded) {
                 entryBtn.disabled = false;
-                entryBtn.innerText = 'SIGN IN';
+                entryBtn.innerText = 'Authorize Access';
                 entryBtn.className = 'embossed-btn fetched-active w-full py-6 tracking-widest uppercase';
             } else {
                 entryBtn.disabled = true;
@@ -823,11 +827,11 @@
         const statusDot = document.getElementById('statusDot');
 
         if (dataLoaded) {
-            statusText.innerText = 'READY • متصل';
+            statusText.innerText = 'READY 🇮🇶';
             statusText.className = 'status-text ready';
             statusDot.className = 'status-dot';
             entryBtn.disabled = false;
-            entryBtn.innerText = 'SIGN IN';
+            entryBtn.innerText = 'Authorize Access';
             entryBtn.className = 'embossed-btn fetched-active w-full py-6 tracking-widest uppercase';
             
             if (hasSession) {
@@ -858,7 +862,7 @@
                 }
             }
         } else if (loadError) {
-            statusText.innerText = '⚠️ غير متصل';
+            statusText.innerText = '⚠️ OFFLINE';
             statusText.className = 'status-text error';
             statusDot.className = 'status-dot';
             entryBtn.disabled = true;
