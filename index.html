@@ -5,307 +5,525 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Duty Portal 🇮🇶</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Inter', sans-serif;
-            background: #f1f5f9;
-            color: #0f172a;
-            margin: 0;
+            background: #0a0e12;
+            color: #e8e6e3;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 1rem;
-            background-image: radial-gradient(circle at 10% 20%, rgba(226, 232, 240, 0.6) 0%, #e9edf3 90%);
+            background-image: 
+                radial-gradient(ellipse at 20% 50%, rgba(26, 54, 93, 0.3) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(26, 54, 93, 0.2) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 100%, rgba(212, 175, 55, 0.05) 0%, transparent 40%);
+            position: relative;
         }
 
-        .clinical-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-radius: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.7);
-            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.02);
-            transition: all 0.2s ease;
-            width: 100%;
-            max-width: 400px;
-            padding: 2rem 1.75rem;
+        /* Royal decorative elements */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(212, 175, 55, 0.01) 2px, rgba(212, 175, 55, 0.01) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(212, 175, 55, 0.01) 2px, rgba(212, 175, 55, 0.01) 4px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .royal-card {
             position: relative;
+            background: linear-gradient(145deg, rgba(18, 26, 35, 0.92), rgba(10, 15, 20, 0.95));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            box-shadow: 
+                0 30px 80px -20px rgba(0, 0, 0, 0.8),
+                0 0 0 1px rgba(212, 175, 55, 0.05) inset,
+                0 0 40px rgba(212, 175, 55, 0.03);
+            width: 100%;
+            max-width: 420px;
+            padding: 2.5rem 2rem;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 1;
             overflow: hidden;
         }
 
-        .clinical-card::before {
+        .royal-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 20%, rgba(212, 175, 55, 0.03) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .royal-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), rgba(212, 175, 55, 0.6), rgba(212, 175, 55, 0.3), transparent);
+            opacity: 0.5;
+        }
+
+        /* Royal glow border animation */
+        @keyframes royalGlow {
+            0%, 100% { border-color: rgba(212, 175, 55, 0.15); box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(212, 175, 55, 0.05) inset; }
+            50% { border-color: rgba(212, 175, 55, 0.3); box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(212, 175, 55, 0.1) inset, 0 0 30px rgba(212, 175, 55, 0.05); }
+        }
+        .royal-card.glow {
+            animation: royalGlow 4s ease-in-out infinite;
+        }
+
+        /* Elegant heading */
+        .royal-heading {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f5e6c8, #d4af37, #b8941e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.02em;
+        }
+
+        .royal-subheading {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            color: rgba(212, 175, 55, 0.5);
+            text-transform: uppercase;
+            font-size: 0.6rem;
+        }
+
+        /* Input styling */
+        .royal-input {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.12);
+            border-radius: 1rem;
+            transition: all 0.4s ease;
+        }
+        .royal-input:focus-within {
+            border-color: rgba(212, 175, 55, 0.4);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.05), 0 0 20px rgba(212, 175, 55, 0.03);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .royal-input input, .royal-input select {
+            background: transparent;
+            color: #e8e6e3;
+            outline: none;
+            width: 100%;
+            padding: 1rem 1.25rem;
+            font-weight: 500;
+        }
+        .royal-input input::placeholder {
+            color: rgba(232, 230, 227, 0.25);
+            font-weight: 300;
+        }
+        .royal-input select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23d4af37' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 1rem center;
+            padding-right: 2.5rem;
+            cursor: pointer;
+        }
+        .royal-input select option {
+            background: #0a0e12;
+            color: #e8e6e3;
+        }
+
+        /* Royal button */
+        .royal-btn {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.05));
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 1rem;
+            color: #d4af37;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            padding: 1rem 1.5rem;
+            width: 100%;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .royal-btn::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(145deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 60%);
-            pointer-events: none;
-            border-radius: 2rem;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
-
-        .pulse-border {
-            position: relative;
-            animation: softPulse 4s infinite ease-in-out;
+        .royal-btn:hover:not(:disabled)::before {
+            opacity: 1;
         }
-        @keyframes softPulse {
-            0%, 100% { box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.10), 0 0 0 0 rgba(14, 165, 233, 0.0); }
-            50% { box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15), 0 0 0 2px rgba(14, 165, 233, 0.08); }
+        .royal-btn:hover:not(:disabled) {
+            border-color: rgba(212, 175, 55, 0.5);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.05), 0 4px 20px rgba(0, 0, 0, 0.3);
+            transform: translateY(-1px);
         }
-
-        .med-blue { color: #0b6e99; }
-        .med-blue-bg { background: #0b6e99; }
-        .med-border { border-color: #b8d1e0; }
-        .med-gold { color: #b68b40; }
-
-        .input-clinical {
-            background: rgba(255, 255, 255, 0.5);
-            border: 1px solid #dce3ec;
-            border-radius: 1.25rem;
-            transition: all 0.2s ease;
-        }
-        .input-clinical:focus-within {
-            border-color: #0b6e99;
-            box-shadow: 0 0 0 3px rgba(11, 110, 153, 0.15);
-            background: white;
-        }
-
-        .btn-clinical {
-            background: #0b6e99;
-            color: white;
-            border: none;
-            border-radius: 1.25rem;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 8px -4px rgba(11, 110, 153, 0.2);
-        }
-        .btn-clinical:hover {
-            background: #095a7c;
+        .royal-btn:active:not(:disabled) {
             transform: scale(0.98);
-            box-shadow: 0 8px 16px -6px rgba(11, 110, 153, 0.3);
         }
-        .btn-clinical:active { transform: scale(0.96); }
-
-        .btn-outline-clinical {
-            background: transparent;
-            color: #0b6e99;
-            border: 1px solid #0b6e99;
-            border-radius: 1.25rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
+        .royal-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
         }
-        .btn-outline-clinical:hover {
-            background: #0b6e99;
-            color: white;
-            box-shadow: 0 4px 12px rgba(11, 110, 153, 0.15);
+        .royal-btn.success {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.05));
+            border-color: rgba(34, 197, 94, 0.4);
+            color: #4ade80;
         }
 
-        .badge-clinical {
-            background: rgba(11, 110, 153, 0.08);
-            border-radius: 2rem;
-            padding: 0.25rem 1rem;
-            font-size: 0.6rem;
-            font-weight: 600;
-            letter-spacing: 0.04em;
-            color: #0b6e99;
-            border: 1px solid rgba(11, 110, 153, 0.1);
-        }
-
+        /* Status indicators */
         .status-dot {
             display: inline-block;
             width: 0.5rem;
             height: 0.5rem;
             border-radius: 50%;
-            background: #22c55e;
+            background: rgba(212, 175, 55, 0.3);
+            transition: all 0.4s ease;
             margin-right: 0.5rem;
+        }
+        .status-dot.ready {
+            background: #4ade80;
             animation: pulse-dot 2s infinite;
         }
+        .status-dot.error {
+            background: #ef4444;
+            animation: pulse-dot 1.5s infinite;
+        }
         @keyframes pulse-dot {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
         }
 
-        .suggestions-clinical {
-            background: white;
-            border-radius: 1.25rem;
-            border: 1px solid #dce3ec;
-            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.08);
+        .status-text {
+            font-size: 0.6rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            color: rgba(232, 230, 227, 0.3);
+            transition: all 0.4s ease;
+        }
+        .status-text.ready { color: rgba(74, 222, 128, 0.6); }
+        .status-text.error { color: rgba(239, 68, 68, 0.6); }
+
+        /* Suggestions */
+        .suggestions-royal {
+            background: rgba(10, 14, 18, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.12);
+            border-radius: 1rem;
             max-height: 200px;
             overflow-y: auto;
             direction: rtl;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.6);
         }
-        .suggestion-clinical-item {
+        .suggestion-royal-item {
             padding: 0.75rem 1.25rem;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.05);
             cursor: pointer;
-            color: #1e293b;
+            color: rgba(232, 230, 227, 0.6);
             font-weight: 500;
-            transition: 0.1s ease;
+            transition: all 0.2s ease;
         }
-        .suggestion-clinical-item:hover {
-            background: #f0f7fc;
-            color: #0b6e99;
+        .suggestion-royal-item:hover {
+            background: rgba(212, 175, 55, 0.05);
+            color: #d4af37;
         }
-        .suggestion-clinical-item.selected {
-            background: #e6f0f7;
-            color: #0b6e99;
-            border-right: 3px solid #0b6e99;
+        .suggestion-royal-item.selected {
+            background: rgba(212, 175, 55, 0.08);
+            color: #d4af37;
+            border-right: 2px solid #d4af37;
         }
 
-        .loader-ring {
-            width: 32px;
-            height: 32px;
-            border: 3px solid rgba(11, 110, 153, 0.1);
-            border-top-color: #0b6e99;
+        /* Loading spinner */
+        .royal-spinner {
+            width: 2.5rem;
+            height: 2.5rem;
+            border: 2px solid rgba(212, 175, 55, 0.1);
+            border-top-color: #d4af37;
             border-radius: 50%;
-            animation: spin 0.9s linear infinite;
+            animation: spin 0.8s linear infinite;
             margin: 0 auto;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Shield / loading screen */
+        #shield {
+            position: fixed;
+            inset: 0;
+            background: #0a0e12;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        #shield .royal-spinner {
+            width: 3rem;
+            height: 3rem;
+            border-width: 3px;
+        }
+        #shield .shield-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: rgba(212, 175, 55, 0.4);
+            letter-spacing: 0.2em;
+        }
+
+        /* View transitions */
+        .view-wrapper {
+            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .view-wrapper.exit {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.98);
+        }
+        .view-wrapper.enter {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .hidden-view {
+            display: none !important;
+        }
+
+        /* Toggle remember me */
+        .toggle-royal {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+            color: rgba(232, 230, 227, 0.4);
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.3s ease;
+        }
+        .toggle-royal:hover {
+            color: rgba(232, 230, 227, 0.6);
+        }
+        .toggle-royal input[type="checkbox"] {
+            accent-color: #d4af37;
+            width: 1rem;
+            height: 1rem;
+            cursor: pointer;
+            border-radius: 0.25rem;
+        }
+
+        .toast-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.7rem;
+            color: #fca5a5;
+            text-align: center;
+            animation: slideDown 0.4s ease;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         .hidden { display: none !important; }
         .rtl-input { direction: rtl; text-align: right; }
         .phone-display { direction: ltr; unicode-bidi: isolate; display: inline-block; }
 
-        select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230b6e99' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: left 1rem center; background-size: 1rem; padding-right: 1rem; }
-
-        #shield {
-            position: fixed; inset: 0; background: #f1f5f9; z-index: 100; 
-            transition: opacity 0.5s ease;
-            display: flex; align-items: center; justify-content: center;
+        /* Scrollbar styling */
+        .suggestions-royal::-webkit-scrollbar {
+            width: 4px;
         }
-        #shield .loader-ring { width: 48px; height: 48px; border-width: 4px; }
-
-        .view-transition { transition: opacity 0.35s ease, transform 0.35s ease; }
-
-        /* remember me toggle */
-        .toggle-remember {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.75rem;
-            color: #475569;
-            cursor: pointer;
-            user-select: none;
+        .suggestions-royal::-webkit-scrollbar-track {
+            background: transparent;
         }
-        .toggle-remember input[type="checkbox"] {
-            accent-color: #0b6e99;
-            width: 1rem;
-            height: 1rem;
-            margin: 0;
-            cursor: pointer;
+        .suggestions-royal::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 2px;
+        }
+
+        /* Divider */
+        .royal-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent);
+            margin: 0.5rem 0;
+        }
+
+        /* Service badge */
+        .service-badge {
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            border-radius: 2rem;
+            padding: 0.4rem 1.2rem;
+            font-size: 0.7rem;
+            color: rgba(212, 175, 55, 0.6);
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+
+        .call-btn {
+            background: rgba(34, 197, 94, 0.08);
+            border: 1px solid rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border-radius: 1rem;
+            padding: 0.8rem;
+            font-weight: 600;
+            font-size: 0.7rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .call-btn:hover {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: rgba(34, 197, 94, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .wa-btn {
+            background: rgba(37, 211, 102, 0.08);
+            border: 1px solid rgba(37, 211, 102, 0.15);
+            color: #25d366;
+            border-radius: 1rem;
+            padding: 0.8rem;
+            font-weight: 600;
+            font-size: 0.7rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .wa-btn:hover {
+            background: rgba(37, 211, 102, 0.15);
+            border-color: rgba(37, 211, 102, 0.3);
+            transform: translateY(-1px);
         }
     </style>
 </head>
 <body>
 
 <div id="shield">
-    <div class="loader-ring"></div>
+    <div class="royal-spinner"></div>
+    <span class="shield-text">Iraqi Hosp. On-Call Portal</span>
 </div>
 
-<div id="main-card" class="clinical-card pulse-border view-transition">
+<div id="main-card" class="royal-card glow">
 
     <!-- LOGIN VIEW -->
-    <div id="login-view">
-        <div class="text-center mb-8">
-            <div class="flex items-center justify-center gap-2 mb-2">
-                <span class="text-2xl">🏥</span>
-                <span class="text-sm font-semibold tracking-widest text-slate-400 uppercase">Duty</span>
+    <div id="login-view" class="view-wrapper">
+        <div class="text-center mb-10">
+            <div class="flex items-center justify-center gap-3 mb-3">
+                <span class="text-3xl">🏥</span>
+                <span class="royal-subheading">Duty</span>
             </div>
-            <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">On‑Call Portal</h1>
+            <h1 class="royal-heading text-3xl md:text-4xl">On‑Call Portal</h1>
+            <div class="royal-divider my-4"></div>
             <div class="flex items-center justify-center gap-2 mt-3">
-                <span class="status-dot"></span>
-                <span id="status-text" class="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400">Connecting</span>
+                <span id="statusDot" class="status-dot"></span>
+                <span id="status-text" class="status-text">جاري التحميل...</span>
             </div>
         </div>
         <div class="space-y-5">
-            <div class="input-clinical p-1.5">
+            <div class="royal-input">
                 <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" 
                     onkeydown="if(event.key==='Enter') handleEntry()"
-                    class="w-full bg-transparent py-4 text-center text-3xl tracking-[0.6rem] text-slate-700 font-mono outline-none placeholder:text-slate-300">
+                    class="text-center text-2xl tracking-[0.8rem] font-mono">
             </div>
-            <!-- remember me -->
             <div class="flex items-center justify-between px-1">
-                <label class="toggle-remember">
+                <label class="toggle-royal">
                     <input type="checkbox" id="rememberMe" checked>
                     <span>تذكرني</span>
                 </label>
-                <span class="text-[0.55rem] text-slate-400 tracking-wider">SECURE</span>
+                <span class="text-[0.5rem] text-[rgba(212,175,55,0.2)] tracking-widest">✦ SECURE</span>
             </div>
-            <button id="entry-btn" onclick="handleEntry()" class="btn-clinical w-full py-4 text-sm font-semibold tracking-wide uppercase">Authorize Access</button>
+            <button id="entry-btn" onclick="handleEntry()" class="royal-btn" disabled>جاري التحميل...</button>
+            <div id="login-error" class="hidden toast-error"></div>
         </div>
-        <p class="text-[0.55rem] text-slate-400 text-center mt-6 tracking-widest">CLINICAL NETWORK • v2.0</p>
+        <p class="text-[0.5rem] text-center mt-6 tracking-[0.15em] text-[rgba(232,230,227,0.1)]">ROYAL MEDICAL NETWORK v2.0</p>
     </div>
 
     <!-- REGISTER VIEW -->
-    <div id="register-view" class="hidden space-y-5">
-        <div class="flex items-center justify-between">
-            <h2 class="text-xl font-bold text-slate-800">Update Duty</h2>
-            <span class="badge-clinical">🇮🇶</span>
+    <div id="register-view" class="hidden-view view-wrapper">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-[#d4af37] font-['Playfair_Display']">Update Duty</h2>
+            <span class="service-badge">🇮🇶</span>
         </div>
-        <div class="input-clinical p-1">
-            <select id="spec-select" onchange="prepNameInput()" class="w-full bg-transparent p-4 text-slate-700 font-semibold outline-none">
-                <option value="" class="bg-white">Specialty</option>
-                <option value="NS" class="bg-white">جراحة الجملة العصبية</option>
-                <option value="CT" class="bg-white">جراحة القلب والصدر</option>
-                <option value="GS" class="bg-white">الجراحة العامة</option>
-                <option value="US" class="bg-white">جراحة المسالك البولية</option>
-                <option value="ENT" class="bg-white">الأنف والأذن والحنجرة</option>
-                <option value="H" class="bg-white">أمراض القلب</option>
-                <option value="ICU" class="bg-white">تخدير العناية المركزة</option>
-                <option value="OP" class="bg-white">تخدير العمليات</option>
-                <option value="R" class="bg-white">الأشعة و السونار</option>
-                <option value="ON" class="bg-white">الأورام</option>
-                <option value="D" class="bg-white">الوفيات</option>
+        <div class="royal-input">
+            <select id="spec-select" onchange="prepNameInput()">
+                <option value="">Specialty</option>
+                <option value="NS">جراحة الجملة العصبية</option>
+                <option value="CT">جراحة القلب والصدر</option>
+                <option value="GS">الجراحة العامة</option>
+                <option value="US">جراحة المسالك البولية</option>
+                <option value="ENT">الأنف والأذن والحنجرة</option>
+                <option value="H">أمراض القلب</option>
+                <option value="ICU">تخدير العناية المركزة</option>
+                <option value="OP">تخدير العمليات</option>
+                <option value="R">الأشعة و السونار</option>
+                <option value="ON">الأورام</option>
+                <option value="D">الوفيات</option>
             </select>
         </div>
 
-        <div id="name-section" class="hidden space-y-4">
+        <div id="name-section" class="hidden space-y-4 mt-4">
             <div class="relative">
-                <div class="input-clinical p-1">
+                <div class="royal-input">
                     <input type="text" id="name-input" autocomplete="off" placeholder="اسم المقيم..." 
                         oninput="filterNames()" 
                         onkeydown="handleNameKey(event)"
                         onblur="setTimeout(() => document.getElementById('suggestions').classList.add('hidden'), 200)"
-                        class="w-full bg-transparent p-4 text-slate-700 font-semibold outline-none rtl-input">
+                        class="rtl-input">
                 </div>
-                <div id="suggestions" class="suggestions-clinical hidden absolute w-full z-50 mt-1"></div>
+                <div id="suggestions" class="suggestions-royal hidden absolute w-full z-50 mt-2"></div>
             </div>
-            <button id="submit-btn" onclick="submitRegistration()" class="btn-clinical w-full py-4 text-sm font-semibold tracking-wide uppercase">
+            <button id="submit-btn" onclick="submitRegistration()" class="royal-btn">
                 Update Registry
             </button>
         </div>
-        <!-- small logout / reset -->
-        <div class="text-center pt-2">
-            <button onclick="logout()" class="text-[0.6rem] text-slate-400 hover:text-slate-600 underline-offset-2 underline transition-colors">تسجيل الخروج</button>
+        <div class="text-center pt-4">
+            <button onclick="logout()" class="text-[0.6rem] text-[rgba(232,230,227,0.15)] hover:text-[rgba(232,230,227,0.3)] underline-offset-2 underline transition-colors">تسجيل الخروج</button>
         </div>
     </div>
 
     <!-- LOOKUP VIEW -->
-    <div id="lookup-view" class="hidden text-center">
-        <div class="flex items-center justify-center gap-3 mb-4">
-            <span class="text-sm font-medium text-slate-400">Service</span>
-            <span id="service-display" class="text-lg font-bold text-slate-800 bg-slate-100/60 px-5 py-1.5 rounded-full">—</span>
+    <div id="lookup-view" class="hidden-view view-wrapper text-center">
+        <div class="flex items-center justify-center gap-3 mb-6">
+            <span class="text-sm font-light text-[rgba(232,230,227,0.3)]">Service</span>
+            <span id="service-display" class="service-badge text-sm">—</span>
         </div>
-        <h2 id="name-display" class="text-3xl font-extrabold text-slate-800 mb-1">...</h2>
-        <p id="phone-display" class="text-slate-400 font-mono text-lg mb-6 phone-display">-</p>
+        <h2 id="name-display" class="text-3xl font-bold text-[#e8e6e3] font-['Playfair_Display'] mb-1">...</h2>
+        <p id="phone-display" class="text-[rgba(232,230,227,0.3)] font-mono text-lg mb-6 phone-display">-</p>
         
         <div class="flex flex-row gap-3 w-full">
-            <a href="#" id="call-link" class="btn-clinical flex-1 py-4 px-2 text-xs font-semibold uppercase text-center">📞 Call</a>
-            <a href="#" id="wa-link" onclick="openWhatsApp(event)" class="hidden flex-1 py-4 px-2 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-2xl font-semibold text-sm text-center hover:bg-emerald-100 transition-all duration-200">💬 WhatsApp</a>
+            <a href="#" id="call-link" class="call-btn flex-1">📞 Call</a>
+            <a href="#" id="wa-link" onclick="openWhatsApp(event)" class="wa-btn hidden flex-1">💬 WhatsApp</a>
         </div>
-        <p id="time-stamp" class="text-[0.6rem] text-slate-400 mt-8 font-mono tracking-wider uppercase"></p>
+        <p id="time-stamp" class="text-[0.5rem] text-[rgba(232,230,227,0.1)] mt-8 font-mono tracking-wider uppercase"></p>
         <div class="mt-4">
-            <button onclick="logout()" class="text-[0.6rem] text-slate-400 hover:text-slate-600 underline-offset-2 underline transition-colors">تسجيل الخروج</button>
+            <button onclick="logout()" class="text-[0.6rem] text-[rgba(232,230,227,0.15)] hover:text-[rgba(232,230,227,0.3)] underline-offset-2 underline transition-colors">تسجيل الخروج</button>
         </div>
     </div>
 </div>
 
 <script>
     // ############################################################
-    // ALL ORIGINAL FUNCTIONS PRESERVED + "remember me" via localStorage
+    // ALL ORIGINAL FUNCTIONS PRESERVED + FIXED REMEMBER ME + ROYAL THEME
     // ############################################################
 
     const CONFIG = { user: "mHub96", repo: "s", path: "data.json" };
@@ -327,123 +545,234 @@
     let todayResident = null;
     let currentPool = [];
     let selectedIndex = -1;
+    let dataLoaded = false;
+    let loadError = false;
 
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
     const service = urlParams.get('service'); 
 
-    // ---------- REMEMBER ME LOGIC ----------
     const STORAGE_KEY = 'duty_portal_session';
-    const SESSION_PIN = '1234'; // hardcoded same as original
+    const SESSION_PIN = '1234';
 
+    // ---------- REMEMBER ME LOGIC (FIXED) ----------
     function saveSession() {
-        const remember = document.getElementById('rememberMe')?.checked;
-        if (remember) {
+        const remember = document.getElementById('rememberMe');
+        if (remember && remember.checked) {
             localStorage.setItem(STORAGE_KEY, 'authenticated');
+            localStorage.setItem(STORAGE_KEY + '_timestamp', Date.now().toString());
         } else {
             localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(STORAGE_KEY + '_timestamp');
         }
     }
 
     function checkSession() {
-        return localStorage.getItem(STORAGE_KEY) === 'authenticated';
+        const session = localStorage.getItem(STORAGE_KEY);
+        if (!session) return false;
+        // Optional: expire after 7 days
+        const timestamp = localStorage.getItem(STORAGE_KEY + '_timestamp');
+        if (timestamp) {
+            const days = (Date.now() - parseInt(timestamp)) / (1000 * 60 * 60 * 24);
+            if (days > 7) {
+                clearSession();
+                return false;
+            }
+        }
+        return session === 'authenticated';
     }
 
     function clearSession() {
         localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(STORAGE_KEY + '_timestamp');
     }
 
-    // logout function – returns to login view
     function logout() {
         clearSession();
-        // reset views
-        document.getElementById('login-view').classList.remove('hidden');
-        document.getElementById('register-view').classList.add('hidden');
-        document.getElementById('lookup-view').classList.add('hidden');
-        document.getElementById('pw').value = '';
-        // re-enable login button style
-        const entryBtn = document.getElementById('entry-btn');
-        entryBtn.classList.remove('bg-emerald-700', 'hover:bg-emerald-800');
-        entryBtn.classList.add('btn-clinical');
-        // show main card
-        document.getElementById('main-card').style.opacity = '1';
+        // Animated transition
+        const loginView = document.getElementById('login-view');
+        const registerView = document.getElementById('register-view');
+        const lookupView = document.getElementById('lookup-view');
+        
+        // Exit animation
+        if (!registerView.classList.contains('hidden-view')) {
+            registerView.classList.add('exit');
+            setTimeout(() => {
+                registerView.classList.add('hidden-view');
+                registerView.classList.remove('exit');
+            }, 400);
+        }
+        if (!lookupView.classList.contains('hidden-view')) {
+            lookupView.classList.add('exit');
+            setTimeout(() => {
+                lookupView.classList.add('hidden-view');
+                lookupView.classList.remove('exit');
+            }, 400);
+        }
+        
+        setTimeout(() => {
+            loginView.classList.remove('hidden-view');
+            loginView.classList.add('enter');
+            setTimeout(() => loginView.classList.remove('enter'), 500);
+            document.getElementById('pw').value = '';
+            const entryBtn = document.getElementById('entry-btn');
+            if (dataLoaded) {
+                entryBtn.disabled = false;
+                entryBtn.innerText = 'Authorize Access';
+                entryBtn.classList.remove('success');
+            } else {
+                entryBtn.disabled = true;
+                entryBtn.innerText = 'جاري التحميل...';
+            }
+        }, 300);
     }
 
-    // override handleEntry to save session
-    const originalHandleEntry = window.handleEntry;
+    // ---------- ENTRY HANDLER (with session save) ----------
     window.handleEntry = function() {
+        if (!dataLoaded) {
+            showLoginError('البيانات لم تكتمل، حاول مرة أخرى');
+            return;
+        }
         const pin = document.getElementById('pw').value;
         if (pin === SESSION_PIN) {
             saveSession();
             proceedAfterAuth();
         } else {
-            // optional: visual feedback for wrong pin
             const input = document.getElementById('pw');
-            input.classList.add('border-red-400', 'ring-2', 'ring-red-200');
-            setTimeout(() => input.classList.remove('border-red-400', 'ring-2', 'ring-red-200'), 600);
+            input.classList.add('border-red-400', 'ring-2', 'ring-red-400/20');
+            setTimeout(() => input.classList.remove('border-red-400', 'ring-2', 'ring-red-400/20'), 600);
+            showLoginError('الرمز غير صحيح');
         }
     };
 
     function proceedAfterAuth() {
-        const card = document.getElementById('main-card');
-        card.style.opacity = "0";
+        const loginView = document.getElementById('login-view');
+        const registerView = document.getElementById('register-view');
+        const lookupView = document.getElementById('lookup-view');
+        
+        // Exit login
+        loginView.classList.add('exit');
         setTimeout(() => {
-            document.getElementById('login-view').classList.add('hidden');
+            loginView.classList.add('hidden-view');
+            loginView.classList.remove('exit');
+            
+            // Enter target view
             if (mode === 'register') {
-                document.getElementById('register-view').classList.remove('hidden');
+                registerView.classList.remove('hidden-view');
+                registerView.classList.add('enter');
+                setTimeout(() => registerView.classList.remove('enter'), 500);
             } else {
-                showLookupUI(); 
-                document.getElementById('lookup-view').classList.remove('hidden');
+                showLookupUI();
+                lookupView.classList.remove('hidden-view');
+                lookupView.classList.add('enter');
+                setTimeout(() => lookupView.classList.remove('enter'), 500);
             }
-            card.style.opacity = "1";
-        }, 600);
+        }, 500);
     }
 
-    // ---------- ORIGINAL FUNCTIONS (with small patch for session) ----------
+    function showLoginError(msg) {
+        const errEl = document.getElementById('login-error');
+        errEl.innerText = msg;
+        errEl.classList.remove('hidden');
+        setTimeout(() => errEl.classList.add('hidden'), 4000);
+    }
 
+    // ---------- LOADING & INIT ----------
     window.onload = async function() {
-        // check session before anything
-        if (checkSession()) {
-            // auto-login: we still need to fetch data first, then proceed
-            await fetchData();
-            proceedAfterAuth();
-        } else {
-            // normal flow
-            setTimeout(() => { 
-                const s = document.getElementById('shield');
-                if(s) { s.style.opacity = '0'; setTimeout(() => s.remove(), 500); }
-            }, 300);
-            await fetchData();
+        const shieldTimeout = setTimeout(() => {
+            const s = document.getElementById('shield');
+            if (s && s.style.opacity !== '0') {
+                s.style.opacity = '0';
+                setTimeout(() => s.remove(), 500);
+            }
+        }, 5000);
+
+        try {
+            await fetchDataWithTimeout(8000);
+        } catch (e) {
+            console.warn('Data fetch failed:', e);
+            loadError = true;
+            const cached = localStorage.getItem('duty_db_cache');
+            if (cached) {
+                try {
+                    db = JSON.parse(cached);
+                    dataLoaded = true;
+                } catch (e2) { /* ignore */ }
+            }
         }
-        // if session exists, we already proceeded; but if not, we stay on login
-        // also ensure the "remember me" checkbox is synced
+
+        clearTimeout(shieldTimeout);
+        const s = document.getElementById('shield');
+        if (s) { s.style.opacity = '0'; setTimeout(() => s.remove(), 500); }
+
+        // Update UI
+        const entryBtn = document.getElementById('entry-btn');
+        const statusText = document.getElementById('status-text');
+        const statusDot = document.getElementById('statusDot');
+
+        if (dataLoaded) {
+            statusText.innerText = 'READY • متصل';
+            statusText.className = 'status-text ready';
+            statusDot.className = 'status-dot ready';
+            entryBtn.disabled = false;
+            entryBtn.innerText = 'Authorize Access';
+            entryBtn.classList.remove('success');
+            
+            // Auto-login if session exists
+            if (checkSession()) {
+                // Small delay to let the UI settle
+                setTimeout(() => {
+                    proceedAfterAuth();
+                }, 300);
+            }
+        } else if (loadError) {
+            statusText.innerText = '⚠️ غير متصل';
+            statusText.className = 'status-text error';
+            statusDot.className = 'status-dot error';
+            entryBtn.disabled = true;
+            entryBtn.innerText = '⚠️ خطأ في الاتصال';
+            showLoginError('تعذر الاتصال بقاعدة البيانات. يرجى تحديث الصفحة.');
+        }
+
+        // Sync remember me checkbox
         const rememberCheck = document.getElementById('rememberMe');
         if (rememberCheck) {
-            // if session exists, it's checked by default; else unchecked
             rememberCheck.checked = checkSession();
         }
     };
 
-    async function fetchData() {
-        const status = document.getElementById('status-text');
-        const entryBtn = document.getElementById('entry-btn');
+    async function fetchDataWithTimeout(timeoutMs) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
         try {
             const res = await fetch(`https://api.github.com/repos/${CONFIG.user}/${CONFIG.repo}/contents/${CONFIG.path}?t=${Date.now()}`, {
-                headers: { "Authorization": `token ${GH_TOKEN}` }
+                headers: { "Authorization": `token ${GH_TOKEN}` },
+                signal: controller.signal
             });
+            clearTimeout(timeoutId);
+
             if (res.ok) {
                 const data = await res.json();
                 fileSha = data.sha;
-                db = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\s/g, '')))));
+                const decoded = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\s/g, '')))));
+                db = decoded;
+                localStorage.setItem('duty_db_cache', JSON.stringify(db));
+                dataLoaded = true;
+                loadError = false;
+
                 if (service) {
                     const todayStr = getTodayStr();
                     todayResident = db.schedule.find(s => s.specCode === service && s.date === todayStr);
                 }
-                status.innerText = "READY • connected";
-                entryBtn.classList.add('bg-emerald-700', 'hover:bg-emerald-800');
-                entryBtn.classList.remove('bg-slate-800');
+                return true;
+            } else {
+                throw new Error(`HTTP ${res.status}`);
             }
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            clearTimeout(timeoutId);
+            throw e;
+        }
     }
 
     function getTodayStr() {
@@ -451,7 +780,9 @@
         return `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
     }
 
+    // ---------- ORIGINAL FUNCTIONS (unchanged) ----------
     function prepNameInput() {
+        if (!dataLoaded) return;
         const spec = document.getElementById('spec-select').value;
         const section = document.getElementById('name-section');
         if (!spec) { section.classList.add('hidden'); return; }
@@ -464,6 +795,7 @@
     }
 
     function filterNames() {
+        if (!dataLoaded) return;
         const nameInput = document.getElementById('name-input');
         const val = nameInput.value.trim().toLowerCase().replace(/^د\.?\s*/, '');
         const box = document.getElementById('suggestions');
@@ -478,7 +810,7 @@
             });
 
         if (matches.length > 0) {
-            box.innerHTML = matches.map(m => `<div class="suggestion-clinical-item" onclick="selectSuggestion('${m.name}')">${m.name}</div>`).join('');
+            box.innerHTML = matches.map(m => `<div class="suggestion-royal-item" onclick="selectSuggestion('${m.name}')">${m.name}</div>`).join('');
             box.classList.remove('hidden');
             selectedIndex = -1;
         } else box.classList.add('hidden');
@@ -486,7 +818,7 @@
 
     function handleNameKey(e) {
         const box = document.getElementById('suggestions');
-        const items = box.querySelectorAll('.suggestion-clinical-item');
+        const items = box.querySelectorAll('.suggestion-royal-item');
         if (e.key === "ArrowDown") selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
         else if (e.key === "ArrowUp") selectedIndex = Math.max(selectedIndex - 1, 0);
         else if (e.key === "Enter") {
@@ -503,16 +835,19 @@
     }
 
     async function submitRegistration() {
+        if (!dataLoaded) {
+            alert('البيانات غير محملة، يرجى تحديث الصفحة');
+            return;
+        }
         const btn = document.getElementById('submit-btn');
         const nameInput = document.getElementById('name-input');
         const specSelect = document.getElementById('spec-select');
-        const card = document.getElementById('main-card');
         if (!nameInput.value || !specSelect.value) return;
 
         const originalText = btn.innerText;
-        btn.innerText = "Updating...";
+        btn.innerText = "جاري التحديث...";
         btn.disabled = true;
-        btn.classList.add('opacity-70');
+        btn.classList.add('opacity-50');
 
         const entry = {
             date: getTodayStr(), specCode: specSelect.value, name: nameInput.value,
@@ -531,22 +866,23 @@
             if (res.ok) {
                 const result = await res.json();
                 fileSha = result.content.sha;
-                btn.classList.remove('opacity-70');
-                btn.innerText = "✅ Success";
-                btn.classList.add('bg-emerald-700', 'hover:bg-emerald-800');
+                localStorage.setItem('duty_db_cache', JSON.stringify(db));
+                btn.classList.remove('opacity-50');
+                btn.innerText = "✅ تم التحديث";
+                btn.classList.add('success');
 
                 setTimeout(() => {
                     specSelect.value = "";
                     nameInput.value = "";
                     document.getElementById('name-section').classList.add('hidden');
-                    btn.classList.remove('bg-emerald-700', 'hover:bg-emerald-800');
+                    btn.classList.remove('success');
                     btn.innerText = originalText;
                     btn.disabled = false;
                 }, 2000);
             } else throw new Error();
         } catch (e) {
-            btn.classList.remove('opacity-70');
-            btn.innerText = "Retry ❌";
+            btn.classList.remove('opacity-50');
+            btn.innerText = "❌ خطأ";
             btn.disabled = false;
             setTimeout(() => { btn.innerText = originalText; }, 2500);
         }
@@ -576,7 +912,6 @@
         if (info?.phone) window.location.href = "whatsapp://send?phone=" + info.phone;
     }
 
-    // expose logout globally
     window.logout = logout;
 </script>
 </body>
