@@ -8,32 +8,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Burgundy-Gold color profile - completely new */
-            --bg: #1a0e0f;
-            --bg-card: #241416;
-            --light: #3d2226;
-            --shadow: #0d0607;
-            --shadow-dark: #080304;
+            /* Emerald-Navy color profile */
+            --bg: #0a1215;
+            --bg-card: #0f1a1e;
+            --light: #1a2d33;
+            --shadow: #050a0c;
+            --shadow-dark: #030608;
             
-            /* Gold accent */
-            --accent: #d4a853;
-            --accent-hover: #c4953a;
-            --accent-dim: rgba(212, 168, 83, 0.12);
-            --accent-glow: rgba(212, 168, 83, 0.35);
-            
-            /* Rich burgundy tones */
-            --burgundy: #8b1a2b;
-            --burgundy-dark: #6b1420;
-            --burgundy-glow: rgba(139, 26, 43, 0.3);
+            /* Emerald accent */
+            --accent: #2ecc71;
+            --accent-hover: #27ae60;
+            --accent-dim: rgba(46, 204, 113, 0.12);
+            --accent-glow: rgba(46, 204, 113, 0.35);
             
             /* Action-specific colors */
-            --auth-color: #d4a853;
-            --auth-hover: #c4953a;
-            --auth-bg: rgba(212, 168, 83, 0.15);
+            --auth-color: #2ecc71;
+            --auth-hover: #27ae60;
+            --auth-bg: rgba(46, 204, 113, 0.15);
             
-            --call-color: #4a90d9;
-            --call-hover: #3a7ac0;
-            --call-bg: rgba(74, 144, 217, 0.12);
+            --call-color: #3498db;
+            --call-hover: #2980b9;
+            --call-bg: rgba(52, 152, 219, 0.12);
             
             --wa-color: #25d366;
             --wa-hover: #1da851;
@@ -47,14 +42,19 @@
             --danger-hover: #c0392b;
             --danger-bg: rgba(231, 76, 60, 0.12);
             
-            --update-color: #c0392b;
-            --update-hover: #a93226;
-            --update-bg: rgba(192, 57, 43, 0.12);
+            --update-color: #1abc9c;
+            --update-hover: #16a085;
+            --update-bg: rgba(26, 188, 156, 0.12);
             
-            --text-primary: #f5ede3;
-            --text-secondary: #c9b89a;
-            --text-muted: #8a7a6a;
-            --card-border: rgba(212, 168, 83, 0.08);
+            --text-primary: #e8f0f0;
+            --text-secondary: #8bb8c0;
+            --text-muted: #4a7a82;
+            --card-border: rgba(46, 204, 113, 0.06);
+            
+            /* Breathing shadow colors */
+            --shadow-breath-start: rgba(46, 204, 113, 0.02);
+            --shadow-breath-mid: rgba(46, 204, 113, 0.12);
+            --shadow-breath-end: rgba(46, 204, 113, 0.02);
         }
         
         body {
@@ -70,20 +70,20 @@
             position: relative;
         }
 
-        /* Rich ambient glow */
+        /* Ambient glow */
         body::before {
             content: '';
             position: fixed;
             inset: 0;
             background: 
-                radial-gradient(ellipse at 30% 40%, rgba(212, 168, 83, 0.04) 0%, transparent 50%),
-                radial-gradient(ellipse at 70% 60%, rgba(139, 26, 43, 0.05) 0%, transparent 50%);
+                radial-gradient(ellipse at 30% 40%, rgba(46, 204, 113, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 60%, rgba(26, 188, 156, 0.04) 0%, transparent 50%);
             pointer-events: none;
             z-index: 0;
             animation: bgPulse 8s ease-in-out infinite;
         }
         @keyframes bgPulse {
-            0%, 100% { opacity: 0.6; }
+            0%, 100% { opacity: 0.5; }
             50% { opacity: 1; }
         }
 
@@ -94,7 +94,7 @@
             box-shadow: 
                 20px 20px 50px var(--shadow),
                 -15px -15px 40px var(--light),
-                inset 0 1px 0 rgba(212, 168, 83, 0.03);
+                inset 0 1px 0 rgba(46, 204, 113, 0.03);
             z-index: 10;
             transition: all 0.7s ease;
             width: 100%;
@@ -104,23 +104,43 @@
             animation: cardFloat 5s ease-in-out infinite;
         }
 
-        /* STRONG BREATHING SHADOW - restored and enhanced */
+        /* BREATHING SHADOW - Strong, visible, cycling glow */
         @keyframes cardFloat {
             0%, 100% { 
                 box-shadow: 
                     20px 20px 50px var(--shadow),
                     -15px -15px 40px var(--light),
-                    inset 0 1px 0 rgba(212, 168, 83, 0.03);
+                    0 0 20px rgba(46, 204, 113, 0.02),
+                    inset 0 1px 0 rgba(46, 204, 113, 0.03);
                 transform: translateY(0px);
+            }
+            25% {
+                box-shadow: 
+                    18px 18px 45px var(--shadow-dark),
+                    -12px -12px 35px var(--light),
+                    0 0 40px rgba(46, 204, 113, 0.06),
+                    0 0 80px rgba(46, 204, 113, 0.03),
+                    inset 0 1px 0 rgba(46, 204, 113, 0.04);
+                transform: translateY(-3px);
             }
             50% { 
                 box-shadow: 
                     15px 15px 40px var(--shadow-dark),
                     -10px -10px 30px var(--light),
-                    inset 0 1px 0 rgba(212, 168, 83, 0.05),
-                    0 0 70px rgba(212, 168, 83, 0.08),
-                    0 0 120px rgba(139, 26, 43, 0.04);
-                transform: translateY(-5px);
+                    0 0 70px rgba(46, 204, 113, 0.12),
+                    0 0 120px rgba(46, 204, 113, 0.05),
+                    0 0 180px rgba(26, 188, 156, 0.03),
+                    inset 0 1px 0 rgba(46, 204, 113, 0.05);
+                transform: translateY(-6px);
+            }
+            75% {
+                box-shadow: 
+                    18px 18px 45px var(--shadow-dark),
+                    -12px -12px 35px var(--light),
+                    0 0 40px rgba(46, 204, 113, 0.06),
+                    0 0 80px rgba(46, 204, 113, 0.03),
+                    inset 0 1px 0 rgba(46, 204, 113, 0.04);
+                transform: translateY(-3px);
             }
         }
 
@@ -133,9 +153,9 @@
             padding: 1px;
             background: linear-gradient(135deg, 
                 transparent, 
-                rgba(212, 168, 83, 0.15), 
-                rgba(212, 168, 83, 0.3), 
-                rgba(212, 168, 83, 0.15), 
+                rgba(46, 204, 113, 0.1), 
+                rgba(46, 204, 113, 0.25), 
+                rgba(46, 204, 113, 0.1), 
                 transparent);
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
@@ -145,7 +165,7 @@
         }
         @keyframes borderGlow {
             0%, 100% { opacity: 0.2; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.02); }
+            50% { opacity: 0.7; transform: scale(1.02); }
         }
 
         .tube-container {
@@ -158,7 +178,7 @@
         }
         #tube-bg {
             fill: none;
-            stroke: rgba(212, 168, 83, 0.04);
+            stroke: rgba(46, 204, 113, 0.04);
             stroke-width: 4;
         }
         #tube-fluid {
@@ -187,7 +207,7 @@
             box-shadow: 
                 inset 8px 8px 18px var(--shadow),
                 inset -6px -6px 16px var(--light),
-                0 0 0 1px rgba(212, 168, 83, 0.04);
+                0 0 0 1px rgba(46, 204, 113, 0.04);
             transition: all 0.4s ease;
             position: relative;
         }
@@ -195,8 +215,8 @@
             box-shadow: 
                 inset 8px 8px 18px var(--shadow),
                 inset -6px -6px 16px var(--light),
-                0 0 0 1px rgba(212, 168, 83, 0.2),
-                0 0 40px rgba(212, 168, 83, 0.05);
+                0 0 0 1px rgba(46, 204, 113, 0.2),
+                0 0 40px rgba(46, 204, 113, 0.05);
             transform: scale(1.01);
         }
 
@@ -214,8 +234,8 @@
             width: 1.2rem;
             height: 1.2rem;
             border-radius: 50%;
-            background: rgba(212, 168, 83, 0.08);
-            border: 2px solid rgba(212, 168, 83, 0.06);
+            background: rgba(46, 204, 113, 0.08);
+            border: 2px solid rgba(46, 204, 113, 0.06);
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             transform: scale(0.5);
             opacity: 0;
@@ -230,7 +250,7 @@
             opacity: 1;
             box-shadow: 
                 0 0 30px var(--accent-glow),
-                0 0 60px rgba(212, 168, 83, 0.1),
+                0 0 60px rgba(46, 204, 113, 0.1),
                 inset 0 2px 4px rgba(255,255,255,0.15);
             animation: dotPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -246,7 +266,7 @@
             position: absolute;
             inset: -4px;
             border-radius: 50%;
-            border: 2px solid rgba(212, 168, 83, 0.15);
+            border: 2px solid rgba(46, 204, 113, 0.15);
             animation: rippleDot 0.6s ease-out;
         }
 
@@ -261,7 +281,7 @@
             transform: scale(1);
             opacity: 1;
             box-shadow: 
-                0 0 20px rgba(212, 168, 83, 0.15),
+                0 0 20px rgba(46, 204, 113, 0.15),
                 inset 0 2px 4px rgba(255,255,255,0.1);
         }
 
@@ -270,7 +290,7 @@
             position: absolute;
             inset: -3px;
             border-radius: 50%;
-            border: 2px solid rgba(212, 168, 83, 0.08);
+            border: 2px solid rgba(46, 204, 113, 0.08);
             animation: pulseFilled 2s ease-in-out infinite;
         }
 
@@ -348,7 +368,7 @@
         }
 
         /* ============================================================
-           BUTTON STYLES - Rich Burgundy & Gold
+           BUTTON STYLES - Emerald Theme
            ============================================================ */
 
         .embossed-btn {
@@ -357,7 +377,7 @@
             box-shadow: 
                 12px 12px 24px var(--shadow),
                 -8px -8px 20px var(--light),
-                inset 0 1px 0 rgba(212, 168, 83, 0.02);
+                inset 0 1px 0 rgba(46, 204, 113, 0.02);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             font-weight: 700;
             border: none;
@@ -375,23 +395,23 @@
             cursor: not-allowed;
         }
 
-        /* --- AUTH / LOGIN BUTTON - Gold --- */
+        /* --- AUTH / LOGIN BUTTON - Emerald --- */
         .btn-auth {
             background: linear-gradient(135deg, var(--auth-color), var(--auth-hover));
-            color: #1a0e0f !important;
+            color: #0a1215 !important;
             box-shadow: 
-                0 8px 25px rgba(212, 168, 83, 0.3),
+                0 8px 25px rgba(46, 204, 113, 0.3),
                 12px 12px 24px var(--shadow),
                 -8px -8px 20px var(--light);
-            border: 1px solid rgba(212, 168, 83, 0.2);
+            border: 1px solid rgba(46, 204, 113, 0.2);
         }
         .btn-auth:hover:not(:disabled) {
             transform: translateY(-3px) scale(1.01);
             box-shadow: 
-                0 12px 35px rgba(212, 168, 83, 0.45),
+                0 12px 35px rgba(46, 204, 113, 0.45),
                 16px 16px 32px var(--shadow),
                 -10px -10px 24px var(--light);
-            background: linear-gradient(135deg, var(--auth-hover), #b08830);
+            background: linear-gradient(135deg, var(--auth-hover), #1a8a4a);
         }
         .btn-auth:active:not(:disabled) {
             transform: scale(0.97);
@@ -400,8 +420,8 @@
             animation: pulseReady 2s ease-in-out infinite;
         }
         @keyframes pulseReady {
-            0%, 100% { box-shadow: 0 8px 25px rgba(212, 168, 83, 0.3), 12px 12px 24px var(--shadow), -8px -8px 20px var(--light); }
-            50% { box-shadow: 0 8px 40px rgba(212, 168, 83, 0.5), 12px 12px 24px var(--shadow), -8px -8px 20px var(--light); }
+            0%, 100% { box-shadow: 0 8px 25px rgba(46, 204, 113, 0.3), 12px 12px 24px var(--shadow), -8px -8px 20px var(--light); }
+            50% { box-shadow: 0 8px 40px rgba(46, 204, 113, 0.5), 12px 12px 24px var(--shadow), -8px -8px 20px var(--light); }
         }
 
         /* --- CALL BUTTON - Blue --- */
@@ -409,18 +429,18 @@
             background: linear-gradient(135deg, var(--call-color), var(--call-hover));
             color: #ffffff !important;
             box-shadow: 
-                0 8px 25px rgba(74, 144, 217, 0.3),
+                0 8px 25px rgba(52, 152, 219, 0.3),
                 12px 12px 24px var(--shadow),
                 -8px -8px 20px var(--light);
-            border: 1px solid rgba(74, 144, 217, 0.2);
+            border: 1px solid rgba(52, 152, 219, 0.2);
         }
         .btn-call:hover {
             transform: translateY(-3px) scale(1.01);
             box-shadow: 
-                0 12px 35px rgba(74, 144, 217, 0.4),
+                0 12px 35px rgba(52, 152, 219, 0.4),
                 16px 16px 32px var(--shadow),
                 -10px -10px 24px var(--light);
-            background: linear-gradient(135deg, var(--call-hover), #2a6a9a);
+            background: linear-gradient(135deg, var(--call-hover), #1a6a9a);
         }
         .btn-call:active {
             transform: scale(0.97);
@@ -448,23 +468,23 @@
             transform: scale(0.97);
         }
 
-        /* --- UPDATE / SUBMIT BUTTON - Burgundy --- */
+        /* --- UPDATE / SUBMIT BUTTON - Teal --- */
         .btn-update {
             background: linear-gradient(135deg, var(--update-color), var(--update-hover));
             color: #ffffff !important;
             box-shadow: 
-                0 8px 25px rgba(192, 57, 43, 0.3),
+                0 8px 25px rgba(26, 188, 156, 0.3),
                 12px 12px 24px var(--shadow),
                 -8px -8px 20px var(--light);
-            border: 1px solid rgba(192, 57, 43, 0.2);
+            border: 1px solid rgba(26, 188, 156, 0.2);
         }
         .btn-update:hover:not(:disabled) {
             transform: translateY(-3px) scale(1.01);
             box-shadow: 
-                0 12px 35px rgba(192, 57, 43, 0.4),
+                0 12px 35px rgba(26, 188, 156, 0.4),
                 16px 16px 32px var(--shadow),
                 -10px -10px 24px var(--light);
-            background: linear-gradient(135deg, var(--update-hover), #7a1f18);
+            background: linear-gradient(135deg, var(--update-hover), #0e7a66);
         }
         .btn-update:active:not(:disabled) {
             transform: scale(0.97);
@@ -473,7 +493,7 @@
         /* --- SUCCESS BUTTON --- */
         .btn-success {
             background: linear-gradient(135deg, var(--success-color), var(--success-hover)) !important;
-            color: #ffffff !important;
+            color: #0a1215 !important;
             box-shadow: 
                 0 8px 30px rgba(46, 204, 113, 0.35),
                 12px 12px 24px var(--shadow),
@@ -535,12 +555,12 @@
             font-size: 1rem;
         }
         .recessed-input input::placeholder {
-            color: rgba(201, 184, 154, 0.25);
+            color: rgba(139, 184, 192, 0.2);
             font-weight: 400;
         }
         .recessed-input select {
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23d4a853' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%232ecc71' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: left 1rem center;
             padding-right: 2.5rem;
@@ -562,12 +582,12 @@
                 16px 16px 32px var(--shadow),
                 -10px -10px 24px var(--light);
             direction: rtl;
-            border: 1px solid rgba(212, 168, 83, 0.04);
+            border: 1px solid rgba(46, 204, 113, 0.04);
         }
         .suggestion-item {
             padding: 14px 20px;
             cursor: pointer;
-            border-bottom: 1px solid rgba(61, 34, 38, 0.3);
+            border-bottom: 1px solid rgba(26, 45, 51, 0.3);
             text-align: right;
             color: var(--text-secondary);
             transition: all 0.2s ease;
@@ -575,7 +595,7 @@
         }
         .suggestion-item:hover,
         .suggestion-item.selected {
-            background: rgba(212, 168, 83, 0.06);
+            background: rgba(46, 204, 113, 0.06);
             color: var(--accent);
         }
         .suggestion-item:last-child {
@@ -597,15 +617,15 @@
         #shield .shield-spinner {
             width: 3rem;
             height: 3rem;
-            border: 3px solid rgba(212, 168, 83, 0.06);
+            border: 3px solid rgba(46, 204, 113, 0.06);
             border-top-color: var(--accent);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            box-shadow: 0 0 30px rgba(212, 168, 83, 0.04);
+            box-shadow: 0 0 30px rgba(46, 204, 113, 0.04);
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         #shield .shield-text {
-            color: rgba(212, 168, 83, 0.3);
+            color: rgba(46, 204, 113, 0.3);
             font-size: 0.75rem;
             font-weight: 600;
             letter-spacing: 0.2em;
@@ -622,7 +642,7 @@
             width: 0.5rem;
             height: 0.5rem;
             border-radius: 50%;
-            background: rgba(201, 184, 154, 0.15);
+            background: rgba(139, 184, 192, 0.15);
             transition: all 0.4s ease;
             margin-right: 0.5rem;
         }
@@ -645,7 +665,7 @@
             font-size: 0.6rem;
             font-weight: 600;
             letter-spacing: 0.15em;
-            color: rgba(201, 184, 154, 0.3);
+            color: rgba(139, 184, 192, 0.3);
             transition: all 0.4s ease;
             text-transform: uppercase;
         }
@@ -672,13 +692,13 @@
             align-items: center;
             gap: 0.5rem;
             font-size: 0.7rem;
-            color: rgba(201, 184, 154, 0.3);
+            color: rgba(139, 184, 192, 0.3);
             cursor: pointer;
             user-select: none;
             transition: color 0.3s ease;
         }
         .toggle-remember:hover {
-            color: rgba(201, 184, 154, 0.6);
+            color: rgba(139, 184, 192, 0.6);
         }
         .toggle-remember input[type="checkbox"] {
             accent-color: var(--accent);
@@ -710,17 +730,17 @@
 
         .royal-divider {
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(212, 168, 83, 0.08), transparent);
+            background: linear-gradient(90deg, transparent, rgba(46, 204, 113, 0.08), transparent);
             margin: 0.5rem 0;
         }
 
         .service-badge {
-            background: rgba(212, 168, 83, 0.06);
-            border: 1px solid rgba(212, 168, 83, 0.06);
+            background: rgba(46, 204, 113, 0.06);
+            border: 1px solid rgba(46, 204, 113, 0.06);
             border-radius: 2rem;
             padding: 0.4rem 1.2rem;
             font-size: 0.7rem;
-            color: rgba(212, 168, 83, 0.5);
+            color: rgba(46, 204, 113, 0.5);
             font-weight: 600;
             letter-spacing: 0.05em;
         }
@@ -732,7 +752,7 @@
             background: transparent;
         }
         .suggestions-box::-webkit-scrollbar-thumb {
-            background: rgba(212, 168, 83, 0.1);
+            background: rgba(46, 204, 113, 0.1);
             border-radius: 2px;
         }
 
@@ -755,65 +775,169 @@
         }
 
         /* ============================================================
-           3D TEXT EFFECT - POPS OUT OF SCREEN
+           TRUE 3D EMBOSSED TEXT - Pops out of the screen
            ============================================================ */
-        .text-3d {
+        .text-embossed {
             font-family: 'Playfair Display', serif;
             font-weight: 900;
             color: var(--text-primary);
+            position: relative;
+            display: inline-block;
             text-shadow: 
-                0 1px 0 rgba(212, 168, 83, 0.05),
-                0 2px 0 rgba(212, 168, 83, 0.04),
-                0 3px 0 rgba(212, 168, 83, 0.03),
-                0 4px 0 rgba(212, 168, 83, 0.02),
-                0 5px 0 rgba(212, 168, 83, 0.01),
-                0 10px 20px rgba(0, 0, 0, 0.4),
-                0 15px 30px rgba(0, 0, 0, 0.2),
+                /* Top highlight - creates the "raised" effect */
+                0 -1px 0 rgba(255, 255, 255, 0.05),
+                /* Depth layers - creates the 3D extrusion */
+                0 1px 0 rgba(46, 204, 113, 0.03),
+                0 2px 0 rgba(46, 204, 113, 0.03),
+                0 3px 0 rgba(46, 204, 113, 0.04),
+                0 4px 0 rgba(46, 204, 113, 0.04),
+                0 5px 0 rgba(46, 204, 113, 0.05),
+                0 6px 0 rgba(46, 204, 113, 0.05),
+                0 7px 0 rgba(46, 204, 113, 0.06),
+                0 8px 0 rgba(46, 204, 113, 0.06),
+                /* Blur shadows for realistic depth */
+                0 8px 15px rgba(0, 0, 0, 0.3),
+                0 12px 25px rgba(0, 0, 0, 0.2),
                 0 20px 40px rgba(0, 0, 0, 0.1);
-            transform: perspective(500px) rotateX(2deg) translateZ(0);
-            transition: all 0.3s ease;
-            letter-spacing: 0.02em;
+            transform: perspective(600px) rotateX(3deg) translateZ(0);
+            transition: all 0.4s ease;
+            letter-spacing: 0.03em;
+            line-height: 1.3;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.1) 0%,
+                var(--text-primary) 40%,
+                var(--text-secondary) 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .text-3d:hover {
-            transform: perspective(500px) rotateX(2deg) translateZ(10px);
+        .text-embossed:hover {
+            transform: perspective(600px) rotateX(3deg) translateZ(15px) scale(1.02);
             text-shadow: 
-                0 1px 0 rgba(212, 168, 83, 0.08),
-                0 2px 0 rgba(212, 168, 83, 0.06),
-                0 3px 0 rgba(212, 168, 83, 0.04),
-                0 4px 0 rgba(212, 168, 83, 0.02),
-                0 8px 15px rgba(0, 0, 0, 0.5),
-                0 15px 30px rgba(0, 0, 0, 0.3),
+                0 -1px 0 rgba(255, 255, 255, 0.08),
+                0 1px 0 rgba(46, 204, 113, 0.05),
+                0 2px 0 rgba(46, 204, 113, 0.05),
+                0 3px 0 rgba(46, 204, 113, 0.06),
+                0 4px 0 rgba(46, 204, 113, 0.06),
+                0 5px 0 rgba(46, 204, 113, 0.07),
+                0 6px 0 rgba(46, 204, 113, 0.07),
+                0 7px 0 rgba(46, 204, 113, 0.08),
+                0 8px 0 rgba(46, 204, 113, 0.08),
+                0 10px 20px rgba(0, 0, 0, 0.4),
+                0 15px 35px rgba(0, 0, 0, 0.3),
                 0 25px 50px rgba(0, 0, 0, 0.15);
         }
 
-        /* Smaller 3D for headings */
-        .text-3d-sm {
+        /* 3D Embossed - smaller headings */
+        .text-embossed-sm {
             font-family: 'Playfair Display', serif;
             font-weight: 800;
             color: var(--text-primary);
             text-shadow: 
-                0 1px 0 rgba(212, 168, 83, 0.04),
-                0 2px 0 rgba(212, 168, 83, 0.02),
-                0 3px 0 rgba(212, 168, 83, 0.01),
-                0 5px 10px rgba(0, 0, 0, 0.3);
-            transform: perspective(400px) rotateX(1deg) translateZ(0);
+                0 -1px 0 rgba(255, 255, 255, 0.04),
+                0 1px 0 rgba(46, 204, 113, 0.03),
+                0 2px 0 rgba(46, 204, 113, 0.04),
+                0 3px 0 rgba(46, 204, 113, 0.05),
+                0 4px 0 rgba(46, 204, 113, 0.05),
+                0 5px 10px rgba(0, 0, 0, 0.2),
+                0 8px 20px rgba(0, 0, 0, 0.1);
+            transform: perspective(400px) rotateX(2deg) translateZ(0);
             letter-spacing: 0.02em;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.08) 0%,
+                var(--text-primary) 40%,
+                var(--text-secondary) 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        /* Gold text with 3D */
-        .text-gold-3d {
+        /* 3D Embossed - Gold accent text */
+        .text-embossed-gold {
             font-family: 'Playfair Display', serif;
             font-weight: 900;
             color: var(--accent);
             text-shadow: 
-                0 1px 0 rgba(212, 168, 83, 0.1),
-                0 2px 0 rgba(212, 168, 83, 0.07),
-                0 3px 0 rgba(212, 168, 83, 0.04),
-                0 4px 0 rgba(212, 168, 83, 0.02),
-                0 8px 15px rgba(0, 0, 0, 0.4),
-                0 12px 25px rgba(0, 0, 0, 0.2);
+                0 -1px 0 rgba(255, 255, 255, 0.06),
+                0 1px 0 rgba(46, 204, 113, 0.05),
+                0 2px 0 rgba(46, 204, 113, 0.06),
+                0 3px 0 rgba(46, 204, 113, 0.07),
+                0 4px 0 rgba(46, 204, 113, 0.07),
+                0 5px 0 rgba(46, 204, 113, 0.08),
+                0 6px 0 rgba(46, 204, 113, 0.08),
+                0 8px 15px rgba(0, 0, 0, 0.3),
+                0 12px 30px rgba(0, 0, 0, 0.2);
             transform: perspective(500px) rotateX(2deg) translateZ(0);
             letter-spacing: 0.03em;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.15) 0%,
+                var(--accent) 40%,
+                var(--accent-hover) 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 3D Embossed - Doctor name specific (extra pop) */
+        .text-doctor-name {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            color: var(--text-primary);
+            text-shadow: 
+                0 -1px 0 rgba(255, 255, 255, 0.08),
+                0 1px 0 rgba(46, 204, 113, 0.04),
+                0 2px 0 rgba(46, 204, 113, 0.04),
+                0 3px 0 rgba(46, 204, 113, 0.05),
+                0 4px 0 rgba(46, 204, 113, 0.05),
+                0 5px 0 rgba(46, 204, 113, 0.06),
+                0 6px 0 rgba(46, 204, 113, 0.06),
+                0 7px 0 rgba(46, 204, 113, 0.07),
+                0 8px 0 rgba(46, 204, 113, 0.07),
+                0 9px 0 rgba(46, 204, 113, 0.08),
+                0 10px 0 rgba(46, 204, 113, 0.08),
+                0 12px 25px rgba(0, 0, 0, 0.4),
+                0 16px 40px rgba(0, 0, 0, 0.25),
+                0 25px 60px rgba(0, 0, 0, 0.12);
+            transform: perspective(700px) rotateX(3deg) translateZ(0);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            letter-spacing: 0.04em;
+            line-height: 1.2;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.12) 0%,
+                #f0f8f8 30%,
+                #c8e0e0 60%,
+                #8bb8c0 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: doctorFloat 4s ease-in-out infinite;
+        }
+        .text-doctor-name:hover {
+            transform: perspective(700px) rotateX(3deg) translateZ(20px) scale(1.03);
+            text-shadow: 
+                0 -1px 0 rgba(255, 255, 255, 0.12),
+                0 1px 0 rgba(46, 204, 113, 0.06),
+                0 2px 0 rgba(46, 204, 113, 0.06),
+                0 3px 0 rgba(46, 204, 113, 0.07),
+                0 4px 0 rgba(46, 204, 113, 0.07),
+                0 5px 0 rgba(46, 204, 113, 0.08),
+                0 6px 0 rgba(46, 204, 113, 0.08),
+                0 7px 0 rgba(46, 204, 113, 0.09),
+                0 8px 0 rgba(46, 204, 113, 0.09),
+                0 9px 0 rgba(46, 204, 113, 0.10),
+                0 10px 0 rgba(46, 204, 113, 0.10),
+                0 14px 30px rgba(0, 0, 0, 0.5),
+                0 20px 50px rgba(0, 0, 0, 0.3),
+                0 30px 70px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes doctorFloat {
+            0%, 100% { transform: perspective(700px) rotateX(3deg) translateZ(0); }
+            50% { transform: perspective(700px) rotateX(3deg) translateZ(5px); }
         }
     </style>
 </head>
@@ -833,7 +957,7 @@
         <!-- LOGIN VIEW -->
         <div id="login-view" class="view-wrapper">
             <div class="text-center mb-8">
-                <h1 class="text-3d-sm text-2xl tracking-tight">On-Call Portal</h1>
+                <h1 class="text-embossed-sm text-2xl tracking-tight">On-Call Portal</h1>
                 <div class="royal-divider my-4"></div>
                 <div class="flex items-center justify-center gap-2 mt-3">
                     <span id="statusDot" class="status-dot"></span>
@@ -868,21 +992,21 @@
                         <input type="checkbox" id="rememberMe" checked>
                         <span>تذكرني</span>
                     </label>
-                    <span class="text-[0.5rem] tracking-widest" style="color: rgba(212, 168, 83, 0.15);">✦ SECURE</span>
+                    <span class="text-[0.5rem] tracking-widest" style="color: rgba(46, 204, 113, 0.15);">✦ SECURE</span>
                 </div>
                 <button id="entry-btn" onclick="handleEntry()" class="embossed-btn btn-auth" disabled>جاري التحميل...</button>
                 <div id="login-error" class="hidden toast-error"></div>
             </div>
-            <p class="text-[0.5rem] text-center mt-6 tracking-[0.15em]" style="color: rgba(201, 184, 154, 0.08);">ROYAL MEDICAL NETWORK</p>
+            <p class="text-[0.5rem] text-center mt-6 tracking-[0.15em]" style="color: rgba(139, 184, 192, 0.08);">ROYAL MEDICAL NETWORK</p>
         </div>
 
         <!-- LOOKUP VIEW -->
         <div id="lookup-view" class="hidden-view view-wrapper text-center">
             <div class="service-display-3d mb-6">
-                <span id="service-display" class="text-xl font-black uppercase" style="color: var(--accent);">...</span>
+                <span id="service-display" class="text-embossed-gold text-xl font-black uppercase">...</span>
             </div>
-            <!-- DOCTOR NAME - STRONG 3D EFFECT -->
-            <h2 id="name-display" class="text-3d text-4xl md:text-5xl mb-1 rtl-text">...</h2>
+            <!-- DOCTOR NAME - STRONG 3D EMBOSSED EFFECT -->
+            <h2 id="name-display" class="text-doctor-name text-4xl md:text-5xl mb-1 rtl-text">...</h2>
             <p id="phone-display" class="font-bold text-lg mb-8 phone-display" style="color: var(--text-secondary);">-</p>
             
             <div class="flex flex-row gap-3 w-full">
@@ -897,7 +1021,7 @@
 
         <!-- REGISTER VIEW -->
         <div id="register-view" class="hidden-view view-wrapper space-y-6">
-            <h2 class="text-3d-sm text-xl text-center mb-2">Duty Update 🇮🇶</h2>
+            <h2 class="text-embossed-sm text-xl text-center mb-2">Duty Update 🇮🇶</h2>
             <div class="recessed-input">
                 <select id="spec-select" onchange="prepNameInput()">
                     <option value="">SELECT SPECIALTY</option>
