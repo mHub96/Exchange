@@ -1,1085 +1,204 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Duty Portal 🇮🇶</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MD Portal | Tactile Fix</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #1a1c20;
-            --light: #2a2d34;
-            --shadow: #0d0e11;
-            --accent: #fbbf24;
-            --crimson: #e11d48;
-            --emerald: #10b981;
-            --btn-grey: #33373e;
-        }
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+        :root { --bg: #e0e5ec; --shadow: #a3b1c6; --highlight: #ffffff; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #4a5568; margin: 0; }
+
+        .neu-flat { background: var(--bg); box-shadow: 20px 20px 60px var(--shadow), -20px -20px 60px var(--highlight); }
+        .neu-inset { background: var(--bg); box-shadow: inset 6px 6px 12px var(--shadow), inset -6px -6px 12px var(--highlight); }
+        
+        .neu-btn {
             background: var(--bg);
-            color: #94a3b8;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            box-shadow: 8px 8px 16px var(--shadow), -8px -8px 16px var(--highlight);
+            transition: all 0.2s ease;
+        }
+        .neu-btn:active {
+            box-shadow: inset 4px 4px 8px var(--shadow), inset -4px -4px 8px var(--highlight);
+            transform: scale(0.98);
         }
 
-        .embossed-card {
-            position: relative;
-            background: var(--bg);
-            border-radius: 3rem;
-            box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light);
-            z-index: 10;
-            transition: all 0.7s ease;
-        }
-        .breathing {
-            animation: frameBreath 3s infinite ease-in-out;
-        }
-        @keyframes frameBreath {
-            0%, 100% { box-shadow: 20px 20px 60px var(--shadow), -10px -10px 40px var(--light); }
-            50% { box-shadow: 15px 15px 45px var(--shadow), -8px -8px 30px var(--light), 0 0 50px rgba(251, 191, 36, 0.2); }
-        }
+        #shield { position: fixed; inset: 0; background: var(--bg); z-index: 100; transition: opacity 0.5s; }
+        
+        .btn-success { background: #10b981 !important; color: white !important; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4) !important; }
 
-        .tube-container {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            z-index: 20;
-            width: 100%;
-            height: 100%;
-        }
-        #tube-bg {
-            fill: none;
-            stroke: rgba(251, 191, 36, 0.03);
-            stroke-width: 4;
-        }
-        #tube-fluid {
-            fill: none;
-            stroke: var(--accent);
-            stroke-width: 5;
-            stroke-linecap: round;
-            filter: drop-shadow(0 0 12px var(--accent));
-            stroke-dasharray: 500 1200;
-            stroke-dashoffset: 1700;
-            opacity: 0;
-            transition: opacity 0.4s;
-        }
-        .loading-active #tube-fluid {
-            opacity: 1;
-            animation: seamlessFlow 2s linear infinite;
-        }
-        @keyframes seamlessFlow {
-            from { stroke-dashoffset: 1700; }
-            to { stroke-dashoffset: 0; }
-        }
-
-        .recessed-input {
-            background: var(--bg);
-            border-radius: 1.5rem;
-            box-shadow: inset 8px 8px 16px var(--shadow), inset -4px -4px 12px var(--light);
-            position: relative;
-        }
-
-        /* Password dot animation container */
-        .password-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.6rem;
-            padding: 0.5rem 1.25rem;
-            min-height: 4rem;
-            direction: ltr;
-        }
-
-        .password-dot {
-            width: 1.2rem;
-            height: 1.2rem;
-            border-radius: 50%;
-            background: rgba(251, 191, 36, 0.08);
-            border: 2px solid rgba(251, 191, 36, 0.06);
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            transform: scale(0.5);
-            opacity: 0;
-            position: relative;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .password-dot.active {
-            background: var(--accent);
-            border-color: var(--accent);
-            transform: scale(1.2);
-            opacity: 1;
-            box-shadow: 0 0 30px rgba(251, 191, 36, 0.3), 0 0 60px rgba(251, 191, 36, 0.08), inset 0 2px 4px rgba(255,255,255,0.15);
-            animation: dotPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes dotPop {
-            0% { transform: scale(0.5); opacity: 0; }
-            50% { transform: scale(1.4); opacity: 1; }
-            100% { transform: scale(1.2); opacity: 1; }
-        }
-
-        .password-dot.active::after {
-            content: '';
-            position: absolute;
-            inset: -4px;
-            border-radius: 50%;
-            border: 2px solid rgba(251, 191, 36, 0.15);
-            animation: rippleDot 0.6s ease-out;
-        }
-
-        @keyframes rippleDot {
-            0% { transform: scale(0.8); opacity: 1; }
-            100% { transform: scale(1.8); opacity: 0; }
-        }
-
-        .password-dot.filled {
-            background: var(--accent);
-            border-color: var(--accent);
-            transform: scale(1);
-            opacity: 1;
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.12), inset 0 2px 4px rgba(255,255,255,0.1);
-        }
-
-        .password-dot.filled::after {
-            content: '';
-            position: absolute;
-            inset: -3px;
-            border-radius: 50%;
-            border: 2px solid rgba(251, 191, 36, 0.06);
-            animation: pulseFilled 2s ease-in-out infinite;
-        }
-
-        @keyframes pulseFilled {
-            0%, 100% { transform: scale(1); opacity: 0.6; }
-            50% { transform: scale(1.3); opacity: 0.2; }
-        }
-
-        .password-dot.empty {
-            transform: scale(0.5);
-            opacity: 0;
-        }
-
-        .password-dot.error-shake {
-            animation: shakeError 0.5s ease;
-            border-color: var(--crimson);
-            background: var(--crimson);
-            box-shadow: 0 0 30px rgba(225, 29, 72, 0.3);
-        }
-
-        @keyframes shakeError {
-            0%, 100% { transform: translateX(0) scale(1); }
-            15% { transform: translateX(-10px) scale(1.05); }
-            30% { transform: translateX(10px) scale(1.05); }
-            45% { transform: translateX(-6px) scale(1.02); }
-            60% { transform: translateX(6px) scale(1.02); }
-            80% { transform: translateX(-3px) scale(1); }
-        }
-
-        .password-input-overlay {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            cursor: text;
-            z-index: 5;
-        }
-        .password-input-overlay input {
-            width: 100%;
-            height: 100%;
-            background: transparent;
-            border: none;
-            outline: none;
-            color: transparent;
-            caret-color: var(--accent);
-            font-size: 1px;
-            letter-spacing: 1px;
-            padding: 0;
-            margin: 0;
-            cursor: text;
-        }
-        .password-input-overlay input::selection {
-            background: transparent;
-        }
-
-        .cursor-indicator {
-            position: absolute;
-            bottom: -2px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 3px;
-            height: 3px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: cursorPulse 1.2s ease-in-out infinite;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            box-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
-        }
-        .cursor-indicator.visible {
-            opacity: 1;
-        }
-        @keyframes cursorPulse {
-            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.3; }
-            50% { transform: translateX(-50%) scale(3); opacity: 1; }
-        }
-
-        .embossed-btn {
-            background: var(--bg);
-            border-radius: 1.5rem;
-            box-shadow: 10px 10px 20px var(--shadow), -5px -5px 15px var(--light);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            color: #64748b;
-            font-weight: 800;
-            border: none;
-            cursor: pointer;
-            padding: 1rem 1.5rem;
-            width: 100%;
-            text-align: center;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
-        }
-        .embossed-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .fetched-active {
-            background: var(--accent) !important;
-            color: #1a1c20 !important;
-            box-shadow: 0 0 25px rgba(251, 191, 36, 0.5) !important;
-        }
-        .success-state {
-            background: var(--emerald) !important;
-            color: white !important;
-            box-shadow: 0 0 25px rgba(16, 185, 129, 0.5) !important;
-        }
-        .wa-glow {
-            background: rgba(16, 185, 129, 0.1) !important;
-            border: 1px solid var(--emerald);
-            color: var(--emerald) !important;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
-        }
-
-        .crimson-warning {
-            background: var(--crimson) !important;
-            color: white !important;
-            animation: quickShake 0.3s cubic-bezier(.36,.07,.19,.97) both;
-        }
-        @keyframes quickShake {
-            10%, 90% { transform: translate3d(-2px, 0, 0); }
-            30%, 70% { transform: translate3d(4px, 0, 0); }
-            40%, 60% { transform: translate3d(-4px, 0, 0); }
-        }
-
-        .suggestions-box {
-            max-height: 180px;
-            overflow-y: auto;
-            border-radius: 1.5rem;
-            margin-top: 0.5rem;
-            background: var(--bg);
-            box-shadow: 10px 10px 20px var(--shadow);
-            direction: rtl;
-        }
-        .suggestion-item {
-            padding: 14px 20px;
-            cursor: pointer;
-            border-bottom: 1px solid var(--light);
-            text-align: right;
-            color: #94a3b8;
-        }
-        .suggestion-item:hover,
-        .suggestion-item.selected {
-            background: var(--light);
-            color: var(--accent);
-        }
-
-        #shield {
-            position: fixed;
-            inset: 0;
-            background: var(--bg);
-            z-index: 100;
-            transition: opacity 0.5s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 1.5rem;
-        }
-        #shield .shield-spinner {
-            width: 3rem;
-            height: 3rem;
-            border: 3px solid rgba(251, 191, 36, 0.06);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        #shield .shield-text {
-            color: rgba(251, 191, 36, 0.3);
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-        }
-
-        .hidden { display: none !important; }
-        .rtl-text { direction: rtl; text-align: center; }
-        .rtl-input { direction: rtl; text-align: right; }
-        .phone-display { direction: ltr; unicode-bidi: isolate; display: inline-block; }
-
-        .toast-error {
-            background: rgba(225, 29, 72, 0.06);
-            border: 1px solid rgba(225, 29, 72, 0.1);
-            border-radius: 1rem;
-            padding: 0.75rem 1rem;
-            font-size: 0.7rem;
-            color: #f1948a;
-            text-align: center;
-            animation: slideDown 0.4s ease;
-        }
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .toggle-remember {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.7rem;
-            color: rgba(148, 163, 184, 0.3);
-            cursor: pointer;
-            user-select: none;
-            transition: color 0.3s ease;
-        }
-        .toggle-remember:hover {
-            color: rgba(148, 163, 184, 0.6);
-        }
-        .toggle-remember input[type="checkbox"] {
-            accent-color: var(--accent);
-            width: 1rem;
-            height: 1rem;
-            cursor: pointer;
-            border-radius: 0.25rem;
-        }
-
-        .view-wrapper {
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-        .view-wrapper.exit {
-            opacity: 0;
-            transform: translateY(-20px) scale(0.97);
-        }
-        .view-wrapper.enter {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-        .hidden-view { display: none !important; }
-
-        .status-text {
-            font-size: 0.6rem;
-            font-weight: 600;
-            letter-spacing: 0.15em;
-            color: rgba(148, 163, 184, 0.3);
-            transition: all 0.4s ease;
-            text-transform: uppercase;
-        }
-        .status-text.ready {
-            color: rgba(16, 185, 129, 0.5);
-            animation: blinkReady 1.2s ease-in-out infinite;
-        }
-        .status-text.error {
-            color: rgba(225, 29, 72, 0.5);
-        }
-        @keyframes blinkReady {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        /* Faint dark grey outline - slightly lighter than the box itself */
-        .embossed-card {
-            outline: 1px solid rgba(148, 163, 184, 0.06);
-            outline-offset: 0px;
-        }
-        .embossed-card::before {
-            content: '';
-            position: absolute;
-            inset: -1px;
-            border-radius: 3rem;
-            border: 1px solid rgba(148, 163, 184, 0.04);
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        /* Status dot - hidden, only text blinks */
-        .status-dot {
-            display: none;
-        }
+        /* Status Pulse while loading */
+        .pulse-text { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
     </style>
 </head>
-<body class="p-4">
+<body class="flex items-center justify-center min-h-screen p-4 overflow-hidden">
 
-    <div id="shield">
-        <div class="shield-spinner"></div>
-        <span class="shield-text">Iraqi Hosp. Duty Portal</span>
-    </div>
+    <div id="shield"></div>
 
-    <div id="main-card" class="w-full max-w-sm embossed-card breathing p-10 mx-auto">
-        <svg class="tube-container" viewBox="0 0 384 512" preserveAspectRatio="none">
-            <rect id="tube-bg" x="2" y="2" width="380" height="508" rx="48" />
-            <rect id="tube-fluid" x="2" y="2" width="380" height="508" rx="48" />
-        </svg>
-
-        <!-- LOGIN VIEW -->
-        <div id="login-view" class="view-wrapper">
+    <div id="main-card" class="w-full max-w-sm neu-flat p-10 rounded-[3rem] transition-all duration-500">
+        
+        <div id="login-view">
             <div class="text-center mb-10">
-                <h1 class="text-white text-2xl font-extrabold tracking-tight">On-Call Portal</h1>
-                <div class="flex items-center justify-center gap-2 mt-3">
-                    <span id="statusDot" class="status-dot"></span>
-                    <span id="status-text" class="status-text">Connecting Database...</span>
-                </div>
+                <h1 id="title-text" class="text-slate-800 text-2xl font-extrabold tracking-tight">Access Hub</h1>
+                <p id="status-text" class="text-slate-500 text-[0.6rem] mt-2 font-bold uppercase tracking-[0.3em] pulse-text">Initializing...</p>
             </div>
+            
             <div class="space-y-8">
-                <div class="recessed-input p-2" id="passwordContainer">
-                    <div class="password-container" id="dotContainer">
-                        <div class="password-dot empty" id="dot0"></div>
-                        <div class="password-dot empty" id="dot1"></div>
-                        <div class="password-dot empty" id="dot2"></div>
-                        <div class="password-dot empty" id="dot3"></div>
-                        <div class="password-dot empty" id="dot4"></div>
-                        <div class="password-dot empty" id="dot5"></div>
-                        <div class="password-dot empty" id="dot6"></div>
-                        <div class="password-dot empty" id="dot7"></div>
-                        <div class="cursor-indicator" id="cursorIndicator"></div>
-                    </div>
-                    <div class="password-input-overlay">
-                        <input type="password" id="pw" inputmode="numeric" maxlength="8" 
-                               autofocus
-                               onkeydown="handlePasswordKey(event)"
-                               oninput="handlePasswordInput()"
-                               onfocus="showCursor()"
-                               onblur="hideCursor()">
-                    </div>
+                <div class="neu-inset p-2 rounded-2xl">
+                    <input type="password" id="pw" inputmode="numeric" maxlength="4" placeholder="••••" 
+                        class="w-full bg-transparent py-4 text-center text-4xl tracking-[1rem] text-blue-600 outline-none">
                 </div>
-
-                <div class="flex items-center justify-between px-1">
-                    <label class="toggle-remember">
-                        <input type="checkbox" id="rememberMe" checked>
-                        <span>تذكرني</span>
-                    </label>
-                    <span class="text-[0.5rem] tracking-widest" style="color: rgba(251, 191, 36, 0.15);">✦ SECURE</span>
-                </div>
-                <button id="entry-btn" onclick="handleEntry()" class="embossed-btn w-full py-6 tracking-widest uppercase" disabled>جاري التحميل...</button>
-                <div id="login-error" class="hidden toast-error"></div>
-            </div>
-            <p class="text-[0.5rem] text-center mt-6 tracking-[0.15em]" style="color: rgba(148, 163, 184, 0.08);">ROYAL MEDICAL NETWORK</p>
-        </div>
-
-        <!-- LOOKUP VIEW -->
-        <div id="lookup-view" class="hidden-view view-wrapper text-center">
-            <div class="recessed-input inline-block px-6 py-4 mb-6">
-                <span id="service-display" class="text-amber-500 text-xl font-black uppercase">...</span>
-            </div>
-            <h2 id="name-display" class="text-white text-3xl font-extrabold mb-1 rtl-text">...</h2>
-            <p id="phone-display" class="text-slate-500 font-bold text-lg mb-8 phone-display">-</p>
-            <div class="flex flex-row gap-2 w-full">
-                <a href="#" id="call-link" class="embossed-btn flex-1 py-5 uppercase text-center text-xs sm:text-base">📞 SIM Call</a>
-                <a href="#" id="wa-link" onclick="openWhatsApp(event)" class="hidden embossed-btn wa-glow flex-1 py-5 font-extrabold text-center text-xs sm:text-base">💬 WhatsApp</a>
-            </div>
-            <p id="time-stamp" class="text-[0.65rem] text-slate-500 mt-10 font-bold tracking-wider uppercase"></p>
-            <div class="mt-4">
-                <button onclick="logout()" class="text-[0.6rem] text-slate-500 hover:text-slate-300 underline-offset-2 underline transition-colors">تسجيل الخروج</button>
+                
+                <button id="entry-btn" onclick="handleEntry()" 
+                    class="neu-btn w-full py-5 text-blue-600 font-extrabold rounded-2xl tracking-widest relative overflow-hidden">
+                    <span id="btn-label">AUTHORIZE</span>
+                    <div id="spinner" class="hidden absolute inset-0 flex items-center justify-center">
+                        <svg class="animate-spin h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    </div>
+                </button>
             </div>
         </div>
 
-        <!-- REGISTER VIEW -->
-        <div id="register-view" class="hidden-view view-wrapper space-y-6">
-            <h2 class="text-white text-xl font-extrabold text-center mb-2">Duty Update 🇮🇶</h2>
-            <div class="recessed-input p-2">
-                <select id="spec-select" onchange="prepNameInput()" class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none appearance-none text-center">
-                    <option value="" class="bg-[#1a1c20]">SELECT SPECIALTY</option>
-                    <option value="NS" class="bg-[#1a1c20]">جراحة الجملة العصبية</option>
-                    <option value="CT" class="bg-[#1a1c20]">جراحة الصدر و الاوعية الدموية</option>
-                    <option value="GS" class="bg-[#1a1c20]">الجراحة العامة</option>
-                    <option value="US" class="bg-[#1a1c20]">جراحة المسالك البولية</option>
-                    <option value="ENT" class="bg-[#1a1c20]">الأذن و الأنف و الحنجرة</option>
-                    <option value="H" class="bg-[#1a1c20]">أمراض القلب</option>
-                    <option value="ICU" class="bg-[#1a1c20]">تخدير العناية المركزة</option>
-                    <option value="OP" class="bg-[#1a1c20]">تخدير العمليات</option>
-                    <option value="R" class="bg-[#1a1c20]">الأشعة و السونار</option>
-                    <option value="ON" class="bg-[#1a1c20]">الأورام</option>
-                    <option value="D" class="bg-[#1a1c20]">الوفيات</option>
+        <div id="register-view" class="hidden space-y-6">
+            <h2 class="text-slate-800 text-xl font-extrabold text-center mb-4">Duty Update</h2>
+            <div class="neu-inset p-2 rounded-xl">
+                <select id="spec-select" onchange="toggleNameSection()" class="w-full bg-transparent p-3 text-slate-700 font-bold outline-none appearance-none">
+                    <option value="">-- Specialty --</option>
+                    <option value="NS">Neuro</option><option value="CT">Thoracic</option>
+                    <option value="GS">Surgery</option><option value="US">Uro</option>
+                    <option value="ENT">ENT</option><option value="H">Cardio</option>
+                    <option value="D">DeathCert</option><option value="OP">Anes (OP)</option>
+                    <option value="ICU">Anes (ICU)</option><option value="R">Radio</option>
+                    <option value="ON">Onco</option><option value="PS">Plastic</option>
                 </select>
             </div>
-            <div id="name-section" class="hidden space-y-4">
-                <div class="relative">
-                    <div class="recessed-input p-2">
-                        <input type="text" id="name-input" autocomplete="off" placeholder="اسم المقيم..." 
-                            oninput="filterNames()" onkeydown="handleNameKey(event)"
-                            onblur="setTimeout(() => document.getElementById('suggestions').classList.add('hidden'), 200)"
-                            class="w-full bg-transparent p-4 text-slate-300 font-bold outline-none rtl-input">
-                    </div>
-                    <div id="suggestions" class="suggestions-box hidden absolute w-full z-50"></div>
+            <div id="name-section" class="hidden space-y-6">
+                <div class="neu-inset p-2 rounded-xl">
+                    <select id="name-list" class="w-full bg-transparent p-3 text-slate-700 outline-none font-medium appearance-none"></select>
                 </div>
-                <button id="submit-btn" onclick="submitRegistration()" class="embossed-btn fetched-active w-full py-6 uppercase tracking-widest">UPDATE</button>
+                <button id="submit-btn" onclick="submitRegistration()" class="neu-btn w-full py-5 text-blue-600 font-extrabold rounded-2xl">
+                    COMMIT LOG
+                </button>
             </div>
-            <div class="text-center pt-2">
-                <button onclick="logout()" class="text-[0.6rem] text-slate-500 hover:text-slate-300 underline-offset-2 underline transition-colors">تسجيل الخروج</button>
+        </div>
+
+        <div id="lookup-view" class="hidden text-center">
+            <div class="neu-inset inline-block px-6 py-2 rounded-full mb-6">
+                <span id="service-display" class="text-blue-600 text-[0.65rem] font-extrabold tracking-widest uppercase">SERVICE</span>
             </div>
+            <h2 id="name-display" class="text-slate-800 text-3xl font-extrabold mb-2">...</h2>
+            <p id="phone-display" class="text-slate-500 font-bold text-lg mb-10">-</p>
+            <div class="grid grid-cols-2 gap-4">
+                <a href="#" id="call-link" class="neu-btn p-5 rounded-3xl text-blue-600 font-extrabold text-sm">VOICE</a>
+                <a href="#" id="wa-link" class="hidden p-5 bg-emerald-500 text-white rounded-3xl font-extrabold text-sm shadow-lg shadow-emerald-200">WHATSAPP</a>
+            </div>
+            <div id="time-stamp" class="text-[0.6rem] text-slate-400 mt-10 font-mono tracking-tighter uppercase"></div>
         </div>
     </div>
 
-<script>
-    // ############################################################
-    // ALL LATEST FUNCTIONALITY - Password animation, Remember Me, 8-digit PIN
-    // ############################################################
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode');
+        const service = urlParams.get('service');
+        const scriptUrl = "https://script.google.com/macros/s/AKfycbwj99w9IceN2W1aF3S-jN6yFypMBszvb1xv7FTUuYrW-GbYjC4ediZHrscrloeprwCSSw/exec";
 
-    const CONFIG = { user: "mHub96", repo: "s", path: "data.json" };
-    const _pt1 = "ghp_dAUtsFhTH";
-    const _pt2 = "a2KeJQOsxsC";
-    const _pt3 = "Ct1vz8z1Z63";
-    const _pt4 = "Am sjS";
-    const GH_TOKEN = (_pt1 + _pt2 + _pt3 + _pt4).replace(/\s/g, '');
+        let serverData = null;
+        let allResidents = [];
 
-    const arabicSpecs = {
-        "NS": "جراحة الجملة العصبية", "CT": "جراحة الصدر و الاوعية الدموية",
-        "GS": "الجراحة العامة", "US": "جراحة المسالك البولية",
-        "ENT": "الأذن و الأنف و الحنجرة", "H": "أمراض القلب",
-        "ICU": "تخدير العناية المركزة", "OP": "تخدير العمليات",
-        "R": "الأشعة و السونار", "ON": "الأورام", "D": "الوفيات"
-    };
+        window.onload = async function() {
+            // Remove shield
+            setTimeout(() => { 
+                document.getElementById('shield').style.opacity = '0'; 
+                setTimeout(() => document.getElementById('shield').remove(), 500);
+            }, 300);
 
-    let db = { names: [], schedule: [] };
-    let fileSha = "";
-    let todayResident = null;
-    let currentPool = [];
-    let selectedIndex = -1;
-    let dataLoaded = false;
-    let loadError = false;
-    let isSessionRestored = false;
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const mode = urlParams.get('mode');
-    const service = urlParams.get('service');
-
-    const STORAGE_KEY = 'duty_portal_session';
-    const SESSION_PIN = '1234';
-
-    // ---------- PASSWORD ANIMATION ----------
-    let passwordValue = '';
-
-    function updateDots(value) {
-        const dots = document.querySelectorAll('.password-dot');
-        const len = value.length;
-        
-        dots.forEach((dot, index) => {
-            dot.className = 'password-dot';
-            
-            if (index < len) {
-                dot.classList.add('filled');
-                if (dot.dataset.wasEmpty === 'true') {
-                    dot.classList.add('active');
-                    setTimeout(() => dot.classList.remove('active'), 500);
+            // FETCH LOGIC
+            const status = document.getElementById('status-text');
+            try {
+                if (mode === 'register') {
+                    document.getElementById('title-text').innerText = "Doctor Hub";
+                    const res = await fetch(`${scriptUrl}?action=getNames`);
+                    allResidents = (await res.json()).sort((a,b) => a[0].localeCompare(b[0], 'ar'));
+                } else if (service) {
+                    const res = await fetch(`${scriptUrl}?service=${service}&ward=${service}&json=true&t=${Date.now()}`);
+                    serverData = await res.json();
                 }
-                dot.dataset.wasEmpty = 'false';
-            } else {
-                dot.classList.add('empty');
-                dot.dataset.wasEmpty = 'true';
+                
+                // FIXED: Update status once loading is complete
+                status.innerText = "Terminal Ready 🇮🇶";
+                status.classList.remove('pulse-text');
+            } catch (e) {
+                status.innerText = "Connection Error";
+                status.classList.remove('pulse-text');
             }
-        });
-
-        const cursor = document.getElementById('cursorIndicator');
-        if (len < 8) {
-            cursor.classList.add('visible');
-        } else {
-            cursor.classList.remove('visible');
-        }
-    }
-
-    function handlePasswordInput() {
-        const input = document.getElementById('pw');
-        const value = input.value;
-        passwordValue = value;
-        updateDots(value);
-    }
-
-    function handlePasswordKey(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            handleEntry();
-        }
-        if (e.key === 'Backspace') {
-            setTimeout(() => {
-                const input = document.getElementById('pw');
-                updateDots(input.value);
-            }, 10);
-        }
-    }
-
-    function showCursor() {
-        const cursor = document.getElementById('cursorIndicator');
-        if (passwordValue.length < 8) {
-            cursor.classList.add('visible');
-        }
-    }
-
-    function hideCursor() {
-        const cursor = document.getElementById('cursorIndicator');
-        cursor.classList.remove('visible');
-    }
-
-    function shakeDots() {
-        const dots = document.querySelectorAll('.password-dot');
-        dots.forEach(dot => {
-            if (dot.classList.contains('filled')) {
-                dot.classList.add('error-shake');
-                setTimeout(() => dot.classList.remove('error-shake'), 500);
-            }
-        });
-    }
-
-    function resetPasswordInput() {
-        const input = document.getElementById('pw');
-        input.value = '';
-        passwordValue = '';
-        updateDots('');
-        const dots = document.querySelectorAll('.password-dot');
-        dots.forEach(dot => {
-            dot.className = 'password-dot empty';
-            dot.dataset.wasEmpty = 'true';
-        });
-    }
-
-    // ---------- REMEMBER ME ----------
-    function saveSession() {
-        const remember = document.getElementById('rememberMe');
-        if (remember && remember.checked) {
-            localStorage.setItem(STORAGE_KEY, 'authenticated');
-            localStorage.setItem(STORAGE_KEY + '_timestamp', Date.now().toString());
-        } else {
-            localStorage.removeItem(STORAGE_KEY);
-            localStorage.removeItem(STORAGE_KEY + '_timestamp');
-        }
-    }
-
-    function checkSession() {
-        const session = localStorage.getItem(STORAGE_KEY);
-        if (!session) return false;
-        const timestamp = localStorage.getItem(STORAGE_KEY + '_timestamp');
-        if (timestamp) {
-            const days = (Date.now() - parseInt(timestamp)) / (1000 * 60 * 60 * 24);
-            if (days > 7) {
-                clearSession();
-                return false;
-            }
-        }
-        return session === 'authenticated';
-    }
-
-    function clearSession() {
-        localStorage.removeItem(STORAGE_KEY);
-        localStorage.removeItem(STORAGE_KEY + '_timestamp');
-    }
-
-    function logout() {
-        clearSession();
-        isSessionRestored = false;
-        const loginView = document.getElementById('login-view');
-        const registerView = document.getElementById('register-view');
-        const lookupView = document.getElementById('lookup-view');
-        
-        if (!registerView.classList.contains('hidden-view')) {
-            registerView.classList.add('exit');
-            setTimeout(() => {
-                registerView.classList.add('hidden-view');
-                registerView.classList.remove('exit');
-            }, 400);
-        }
-        if (!lookupView.classList.contains('hidden-view')) {
-            lookupView.classList.add('exit');
-            setTimeout(() => {
-                lookupView.classList.add('hidden-view');
-                lookupView.classList.remove('exit');
-            }, 400);
-        }
-        
-        setTimeout(() => {
-            loginView.classList.remove('hidden-view');
-            loginView.classList.add('enter');
-            setTimeout(() => loginView.classList.remove('enter'), 500);
-            resetPasswordInput();
-            const entryBtn = document.getElementById('entry-btn');
-            if (dataLoaded) {
-                entryBtn.disabled = false;
-                entryBtn.innerText = 'Authorize Access';
-                entryBtn.className = 'embossed-btn fetched-active w-full py-6 tracking-widest uppercase';
-            } else {
-                entryBtn.disabled = true;
-                entryBtn.innerText = 'جاري التحميل...';
-                entryBtn.className = 'embossed-btn w-full py-6 tracking-widest uppercase';
-            }
-        }, 300);
-    }
-
-    // ---------- ENTRY HANDLER ----------
-    window.handleEntry = function() {
-        if (!dataLoaded) {
-            showLoginError('البيانات لم تكتمل، حاول مرة أخرى');
-            return;
-        }
-        const input = document.getElementById('pw');
-        const pin = input.value;
-        
-        if (pin === SESSION_PIN) {
-            saveSession();
-            proceedAfterAuth();
-        } else {
-            shakeDots();
-            showLoginError('الرمز غير صحيح');
-            const btn = document.getElementById('entry-btn');
-            btn.classList.add('crimson-warning');
-            const original = btn.innerText;
-            btn.innerText = "INCORRECT!";
-            setTimeout(() => {
-                btn.classList.remove('crimson-warning');
-                btn.innerText = original;
-            }, 1000);
-            setTimeout(() => {
-                resetPasswordInput();
-                input.focus();
-            }, 400);
-        }
-    };
-
-    function proceedAfterAuth() {
-        const loginView = document.getElementById('login-view');
-        const registerView = document.getElementById('register-view');
-        const lookupView = document.getElementById('lookup-view');
-        
-        loginView.classList.add('exit');
-        setTimeout(() => {
-            loginView.classList.add('hidden-view');
-            loginView.classList.remove('exit');
-            
-            if (mode === 'register') {
-                registerView.classList.remove('hidden-view');
-                registerView.classList.add('enter');
-                setTimeout(() => registerView.classList.remove('enter'), 500);
-            } else {
-                showLookupUI();
-                lookupView.classList.remove('hidden-view');
-                lookupView.classList.add('enter');
-                setTimeout(() => lookupView.classList.remove('enter'), 500);
-            }
-        }, 500);
-    }
-
-    function showLoginError(msg) {
-        const errEl = document.getElementById('login-error');
-        errEl.innerText = msg;
-        errEl.classList.remove('hidden');
-        setTimeout(() => errEl.classList.add('hidden'), 4000);
-    }
-
-    // ---------- LOADING & INIT ----------
-    window.onload = async function() {
-        const hasSession = checkSession();
-        const loginView = document.getElementById('login-view');
-        
-        if (hasSession) {
-            loginView.classList.add('hidden-view');
-            isSessionRestored = true;
-        }
-
-        const shieldTimeout = setTimeout(() => {
-            const s = document.getElementById('shield');
-            if (s && s.style.opacity !== '0') {
-                s.style.opacity = '0';
-                setTimeout(() => s.remove(), 500);
-            }
-        }, 5000);
-
-        try {
-            await fetchDataWithTimeout(8000);
-        } catch (e) {
-            console.warn('Data fetch failed:', e);
-            loadError = true;
-            const cached = localStorage.getItem('duty_db_cache');
-            if (cached) {
-                try {
-                    db = JSON.parse(cached);
-                    dataLoaded = true;
-                } catch (e2) { /* ignore */ }
-            }
-        }
-
-        clearTimeout(shieldTimeout);
-        const s = document.getElementById('shield');
-        if (s) { s.style.opacity = '0'; setTimeout(() => s.remove(), 500); }
-
-        const entryBtn = document.getElementById('entry-btn');
-        const statusText = document.getElementById('status-text');
-        const statusDot = document.getElementById('statusDot');
-
-        if (dataLoaded) {
-            statusText.innerText = 'READY 🇮🇶';
-            statusText.className = 'status-text ready';
-            statusDot.className = 'status-dot';
-            entryBtn.disabled = false;
-            entryBtn.innerText = 'Authorize Access';
-            entryBtn.className = 'embossed-btn fetched-active w-full py-6 tracking-widest uppercase';
-            
-            if (hasSession) {
-                setTimeout(() => {
-                    if (mode === 'register') {
-                        document.getElementById('register-view').classList.remove('hidden-view');
-                        document.getElementById('register-view').classList.add('enter');
-                        setTimeout(() => document.getElementById('register-view').classList.remove('enter'), 500);
-                    } else {
-                        showLookupUI();
-                        document.getElementById('lookup-view').classList.remove('hidden-view');
-                        document.getElementById('lookup-view').classList.add('enter');
-                        setTimeout(() => document.getElementById('lookup-view').classList.remove('enter'), 500);
-                    }
-                }, 200);
-            } else {
-                if (!loginView.classList.contains('hidden-view')) {
-                    setTimeout(() => {
-                        document.getElementById('pw').focus();
-                    }, 300);
-                } else {
-                    loginView.classList.remove('hidden-view');
-                    loginView.classList.add('enter');
-                    setTimeout(() => {
-                        loginView.classList.remove('enter');
-                        document.getElementById('pw').focus();
-                    }, 300);
-                }
-            }
-        } else if (loadError) {
-            statusText.innerText = '⚠️ OFFLINE';
-            statusText.className = 'status-text error';
-            statusDot.className = 'status-dot';
-            entryBtn.disabled = true;
-            entryBtn.innerText = '⚠️ خطأ في الاتصال';
-            entryBtn.className = 'embossed-btn w-full py-6 tracking-widest uppercase';
-            showLoginError('تعذر الاتصال بقاعدة البيانات. يرجى تحديث الصفحة.');
-            
-            if (loginView.classList.contains('hidden-view')) {
-                loginView.classList.remove('hidden-view');
-                loginView.classList.add('enter');
-                setTimeout(() => loginView.classList.remove('enter'), 300);
-            }
-        }
-
-        const rememberCheck = document.getElementById('rememberMe');
-        if (rememberCheck) {
-            rememberCheck.checked = checkSession();
-        }
-
-        resetPasswordInput();
-    };
-
-    async function fetchDataWithTimeout(timeoutMs) {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-        try {
-            const res = await fetch(`https://api.github.com/repos/${CONFIG.user}/${CONFIG.repo}/contents/${CONFIG.path}?t=${Date.now()}`, {
-                headers: { "Authorization": `token ${GH_TOKEN}` },
-                signal: controller.signal
-            });
-            clearTimeout(timeoutId);
-
-            if (res.ok) {
-                const data = await res.json();
-                fileSha = data.sha;
-                const decoded = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\s/g, '')))));
-                db = decoded;
-                localStorage.setItem('duty_db_cache', JSON.stringify(db));
-                dataLoaded = true;
-                loadError = false;
-
-                if (service) {
-                    const todayStr = getMedicalDate();
-                    todayResident = db.schedule.find(s => s.specCode === service && s.date === todayStr);
-                }
-                return true;
-            } else {
-                throw new Error(`HTTP ${res.status}`);
-            }
-        } catch (e) {
-            clearTimeout(timeoutId);
-            throw e;
-        }
-    }
-
-    function getMedicalDate() {
-        const now = new Date();
-        if (now.getHours() < 8) now.setDate(now.getDate() - 1);
-        const d = String(now.getDate()).padStart(2, '0');
-        const m = String(now.getMonth() + 1).padStart(2, '0');
-        return `${d}/${m}/${now.getFullYear()}`;
-    }
-
-    // ---------- ORIGINAL FUNCTIONS ----------
-    function showLookupUI() {
-        const targetDate = getMedicalDate();
-        const now = new Date();
-        const timestamp = `${String(now.getDate()).padStart(2, '0')}-${now.toLocaleString('en-GB', {month:'short'})}-${now.getFullYear()} | ${now.toLocaleString('en-GB', {hour:'2-digit', minute:'2-digit', hour12:true}).toUpperCase()}`;
-        
-        document.getElementById('service-display').innerText = arabicSpecs[service] || service || "SERVICE";
-        document.getElementById('time-stamp').innerText = timestamp;
-
-        todayResident = db.schedule.find(s => s.specCode === service && s.date === targetDate);
-
-        if (todayResident) {
-            const info = db.names.find(n => n.name === todayResident.name);
-            document.getElementById('name-display').innerText = todayResident.name;
-            document.getElementById('phone-display').innerText = info ? info.phone : "No Number";
-            if (info?.phone) {
-                document.getElementById('call-link').href = "tel:" + info.phone;
-                document.getElementById('call-link').classList.remove('hidden');
-                document.getElementById('wa-link').classList.remove('hidden');
-            }
-        } else {
-            document.getElementById('name-display').innerText = "No Duty Found";
-            document.getElementById('phone-display').innerText = "Date: " + targetDate;
-            document.getElementById('call-link').classList.add('hidden');
-            document.getElementById('wa-link').classList.add('hidden');
-        }
-    }
-
-    function prepNameInput() {
-        if (!dataLoaded) return;
-        const spec = document.getElementById('spec-select').value;
-        const section = document.getElementById('name-section');
-        if (!spec) { section.classList.add('hidden'); return; }
-        document.getElementById('name-input').value = "";
-        section.classList.remove('hidden');
-        if (spec === "ICU" || spec === "OP") currentPool = db.names.filter(n => n.spec === "A");
-        else if (spec === "D") currentPool = db.names;
-        else currentPool = db.names.filter(n => n.spec === spec);
-    }
-
-    function filterNames() {
-        if (!dataLoaded) return;
-        const val = document.getElementById('name-input').value.trim().toLowerCase().replace(/^د\.?\s*/, '');
-        const box = document.getElementById('suggestions');
-        if (!val) { box.classList.add('hidden'); return; }
-        
-        const matches = currentPool.filter(n => n.name.toLowerCase().replace(/^د\.?\s*/, '').includes(val));
-        matches.sort((a, b) => {
-            const aClean = a.name.toLowerCase().replace(/^د\.?\s*/, '');
-            const bClean = b.name.toLowerCase().replace(/^د\.?\s*/, '');
-            const aStarts = aClean.startsWith(val);
-            const bStarts = bClean.startsWith(val);
-            if (aStarts && !bStarts) return -1;
-            if (!aStarts && bStarts) return 1;
-            return aClean.localeCompare(bClean);
-        });
-
-        if (matches.length > 0) {
-            box.innerHTML = matches.map(m => `<div class="suggestion-item" onclick="selectSuggestion('${m.name}')">${m.name}</div>`).join('');
-            box.classList.remove('hidden');
-            selectedIndex = -1;
-        } else box.classList.add('hidden');
-    }
-
-    function handleNameKey(e) {
-        const items = document.querySelectorAll('.suggestion-item');
-        if (e.key === "ArrowDown") selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
-        else if (e.key === "ArrowUp") selectedIndex = Math.max(selectedIndex - 1, 0);
-        else if (e.key === "Enter") {
-            if (selectedIndex > -1) selectSuggestion(items[selectedIndex].innerText);
-            else submitRegistration();
-        }
-        items.forEach((item, i) => item.classList.toggle('selected', i === selectedIndex));
-    }
-
-    function selectSuggestion(name) {
-        document.getElementById('name-input').value = name;
-        document.getElementById('suggestions').classList.add('hidden');
-    }
-
-    async function submitRegistration() {
-        if (!dataLoaded) {
-            alert('البيانات غير محملة، يرجى تحديث الصفحة');
-            return;
-        }
-        const btn = document.getElementById('submit-btn');
-        const name = document.getElementById('name-input').value;
-        const spec = document.getElementById('spec-select').value;
-        const card = document.getElementById('main-card');
-        
-        if (!name || !spec) return;
-
-        card.classList.add('loading-active');
-        const dutyDate = getMedicalDate();
-        const entry = {
-            date: dutyDate, specCode: spec, name: name,
-            timestamp: new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'})
         };
 
-        db.schedule = db.schedule.filter(s => !(s.date === entry.date && s.specCode === entry.specCode));
-        db.schedule.push(entry);
-
-        try {
-            const body = {
-                message: `Update: ${name}`,
-                content: btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2)))),
-                sha: fileSha
-            };
-            const res = await fetch(`https://api.github.com/repos/${CONFIG.user}/${CONFIG.repo}/contents/${CONFIG.path}`, {
-                method: "PUT", headers: { "Authorization": `token ${GH_TOKEN}` }, body: JSON.stringify(body)
-            });
-            
-            if (res.ok) {
-                const r = await res.json();
-                fileSha = r.content.sha;
-                localStorage.setItem('duty_db_cache', JSON.stringify(db));
-                
-                card.classList.remove('loading-active');
-                btn.classList.replace('fetched-active', 'success-state');
-                const originalText = btn.innerText;
-                btn.innerText = "SUCCESS ✅";
-
-                setTimeout(() => {
-                    btn.classList.replace('success-state', 'fetched-active');
-                    btn.innerText = originalText;
-                    document.getElementById('name-input').value = "";
-                    document.getElementById('spec-select').value = "";
-                    document.getElementById('name-section').classList.add('hidden');
-                }, 1500);
-            }
-        } catch (e) {
-            card.classList.remove('loading-active');
-            btn.innerText = "RETRY ❌";
-            setTimeout(() => {
-                btn.innerText = "UPDATE";
-            }, 2000);
+        function toggleNameSection() {
+            const val = document.getElementById('spec-select').value;
+            const list = document.getElementById('name-list');
+            if (!val) { document.getElementById('name-section').classList.add('hidden'); return; }
+            let filtered = (val === "OP" || val === "ICU") ? allResidents.filter(r => r[1] === "A") : (val === "D" ? allResidents : allResidents.filter(r => r[1] === val));
+            list.innerHTML = filtered.map(r => `<option value="${r[0]}">${r[0]}</option>`).join('');
+            document.getElementById('name-section').classList.remove('hidden');
         }
-    }
 
-    function openWhatsApp(e) {
-        e.preventDefault();
-        const info = db.names.find(n => n.name === todayResident.name);
-        if (info?.phone) window.location.href = "whatsapp://send?phone=" + info.phone;
-    }
+        function handleEntry() {
+            const pin = document.getElementById('pw').value;
+            const correct = (serverData && serverData.password) ? serverData.password.toString() : "1234";
+            const btn = document.getElementById('entry-btn');
+            
+            if (pin === correct) {
+                document.getElementById('spinner').classList.remove('hidden');
+                document.getElementById('btn-label').classList.add('opacity-0');
+                
+                setTimeout(() => {
+                    btn.classList.add('btn-success');
+                    document.getElementById('spinner').classList.add('hidden');
+                    document.getElementById('btn-label').innerText = "SUCCESS";
+                    document.getElementById('btn-label').classList.remove('opacity-0');
+                    
+                    setTimeout(() => {
+                        document.getElementById('login-view').classList.add('hidden');
+                        if (mode === 'register') {
+                            document.getElementById('register-view').classList.remove('hidden');
+                        } else {
+                            showLookupUI();
+                            document.getElementById('lookup-view').classList.remove('hidden');
+                        }
+                    }, 800);
+                }, 1000);
+            } else { alert("ACCESS DENIED"); }
+        }
 
-    window.logout = logout;
+        function showLookupUI() {
+            if (!serverData) return;
+            document.getElementById('service-display').innerText = serverData.resident.serviceArabic;
+            document.getElementById('name-display').innerText = serverData.resident.name;
+            document.getElementById('phone-display').innerText = serverData.resident.phone;
+            document.getElementById('time-stamp').innerText = "Ref: " + serverData.timestamp;
+            document.getElementById('call-link').href = "tel:" + serverData.resident.phone;
+            if (serverData.whatsappDigits) {
+                const wa = document.getElementById('wa-link');
+                wa.classList.remove('hidden');
+                wa.href = "whatsapp://send?phone=" + serverData.whatsappDigits;
+            }
+        }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const container = document.getElementById('passwordContainer');
-        container.addEventListener('click', function() {
-            document.getElementById('pw').focus();
-        });
-    });
-</script>
+        async function submitRegistration() {
+            const btn = document.getElementById('submit-btn');
+            btn.innerText = "UPLOADING...";
+            const payload = {
+                action: "submitDuty",
+                specialty: document.getElementById('spec-select').value,
+                name: document.getElementById('name-list').value
+            };
+            try {
+                await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                btn.classList.add('btn-success');
+                btn.innerText = "SAVED ✅";
+            } catch (e) { alert("ERROR"); btn.innerText = "RETRY"; }
+        }
+    </script>
 </body>
 </html>
